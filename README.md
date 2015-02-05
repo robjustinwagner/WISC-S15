@@ -1,2 +1,2 @@
 # Processor-Design
-Processor Design [ECE552]
+Processor Design
