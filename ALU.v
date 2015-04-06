@@ -2,11 +2,11 @@
 
 module ALU(data_one, data_two, control, zero, result, flags)
 
-//combinational logic --change asynch
+//combinational logic --change asynck
 
    //INPUTS
    input [15:0] data_one, data_two;   //data in
-   input [3:0] control;   //opcode contro
+   input [2:0] control;   //opcode control
    
    //OUTPUTS
    output reg zero;   //branching
@@ -15,38 +15,29 @@ module ALU(data_one, data_two, control, zero, result, flags)
    
    logic cout;
    
-   localparam   ADD   =   4'b0000;
-   localparam   SUB   =   4'b0001;
-   localparam   NAND  =   4'b0010;
-   localparam   XOR   =   4'b0011;
-   localparam   INC   =   4'b0100;
-   localparam   SRA   =   4'b0101;
-   localparam   SRL   =   4'b0110;
-   localparam   SLL   =   4'b0111;
-   localparam   LW    =   4'b1000;
-   localparam   SW    =   4'b1001;
-   localparam   LHB   =   4'b1010;
-   localparam   LLB   =   4'b1011;
-   localparam   B     =   4'b1100;
-   localparam   CALL  =   4'b1101;
-   localparam   RET   =   4'b1110;
-   localparam   ERR   =   4'b1111;
-   
+   localparam   ADD   =   3'b000;
+   localparam   SUB   =   3'b001;
+   localparam   NAND  =   3'b010;
+   localparam   XOR   =   3'b011;
+   localparam   INC   =   3'b100;
+   localparam   SRA   =   3'b101;
+   localparam   SRL   =   3'b110;
+   localparam   SLL   =   3'b111;   
    
    always_comb begin
     
-    //Initalize all variables HERE
+    //Initalize all variables
     cout = 0;
     result = 0;
     
     case(control)
            
-             /*
-              zero: indicates whether all bits of the result bus are logic zero
-              Arithmetic shift: the operand is treated as a two's complement integer, meaning that the most significant bit is a "sign" bit and is preserved.
-              Logical shift: a logic zero is shifted into the operand. This is used to shift unsigned integers.
-              Rotate: typically, carry-in is shifted into the operand.
-              */
+           /*
+            zero: indicates whether all bits of the result bus are logic zero
+            Arithmetic shift: the operand is treated as a two's complement integer, meaning that the most significant bit is a "sign" bit and is preserved.
+            Logical shift: a logic zero is shifted into the operand. This is used to shift unsigned integers.
+            Rotate: typically, carry-in is shifted into the operand.
+           */
               
            ADD : {cout, result} = data_one + data_two;
                  if(!(|result))
@@ -115,22 +106,7 @@ module ALU(data_one, data_two, control, zero, result, flags)
            SLL : result = data_one << data_two;
            //leave flags unchanged
            
-           LW : result = ;                           //FIX THIS
-           
-           SW : result = ;                           //FIX THIS
-           
-           
-           LHB : result = out11;
-           
-           LLB : result = out12; 
-           
-           B : result = out13;
-           
-           CALL : result = out14;
-           
-           RET : result = out15; 
-           
-           ERR : result = result;   //error case, don't change result
+	   default: result = result;
             
        endcase
       
