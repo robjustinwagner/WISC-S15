@@ -1,11 +1,13 @@
 // Author: Graham Nygard, Robert Wagner
 
-module ALU(data_one, data_two, control, zero, result, flags)
+module ALU(data_one, data_two, shift, load_half_imm, control, zero, result, flags)
 
 //combinational logic --change asynck
 
    //INPUTS
    input [15:0] data_one, data_two;   //data in
+   input [3:0] shift;	//SRA, SRL, SLL shift amount
+   input [7:0] load_half_imm; //LHB, LLB
    input [2:0] control;   //opcode control
    
    //OUTPUTS
@@ -97,13 +99,13 @@ module ALU(data_one, data_two, control, zero, result, flags)
                  else
                     flags & 3'b110;   //set sign (N) to pos (0)
            
-           SRA : result = data_one >>> data_two;
+           SRA : result = data_one >>> shift;
            //leave flags unchanged
            
-           SRL : result = data_one >> data_two;
+           SRL : result = data_one >> shift;
            //leave flags unchanged
            
-           SLL : result = data_one << data_two;
+           SLL : result = data_one << shift;
            //leave flags unchanged
            
 	   default: result = result;
