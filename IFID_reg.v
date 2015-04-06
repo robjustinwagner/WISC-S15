@@ -27,9 +27,16 @@ logic [3:0]  AI;
 logic [7:0]  LSI;
 logic [11:0] CALL;
 logic [15:0] PC;
+logic clk_1, clk_2;
 
-
+// Double flop clock for metastability
 always @(posedge clk) begin
+    clk_1 <= clk;
+    clk_2 <= clk_1;
+end
+
+// Pipeline register will be sensitive flopped clock
+always @(posedge clk_2) begin
     
    // Pass on the PC
    PC <= PC_in;
