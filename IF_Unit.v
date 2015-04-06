@@ -1,29 +1,44 @@
 // Author: Graham Nygard, Robert Wagner
 
-module IF_Unit(clk, instruction);
+module IF_Unit(clk, PC_src, PC_branch, read_cntrl,
+               PC_out, instruction);
 
 //INPUTS
 input        clk;
 input        PC_src;
+input        read_cntrl;
 input [15:0] PC_branch;
 
 //OUTPUTS
-output [15:0] PC_out;
+output logic [15:0] PC_out;
 output [15:0] instruction;
 
 //INTERNAL CONTROL
 logic [15:0] PC_update;
+logic [15:0] PC_address;
 
 //MODULE INSTANTIATIONS
-Reg_16bit PC(clk, );
-Instruction_Memory instr_mem(clk, .instr(instruction), rd_en);
 
-//NOTE: you can't read and write to an inout port simultaneously, so kept highZ for reading
-//condition is mux select?, val/expr is mux val?
-assign new_addr = (condition) ? <some value / expression> : 'bz;
+// PC register
+Reg_16bit PC(.clk(clk), .en(1), .d(PC_update), .q(PC_address));
 
-always @(posedge clk) begin
-	addr <= new_addr;
+// Instruction cache
+Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
+                             .instr(instruction), .rd_en(read_cntrl));
+
+//PC update logic (branch target or next instr)
+always_comb begin
+    
+    if (PC_src) begin
+        PC_update = PC_branch;
+    end
+    
+    else begin
+        PC_update = PC_address + 4;
+    end
+    
 end
+
+assign PC_out = PC_update;
 
 endmodule
