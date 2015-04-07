@@ -14,7 +14,7 @@ output logic [15:0] PC_out;
 output logic [15:0] instruction;
 
 //INTERNAL CONTROL
-logic [15:0] PC_plus_4;
+logic [15:0] PC_plus_2;
 logic [15:0] PC_update;
 logic [15:0] PC_address;
 
@@ -30,18 +30,18 @@ Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
 //PC update logic (branch target or next instr)
 always_comb begin
     
-    PC_plus_4 = PC_address + 4;
+    PC_plus_2 = PC_address + 2;
     
     if (PC_src) begin
         PC_update = PC_branch;
     end
     
     else begin
-        PC_update = PC_plus_4;
+        PC_update = PC_plus_2;
     end
     
 end
 
-assign PC_out = PC_plus_4;
+assign PC_out = PC_plus_2;
 
 endmodule

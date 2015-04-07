@@ -1,7 +1,9 @@
 // Author: Graham Nygard, Robert Wagner
 
-module IFID_reg(clk, hazard, PC_in, instruction, reg_rs, reg_rt, reg_rd,
-                cntrl_input, arith_imm, load_save_imm, call, PC_out);
+module IFID_reg(clk, hazard, PC_in, instruction, 
+                   branch_cond, reg_rs, reg_rt, reg_rd,
+                   cntrl_input, arith_imm, load_save_imm, 
+                   call, PC_out);
 
 //INPUTS
 input        clk;
@@ -11,6 +13,7 @@ input [15:0] PC_in;         // Program counter
 
 //OUTPUTS
 output logic [3:0]  cntrl_input;   // Inst[15:12] - Opcode
+output logic [3:0]  branch_cond;   // Inst[11:8]  - Branch condition
 output logic [3:0]  reg_rs;        // Inst[7:4]   - Register rs
 output logic [3:0]  reg_rt;        // Inst[3:0]   - Register rt
 output logic [3:0]  reg_rd;        // Inst[11:8]  - Register rd
