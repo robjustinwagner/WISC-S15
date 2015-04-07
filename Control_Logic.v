@@ -1,7 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
 module Control_Logic(opcode, branch_cond, 
-	data_reg, call, retrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext);
+	data_reg, call, retrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel);
 
 //INPUTS
 input 	[3:0] 	opcode;   	//4-bit instruction opcode
@@ -22,7 +22,7 @@ output        	mem_to_reg;     // LW signal to Memory unit
 output        	reg_to_mem;     // SW signal to Memory unit
 output 	[2:0]  	alu_op;         // ALU control unit input
 output       	alu_src;        // ALU operand seleciton
-output 		sign_ext;       // sign extend select bit
+output 		sign_ext_sel;   // sign extend select bit
                
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -66,7 +66,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
            
            SUB : begin
@@ -78,7 +78,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
 
            NAND : begin
@@ -90,7 +90,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
            
            XOR : begin
@@ -102,7 +102,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
                              
            INC : begin
@@ -114,7 +114,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b1;
 		 end
            
            SRA : begin
@@ -126,7 +126,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext = 1'b1;
 		 end
            
            SRL : begin
@@ -138,7 +138,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b1;
 		 end
            
            SLL : begin
@@ -150,7 +150,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b1;
 		 end
 
 	   LW :  begin
@@ -162,7 +162,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   SW :  begin
@@ -174,7 +174,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b1;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   LHB : begin
@@ -186,7 +186,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   LLB : begin
@@ -198,7 +198,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   B :   begin
@@ -228,7 +228,7 @@ localparam   TR    =   3'b111;
 		 */
 		 alu_op = SUB[2:0];
 		 alu_src = 1'b1;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   CALL : begin
@@ -240,7 +240,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
-		 sign_ext = ;
+		 sign_ext_sel = ;
 		 end
 
 	   RET : begin
@@ -252,7 +252,7 @@ localparam   TR    =   3'b111;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
-		 sign_ext = ;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   ERR : 

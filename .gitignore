@@ -8,3 +8,5 @@ work/_lib1_0.qpg
 work/_vmake
 transcript
 *.mti
+*.qpg
+~$D_Unit.docx
