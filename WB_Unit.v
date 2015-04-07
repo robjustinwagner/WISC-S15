@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module WB_Unit(clk, )
+module WB_Unit(clk, );
 
 //INPUTS
 input clk;

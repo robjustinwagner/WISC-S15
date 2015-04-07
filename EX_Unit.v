@@ -5,7 +5,7 @@ module EX_Unit(clk, mem_to_reg_in, reg_to_mem_in, branch,ret_wb,
                rd_data_1, rd_data_2, sign_ext, ret_future_in, reg_rd_in,
                call_imm, PC_in,
                   mem_to_reg_out, reg_to_mem_out, reg_rd_out,
-                  ret_future_out, alu_result, PC_update)
+                  ret_future_out, alu_result, PC_update);
 ;
 ////////////////////////////INPUTS/////////////////////////////////
 

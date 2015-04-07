@@ -1,7 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
-module Control_Logic(opcode, branch_cond,
-	data_reg, call, return, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext)
+module Control_Logic(opcode, branch_cond, 
+	data_reg, call, retrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext);
 
 //INPUTS
 input 	[3:0] 	opcode;   	//4-bit instruction opcode
@@ -16,7 +16,7 @@ output 		call;		/* Control signal to RegFile to
                                     specify the contents of the
                                     Stack_Pointer Register for
                                     supplying read_data_1 */
-output		return;
+output		retrn;
 output 	[3:0]  	branch;   	// branching control; 0-2 sensitive, 3 pick 
 output        	mem_to_reg;     // LW signal to Memory unit 
 output        	reg_to_mem;     // SW signal to Memory unit
@@ -57,7 +57,8 @@ localparam   TR    =   3'b111;
        
 	case(opcode)
               
-   	   ADD : data_reg = ;
+   	   ADD : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -65,8 +66,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
            
-           SUB : data_reg = ;
+           SUB : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -74,8 +77,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
 
-           NAND : data_reg = ;
+           NAND : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -83,8 +88,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
            
-           XOR : data_reg = ;
+           XOR : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -92,8 +99,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
                              
-           INC : data_reg = ;
+           INC : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -101,8 +110,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
            
-           SRA : data_reg = ;
+           SRA : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -110,8 +121,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
            
-           SRL : data_reg = ;
+           SRL : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -119,8 +132,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
            
-           SLL : data_reg = ;
+           SLL : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -128,8 +143,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
+		 end
 
-	   LW :  data_reg = ;
+	   LW :  begin
+		 data_reg = 1;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -137,8 +154,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
+		 end
 
-	   SW :  data_reg = ;
+	   SW :  begin
+		 data_reg = 1;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -146,8 +165,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
+		 end
 
-	   LHB : data_reg = ;
+	   LHB : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -155,8 +176,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
 		 sign_ext = ;
+		 end
 
-	   LLB : data_reg = ;
+	   LLB : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -164,8 +187,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
 		 sign_ext = ;
+		 end
 
-	   B :   data_reg = ;
+	   B :   begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {1, branch_cond[2:0]};
 		 mem_to_reg = ;
@@ -191,8 +216,10 @@ localparam   TR    =   3'b111;
 		 alu_op = SUB[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
+		 end
 
-	   CALL : data_reg = ;
+	   CALL : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {1, branch_cond[2:0]};					//FIX THIS
 		 mem_to_reg = ;
@@ -200,8 +227,10 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
 		 sign_ext = ;
+		 end
 
-	   RET : data_reg = ;
+	   RET : begin
+		 data_reg = 0;
 		 call = ;
 		 branch = {1, branch_cond[2:0]};					//FIX THIS
 		 mem_to_reg = ;
@@ -209,6 +238,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
+		 end
 
 	   ERR : 
 

@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flags)
+module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flags);
 
 //combinational logic --change asynck
 
@@ -45,63 +45,73 @@ module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flag
             Rotate: typically, carry-in is shifted into the operand.
            */
               
-           ADD : {cout, result} = data_one + data_two;
+           ADD : begin
+		 {cout, result} = data_one + data_two;
                  if(!(|result))
-                    flags | 3'b100;   //set zero (Z)
+                    flags |= 3'b100;   //set zero (Z)
                  else //result != 0
-                    flags & 3'b011;   //clear zero (Z)
+                    flags &= 3'b011;   //clear zero (Z)
                  if(cout == 0)
-                    flags & 3'b101;   //clear overflow (V)
+                    flags &= 3'b101;   //clear overflow (V)
                  else //cout == 1
-                    flags | 3'b010;   //set overflow (V)
+                    flags |= 3'b010;   //set overflow (V)
                  if(result[15] == 1)
-                    flags | 3'b001;   //set sign (N) to neg (1)
+                    flags |= 3'b001;   //set sign (N) to neg (1)
                  else
-                    flags & 3'b110;   //set sign (N) to pos (0)
+                    flags &= 3'b110;   //set sign (N) to pos (0)
+		 end
            
-           SUB : {cout, result} = data_one - data_two;
+           SUB : begin
+		 {cout, result} = data_one - data_two;
                  if(!(|result))
-                    flags | 3'b100;   //set zero (Z)
+                    flags |= 3'b100;   //set zero (Z)
                  else //result != 0
-                    flags & 3'b011;   //clear zero (Z)
+                    flags &= 3'b011;   //clear zero (Z)
                  if(cout == 0)
-                    flags & 3'b101;   //clear overflow (V)
+                    flags &= 3'b101;   //clear overflow (V)
                  else //cout == 1
-                    flags | 3'b010;   //set overflow (V)
+                    flags |= 3'b010;   //set overflow (V)
                  if(result[15] == 1)
-                    flags | 3'b001;   //set sign (N) to neg (1)
+                    flags |= 3'b001;   //set sign (N) to neg (1)
                  else
-                    flags & 3'b110;   //set sign (N) to pos (0)
+                    flags &= 3'b110;   //set sign (N) to pos (0)
+		 end
            
-           NAND : result = data_one &~ data_two;
-                  if(!(|result))
-                     flags | 3'b100;   //set zero (Z)
-                  else //result != 0
-                     flags & 3'b011;   //clear zero (Z)
-                  flags & 3'b101;   //clear overflow (V)
-                  flags & 3'b110;   //set sign (N) to pos (0)
-           
-           XOR : result = data_one ^ data_two;
+           NAND : begin
+		 result = data_one &~ data_two;
                  if(!(|result))
-                     flags | 3'b100;   //set zero (Z)
+                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0
-                     flags & 3'b011;   //clear zero (Z)
-                 flags & 3'b101;   //clear overflow (V)
-                 flags & 3'b110;   //set sign (N) to pos (0)
+                     flags &= 3'b011;   //clear zero (Z)
+                 flags &= 3'b101;   //clear overflow (V)
+                 flags &= 3'b110;   //set sign (N) to pos (0)
+		 end
+           
+           XOR : begin
+		 result = data_one ^ data_two;
+                 if(!(|result))
+                     flags |= 3'b100;   //set zero (Z)
+                 else //result != 0
+                     flags &= 3'b011;   //clear zero (Z)
+                 flags &= 3'b101;   //clear overflow (V)
+                 flags &= 3'b110;   //set sign (N) to pos (0)
+		 end
                              
-           INC : {cout, result} = data_one + data_two;            //FIX THIS
+           INC : begin
+		 {cout, result} = data_one + data_two;            //FIX THIS
                  if(!(|result))
-                    flags | 3'b100;   //set zero (Z)
+                    flags |= 3'b100;   //set zero (Z)
                  else //result != 0
-                    flags & 3'b011;   //clear zero (Z)
+                    flags &= 3'b011;   //clear zero (Z)
                  if(cout == 0)
-                    flags & 3'b101;   //clear overflow (V)
+                    flags &= 3'b101;   //clear overflow (V)
                  else //cout == 1
-                    flags | 3'b010;   //set overflow (V)
+                    flags |= 3'b010;   //set overflow (V)
                  if(result[15] == 1)
-                    flags | 3'b001;   //set sign (N) to neg (1)
+                    flags |= 3'b001;   //set sign (N) to neg (1)
                  else
-                    flags & 3'b110;   //set sign (N) to pos (0)
+                    flags &= 3'b110;   //set sign (N) to pos (0)
+		 end
            
            SRA : result = data_one >>> shift;
            //leave flags unchanged

@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module EXMEM_reg(clk, )
+module EXMEM_reg(clk, );
 
 //INPUTS
 input clk;
