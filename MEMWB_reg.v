@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module MEMWB_reg(clk, )
+module MEMWB_reg(clk, );
 
 //INPUTS
 input clk;

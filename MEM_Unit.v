@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module MEM_Unit(clk, addr, re, we, wrt_data, rd_data)
+module MEM_Unit(clk, addr, re, we, wrt_data, rd_data);
 
 //INPUTS
 input clk;
