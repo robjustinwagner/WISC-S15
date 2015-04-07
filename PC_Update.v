@@ -6,11 +6,13 @@ module PC_Update(PC_in, PC_stack_pointer, alu_done, flags, call_imm,
 
 // FROM ID/EX REG
 input               branch;
+input        [2:0]  branch_cond;
+
 input               call;
 input        [11:0] call_imm;
+
 input        [15:0] PC_in;
 input signed [15:0] sign_ext;
-input        [2:0]  branch_cond;
 
 // FROM ALU
 input               alu_done;
@@ -20,6 +22,7 @@ input        [2:0]  flags;          // [Z, V, N]
 input               ret;              
 input        [15:0] PC_stack_pointer;
 
+//OUTPUTS
 output logic [15:0] PC_update;
 output logic        PC_src;
 output logic        update_done;
