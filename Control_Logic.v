@@ -23,7 +23,9 @@ output        	reg_to_mem;     // SW signal to Memory unit
 output 	[2:0]  	alu_op;         // ALU control unit input
 output       	alu_src;        // ALU operand seleciton
 output 		sign_ext;       // sign extend select bit
-                      
+               
+/* LOCAL PARAMS */      
+//ALU OPERATIONS 
 localparam   ADD   =   4'b0000;
 localparam   SUB   =   4'b0001;
 localparam   NAND  =   4'b0010;
@@ -32,6 +34,7 @@ localparam   INC   =   4'b0100;
 localparam   SRA   =   4'b0101;
 localparam   SRL   =   4'b0110;
 localparam   SLL   =   4'b0111;
+//SPECIAL
 localparam   LW    =   4'b1000;
 localparam   SW    =   4'b1001;
 localparam   LHB   =   4'b1010;
@@ -40,6 +43,15 @@ localparam   B     =   4'b1100;
 localparam   CALL  =   4'b1101;
 localparam   RET   =   4'b1110;
 localparam   ERR   =   4'b1111;
+//BRANCH CONTROL
+localparam   EQ    =   3'b000;
+localparam   LT    =   3'b001;
+localparam   GT    =   3'b010;
+localparam   OV    =   3'b011;
+localparam   NE    =   3'b100;
+localparam   GE    =   3'b101;
+localparam   LE    =   3'b110;
+localparam   TR    =   3'b111;
 
   always_comb begin
        
@@ -158,13 +170,31 @@ localparam   ERR   =   4'b1111;
 		 branch = {1, branch_cond[2:0]};
 		 mem_to_reg = ;
 		 reg_to_mem = ;
-		 alu_op = opcode[2:0];
+		 //do the specific ALU op for the given branch condition
+		 /*
+                 case(branch_cond[2:0])
+                       EQ : alu_op = SUB[2:0];
+		            if(data_one == data_two) flags[2] = 1;
+                       LT : if(data_one < data_two) flags[1] = 0; flags[0] = 1;
+                       GT : if(data_one > data_two) flags = 3'b000;
+                       OV : {cout, result} = data_one + data_two;
+		            if(cout == 1'b1) flags[1] = 1;
+		            {cout, result} = data_one 
+		            //see lecture on overflow
+                       NE : if(data_one != data_two) flags[2] = 0;
+                       GE : if(data_one >= data_two) flags[1] = 1; flags[0] = 0;
+                       LE : if(data_one <= data_two) flags[2] = 1;
+                       TR : //does not matter
+	               default: 
+    		 endcase
+		 */
+		 alu_op = SUB[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
 
 	   CALL : data_reg = ;
 		 call = ;
-		 branch = {1, branch_cond[2:0]};
+		 branch = {1, branch_cond[2:0]};					//FIX THIS
 		 mem_to_reg = ;
 		 reg_to_mem = ;
 		 alu_op = opcode[2:0];
@@ -173,7 +203,7 @@ localparam   ERR   =   4'b1111;
 
 	   RET : data_reg = ;
 		 call = ;
-		 branch = {1, branch_cond[2:0]};
+		 branch = {1, branch_cond[2:0]};					//FIX THIS
 		 mem_to_reg = ;
 		 reg_to_mem = ;
 		 alu_op = opcode[2:0];

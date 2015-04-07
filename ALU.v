@@ -1,22 +1,23 @@
 // Author: Graham Nygard, Robert Wagner
 
-module ALU(data_one, data_two, shift, load_half_imm, control, zero, result, flags)
+module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flags)
 
 //combinational logic --change asynck
 
    //INPUTS
-   input [15:0] data_one, data_two;   //data in
-   input [3:0] shift;	//SRA, SRL, SLL shift amount
-   input [7:0] load_half_imm; //LHB, LLB
+   input signed [15:0] data_one, data_two;   //data in
+   input unsigned [3:0] shift;	//SRA, SRL, SLL shift amount
+   input signed [7:0] load_half_imm; //LHB, LLB
    input [2:0] control;   //opcode control
    
    //OUTPUTS
-   output reg zero;   //branching
-   output reg [15:0] result;
+   output reg done;   //ALU is done with operations
+   output reg signed [15:0] result;
    output reg [2:0] flags;   //[Z, V, N]
    
    logic cout;
    
+   //OPCODE CONTROL
    localparam   ADD   =   3'b000;
    localparam   SUB   =   3'b001;
    localparam   NAND  =   3'b010;
@@ -25,13 +26,16 @@ module ALU(data_one, data_two, shift, load_half_imm, control, zero, result, flag
    localparam   SRA   =   3'b101;
    localparam   SRL   =   3'b110;
    localparam   SLL   =   3'b111;   
+ 
    
    always_comb begin
     
     //Initalize all variables
+    done = 0;
+    flags = 3'b000;
     cout = 0;
     result = 0;
-    
+
     case(control)
            
            /*
@@ -112,6 +116,8 @@ module ALU(data_one, data_two, shift, load_half_imm, control, zero, result, flag
             
        endcase
       
+    done = 1; //all ALU operations are done
+
   end
    
 
