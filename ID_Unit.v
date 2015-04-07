@@ -40,7 +40,11 @@ output        mem_to_reg;        // LW signal to Memory unit
 output        reg_to_mem;        // SW signal to Memory unit
 output        alu_src;           // ALU operand selection
 output [2:0]  alu_op;            // ALU control unit input
-output [2:0]  branch;            // Branch condition
+output [2:0]  branch_cond;       // Branch condition
+
+output        branch;            // PC Updater signal for branch   
+output        call;              // PC Updater signal for call 
+output        ret;               // PC Updater signal for ret 
 
 //REGFILE OUTPUT PARAMS
 output [15:0] read_data_1;       // Regfile Read_Bus_1
@@ -63,7 +67,7 @@ logic DataReg;                   /* Control signal to Regfile to
                                     Data Segment Register for
                                     supplying read_data_1 */
 
-logic Call;                      /* Control signal to RegFile to
+logic StackReg;                  /* Control signal to RegFile to
                                     specify the contents of the
                                     Stack_Pointer Register for
                                     supplying read_data_1 */

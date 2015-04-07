@@ -1,3 +1,7 @@
 *.bak
 *.mpf
 work/_info
+*.mti
+transcript
+*.dat
+*.dbs
