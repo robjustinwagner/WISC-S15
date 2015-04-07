@@ -31,10 +31,10 @@ module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flag
    always_comb begin
     
     //Initalize all variables
-    done = 0;
+    done = 1'b0;
     flags = 3'b000;
-    cout = 0;
-    result = 0;
+    cout = 1'b0;
+    result = 1'b0;
 
     case(control)
            
@@ -126,7 +126,7 @@ module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flag
             
        endcase
       
-    done = 1; //all ALU operations are done
+    done = 1'b1; //all ALU operations are done
 
   end
    

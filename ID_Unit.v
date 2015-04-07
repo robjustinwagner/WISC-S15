@@ -24,7 +24,7 @@ input [3:0]  reg_rd_wb;        // Regfile write back register
 input [15:0] reg_rd_data;      // Regfile write back data
 
 //CONTROL PARAMS
-input [3:0]  cntrl_opcode;      // Inst[15:12] - Instruction pcode
+input [3:0]  cntrl_opcode;      // Inst[15:12] - Instruction opcode
 input [3:0]  branch_cond_in;    // Inst[11:8]  - Branch condition
 
 //PIPELINE TO PIPELINE
@@ -43,7 +43,6 @@ output        mem_to_reg;        // LW signal to Memory unit
 output        reg_to_mem;        // SW signal to Memory unit
 output        alu_src;           // ALU operand selection
 output [2:0]  alu_op;            // ALU control unit input
-output [2:0]  branch_cond_out;   // Branch condition
 
 output        branch;            // PC Updater signal for branch   
 output        call;              // PC Updater signal for call 
@@ -54,6 +53,7 @@ output [15:0] read_data_1;       // Regfile Read_Bus_1
 output [15:0] read_data_2;       // Regfile Read_Bus_2
 
 //PIPELINE TO PIPELINE
+output [2:0]  branch_cond_out;   // Branch condition
 output [3:0]  reg_rd_out;        // Future Regfile dest
 output [3:0]  arith_imm_out;     // Imm of Arithmetic Inst
 output [7:0]  load_save_imm_out; // Imm of Load/Save Inst
@@ -88,10 +88,10 @@ Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        .WriteReg(reg_rd_wb), .Read_Bus_1(read_data_1),
                        .Read_Bus_2(read_data_2), .Write_Bus(reg_rd_data));
 
-Control_Logic control(.opcode(cntrl_opcode), .branch_cond(branch_cond), 
+Control_Logic control(.opcode(cntrl_opcode),
+		      .data_reg(DataReg), .call(Call), .rtrn(ret), .branch(branch),
                       .mem_to_reg(mem_to_reg), .reg_to_mem(reg_to_mem),
-                      .alu_op(alu_op), .alu_src(alu_src), .branch(branch),
-                      .data_reg(DataReg), .call(Call));
+                      .alu_op(alu_op), .alu_src(alu_src), .sign_ext_sel(sign_ext_out));
                       
 Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in), 
                        .load_save_imm(load_save_imm_in),
