@@ -5,7 +5,8 @@ module EX_Unit(clk, mem_to_reg_in, reg_to_mem_in, branch,ret_wb,
                rd_data_1, rd_data_2, sign_ext, ret_future_in, reg_rd_in,
                call_imm, PC_in,
                   mem_to_reg_out, reg_to_mem_out, reg_rd_out,
-                  ret_future_out, alu_result, PC_update);
+                  ret_future_out, alu_result, PC_update, PC_src,
+                  PC_update_done);
 ;
 ////////////////////////////INPUTS/////////////////////////////////
 
@@ -39,6 +40,8 @@ input [15:0] PC_in;            // PC for branch/call/ret
 output logic        mem_to_reg_out; // LW signal to Memory unit 
 output logic        reg_to_mem_out; // SW signal to Memory unit
 output logic        ret_future_out; // Future ret_wb signal
+output logic        PC_update_done; // Complete branch/call/ret/ update
+output logic        PC_src;         // PC source selection
 
 output logic [3:0]  reg_rd_out;     // Future Regfile dest
 
@@ -51,9 +54,10 @@ output logic [15:0] PC_update;      // Updated PC for branch/call/ret
 //MODULE INSTANTIATIONS
 ALU alu(data_one, data_two, shift, load_half_imm, control, zero, result, flags);		//FIX THIS.
 
-PC_Update pc_update(.PC_in(PC_in), PC_stack_pointer, alu_done, flags, call_imm,
-                 sign_ext, branch_cond, branch, call, ret, 
-                    PC_update, PC_src, update_done);
+PC_Update pc_update(.PC_in(PC_in), .PC_stack_pointer(PC_stack_pointer), .alu_done(alu_done), 
+                    .flags(flags), .call_imm(call_imm), .sign_ext(sign_ext), .branch_cond(branch_cond),
+                    .branch(branch), .call(call), .ret(ret), .PC_update(PC_update), .PC_src(PC_src),
+                    .update_done(PC_update_done));
 
 Forwarding_Unit FU();																				//FIX THIS
 
