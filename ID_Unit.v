@@ -4,15 +4,16 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, cntrl_opcode, branch_cond, reg_rs, reg_rt,
+module ID_Unit(clk, cntrl_opcode, branch_cond_in, reg_rs, reg_rt,
                reg_rd_in, reg_rd_out, RegWrite, reg_rd_wb,
                reg_rd_data, arith_imm_in, load_save_imm_in,
                call_in, PC_in, PC_out, mem_to_reg, reg_to_mem,
-               alu_op, alu_src, branch, read_data_1, read_data_2,
-               arith_imm_out, sign_ext_out, load_save_imm_out,
-               call_out);
+               alu_op, alu_src, branch, call, ret, read_data_1,
+               read_data_2, arith_imm_out, sign_ext_out,
+               load_save_imm_out, call_out, branch_cond_out);
 
-/* INPUTS */
+/////////////////////////////INPUTS//////////////////////////////////
+
 input        clk;              // The global clock input
 
 //REGFILE INPUT PARAMS
@@ -24,7 +25,7 @@ input [15:0] reg_rd_data;      // Regfile write back data
 
 //CONTROL PARAMS
 input [3:0]  cntrl_opcode;      // Inst[15:12] - Instruction pcode
-input [3:0]  branch_cond;       // Inst[11:8]  - Branch condition
+input [3:0]  branch_cond_in;    // Inst[11:8]  - Branch condition
 
 //PIPELINE TO PIPELINE
 input [3:0]  arith_imm_in;     // Inst[3:0]   - Imm of Arithmetic Inst
@@ -33,14 +34,16 @@ input [7:0]  load_save_imm_in; // Inst[7:0]   - Imm of Load/Save Inst
 input [11:0] call_in;          // Inst[11:0]  - Call target
 input [15:0] PC_in;            // Program counter
 
-/* OUTPUTS */
+////////////////////////////END INPUTS///////////////////////////////
+
+/////////////////////////////OUTPUTS/////////////////////////////////
 
 //CONTROL OUTPUTS 
 output        mem_to_reg;        // LW signal to Memory unit  
 output        reg_to_mem;        // SW signal to Memory unit
 output        alu_src;           // ALU operand selection
 output [2:0]  alu_op;            // ALU control unit input
-output [2:0]  branch_cond;       // Branch condition
+output [2:0]  branch_cond_out;   // Branch condition
 
 output        branch;            // PC Updater signal for branch   
 output        call;              // PC Updater signal for call 
@@ -59,6 +62,8 @@ output [15:0] PC_out;            // Program counter
 
 //SIGN-EXT UNIT OUTPUT
 output [15:0] sign_ext_out;      // Output of sign extension unit
+
+/////////////////////////END OUTPUTS/////////////////////////////////
 
 
 //INTERNAL CONTROL OUTPUTS
