@@ -16,7 +16,7 @@ output 		call;		/* Control signal to RegFile to
                                     specify the contents of the
                                     Stack_Pointer Register for
                                     supplying read_data_1 */
-output		retrn;
+output		rtrn;
 output 	[3:0]  	branch;   	// branching control; 0-2 sensitive, 3 pick 
 output        	mem_to_reg;     // LW signal to Memory unit 
 output        	reg_to_mem;     // SW signal to Memory unit
@@ -58,143 +58,156 @@ localparam   TR    =   3'b111;
 	case(opcode)
               
    	   ADD : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
            
            SUB : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
 
            NAND : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
            
            XOR : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
                              
            INC : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
            
            SRA : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
            
            SRL : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
            
            SLL : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext = ;
 		 end
 
 	   LW :  begin
-		 data_reg = 1;
-		 call = ;
+		 data_reg = 1'b1;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b1;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
 		 end
 
 	   SW :  begin
-		 data_reg = 1;
-		 call = ;
+		 data_reg = 1'b1;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b1;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
 		 end
 
 	   LHB : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
 		 sign_ext = ;
 		 end
 
 	   LLB : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {0, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
 		 sign_ext = ;
 		 end
 
 	   B :   begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {1, branch_cond[2:0]};
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 //do the specific ALU op for the given branch condition
 		 /*
                  case(branch_cond[2:0])
@@ -219,22 +232,24 @@ localparam   TR    =   3'b111;
 		 end
 
 	   CALL : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b1;
+		 rtrn = 1'b1;
 		 branch = {1, branch_cond[2:0]};					//FIX THIS
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = ;
 		 sign_ext = ;
 		 end
 
 	   RET : begin
-		 data_reg = 0;
-		 call = ;
+		 data_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b1;
 		 branch = {1, branch_cond[2:0]};					//FIX THIS
-		 mem_to_reg = ;
-		 reg_to_mem = ;
+		 mem_to_reg = 1'b0;
+		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext = ;
