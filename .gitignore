@@ -1,0 +1,8 @@
+*.bak
+WISC-S15.cr.mti
+*.mpf
+work/_info
+*.qdb
+work/_lib1_0.qpg
+*.qtl
+work/_vmake
