@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module pipeline_controller(clk, data_mem_access, en);
+module pipeline_controller(clk, data_mem_access, en)
 
 //INPUTS
 input clk;

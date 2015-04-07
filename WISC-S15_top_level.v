@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module WISC-S15_top_level(clk, instr, );
+module WISC-S15_top_level(clk, instr, )
 
 //INPUTS
 input clk;
