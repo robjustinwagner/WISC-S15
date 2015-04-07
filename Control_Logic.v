@@ -1,28 +1,28 @@
 // Author: Graham Nygard, Robert Wagner
 
 module Control_Logic(opcode, branch_cond, 
-	data_reg, call, retrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel);
+	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel);
 
 //INPUTS
-input 	[3:0] 	opcode;   	//4-bit instruction opcode
-input	[3:0]	branch_cond;	//3-bit branch condition encoding
+input 	[3:0] 		opcode;   	//4-bit instruction opcode
+input	[3:0]		branch_cond;	//3-bit branch condition encoding
 
 //OUTPUTS
-output 	      	data_reg;	/* Control signal to Regfile to
+output 	reg    		data_reg;	/* Control signal to Regfile to
                                     specifiy the contents of the 
                                     Data Segment Register for
                                     supplying read_data_1 */
-output 		call;		/* Control signal to RegFile to
+output 	reg		call;		/* Control signal to RegFile to
                                     specify the contents of the
                                     Stack_Pointer Register for
                                     supplying read_data_1 */
-output		rtrn;
-output 	[3:0]  	branch;   	// branching control; 0-2 sensitive, 3 pick 
-output        	mem_to_reg;     // LW signal to Memory unit 
-output        	reg_to_mem;     // SW signal to Memory unit
-output 	[2:0]  	alu_op;         // ALU control unit input
-output       	alu_src;        // ALU operand seleciton
-output 		sign_ext_sel;   // sign extend select bit
+output	reg		rtrn;
+output 	reg [3:0]  	branch;   	// branching control; 0-2 sensitive, 3 pick 
+output  reg    		mem_to_reg;     // LW signal to Memory unit 
+output  reg   		reg_to_mem;     // SW signal to Memory unit
+output 	reg [2:0] 	alu_op;         // ALU control unit input
+output  reg    		alu_src;        // ALU operand seleciton
+output 	reg		sign_ext_sel;   // sign extend select bit
                
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -60,7 +60,7 @@ localparam   TR    =   3'b111;
    	   ADD : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
@@ -72,7 +72,7 @@ localparam   TR    =   3'b111;
            SUB : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
@@ -84,7 +84,7 @@ localparam   TR    =   3'b111;
            NAND : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
@@ -96,7 +96,7 @@ localparam   TR    =   3'b111;
            XOR : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
@@ -108,55 +108,55 @@ localparam   TR    =   3'b111;
            INC : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
-		 alu_src = 1'b0;
+		 alu_src = 1'b1;
 		 sign_ext_sel = 1'b1;
 		 end
            
            SRA : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext = 1'b1;
+		 sign_ext_sel = 1'b0;
 		 end
            
            SRL : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext_sel = 1'b1;
+		 sign_ext_sel = 1'b0;
 		 end
            
            SLL : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
-		 sign_ext_sel = 1'b1;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   LW :  begin
 		 data_reg = 1'b1;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b1;
 		 reg_to_mem = 1'b0;
@@ -168,7 +168,7 @@ localparam   TR    =   3'b111;
 	   SW :  begin
 		 data_reg = 1'b1;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b1;
@@ -180,31 +180,31 @@ localparam   TR    =   3'b111;
 	   LHB : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
-		 alu_src = ;
+		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
 		 end
 
 	   LLB : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {0, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
-		 alu_src = ;
+		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
 		 end
 
 	   B :   begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
-		 rtrn = 1'b1;
+		 rtrn = 1'b0;
 		 branch = {1, branch_cond[2:0]};
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
@@ -227,37 +227,37 @@ localparam   TR    =   3'b111;
     		 endcase
 		 */
 		 alu_op = SUB[2:0];
-		 alu_src = 1'b1;
+		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
 		 end
 
 	   CALL : begin
 		 data_reg = 1'b0;
 		 call = 1'b1;
-		 rtrn = 1'b1;
-		 branch = {1, branch_cond[2:0]};					//FIX THIS
+		 rtrn = 1'b0;
+		 branch = {0, branch_cond[2:0]};					//FIX THIS
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
-		 alu_src = ;
-		 sign_ext_sel = ;
+		 alu_src = 1'b0;
+		 sign_ext_sel = 1'b0;
 		 end
 
 	   RET : begin
 		 data_reg = 1'b0;
 		 call = 1'b0;
 		 rtrn = 1'b1;
-		 branch = {1, branch_cond[2:0]};					//FIX THIS
+		 branch = {0, branch_cond[2:0]};					//FIX THIS
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
 		 alu_op = opcode[2:0];
-		 alu_src = 1'b1;
+		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
 		 end
 
-	   ERR : 
+	   ERR : begin end
 
-	   default : 
+	   default: begin end
 
        endcase
       
