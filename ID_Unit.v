@@ -5,9 +5,9 @@
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
 module ID_Unit(clk, rst, 
-	 mem_to_reg, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
+	 mem_to_reg_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
 		load_save_reg_in, load_save_imm_in, call_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
-	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
+	mem_to_reg_out, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
 		load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, PC_out, sign_ext_out, hazard);
 
 /////////////////////////////INPUTS//////////////////////////////////
@@ -16,7 +16,7 @@ input        clk;              // The global clock input
 input        rst;              // The reset signal from PC
 
 //REGFILE INPUT PARAMS
-input        mem_to_reg;       // Regfile RegWrite when not reset
+input        mem_to_reg_in;       // Regfile RegWrite when not reset
 input [3:0]  reg_rs;           // Inst[7:4]   - Regfile source 1
 input [3:0]  reg_rt_arith;     // Inst[3:0]   - Regfile source 2
 input [3:0]  reg_rd_wb;        // Regfile write back register
@@ -24,9 +24,9 @@ input [15:0] reg_rd_data;      // Regfile write back data
 
 //CONTROL PARAMS
 input [3:0]  cntrl_opcode;      // Inst[15:12] - Instruction opcode
-input [3:0]  branch_cond_in;    // Inst[11:8]  - Branch condition
 
 //PIPELINE TO PIPELINE
+input [2:0]  branch_cond_in;   // Inst[10:8]  - Branch condition
 input [3:0]  arith_imm_in;     // Inst[3:0]   - Imm of Arithmetic Inst
 input [3:0]  load_save_reg_in; // Inst[11:8]  - Register for Load/Save
 input [7:0]  load_save_imm_in; // Inst[7:0]   - Imm of Load/Save Inst
@@ -43,7 +43,7 @@ input [3:0] MEM_WB_reg_rd; // Corresponds to MEMWB_reg's reg_rd_out
 /////////////////////////////OUTPUTS/////////////////////////////////
 
 //CONTROL SIGNALS 
-output logic       mem_to_reg;        // LW signal to Memory unit  
+output logic       mem_to_reg_out;        // LW signal to Memory unit  
 output logic       reg_to_mem;        // SW signal to Memory unit
 output logic       alu_src;           // ALU operand selection
 output logic [2:0] alu_op;            // ALU control unit input
@@ -162,23 +162,23 @@ end
 always_comb begin
     
     if (hazard) begin
-        mem_to_reg = 1'b0;    
-        reg_to_mem = 1'b0; 
-        alu_src    = 1'b0;  
-        alu_op     = 3'b000; 
-        branch     = 1'b0;    
-        call       = 1'b0;   
-        ret        = 1'b0; 
+        mem_to_reg_out = 1'b0;    
+        reg_to_mem     = 1'b0; 
+        alu_src        = 1'b0;  
+        alu_op         = 3'b000; 
+        branch         = 1'b0;    
+        call           = 1'b0;   
+        ret            = 1'b0; 
     end
     
     else begin
-        mem_to_reg = c_mem_to_reg;    
-        reg_to_mem = c_reg_to_mem; 
-        alu_src    = c_alu_src;  
-        alu_op     = c_alu_op; 
-        branch     = c_branch;    
-        call       = c_call;   
-        ret        = c_ret;
+        mem_to_reg_out = c_mem_to_reg;    
+        reg_to_mem     = c_reg_to_mem; 
+        alu_src        = c_alu_src;  
+        alu_op         = c_alu_op; 
+        branch         = c_branch;    
+        call           = c_call;   
+        ret            = c_ret;
     end
     
 end

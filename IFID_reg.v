@@ -12,7 +12,7 @@ input [15:0] PC_in;         // Program counter
 
 //OUTPUTS
 output logic [3:0]  cntrl_input;   // Inst[15:12] - Opcode
-output logic [3:0]  branch_cond;   // Inst[11:8]  - Branch condition
+output logic [2:0]  branch_cond;   // Inst[10:8]  - Branch condition
 output logic [3:0]  reg_rs;        // Inst[7:4]   - Register rs
 output logic [3:0]  reg_rt;        // Inst[3:0]   - Register rt
 output logic [3:0]  reg_rd;        // Inst[11:8]  - Register rd
@@ -63,6 +63,9 @@ always @(posedge clk) begin
 	   // Set call target
 	   call          <= instruction[11:0];
 	   
+	   // Set branch condition
+	   branch_cond   <= instruction[10:8];
+	   
 	end
 	
 	// Stall the pipe
@@ -81,6 +84,8 @@ always @(posedge clk) begin
 	   load_save_imm <= load_save_imm;
 	
 	   call          <= call;
+	   
+	   branch_cond   <= branch_cond;
 	   
 	end
 	
