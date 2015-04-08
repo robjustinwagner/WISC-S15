@@ -2,6 +2,16 @@
 
 module WISC_S15_top_level(clk, rst);
 
+/*
+module IDEX_reg(clk, 
+	mem_to_reg_in, reg_to_mem_in, branch_cond_in, call_target_in, branch_in, call_in, ret_in, 
+		alu_src_in, alu_op_in, shift_in, load_half_imm_in, rd_data_1_in, rd_data_2_in, 
+		sign_ext_in, reg_rd_in, PC_in, 
+	mem_to_reg_out, reg_to_mem_out, branch_cond_out, call_target_out, branch_out, call_out, ret_out, 
+		alu_src_out, alu_op_out, shift_out, load_half_imm_out, rd_data_1_out, rd_data_2_out, 
+		sign_ext_out, reg_rd_out, PC_out);
+*/
+
 //INPUTS
 input clk;
 input rst;
@@ -33,16 +43,21 @@ logic        ret_3;               // PC Updater signal for ret
 logic [15:0] read_data_1_3;       // Regfile Read_Bus_1
 logic [15:0] read_data_2_3;       // Regfile Read_Bus_2
 logic [2:0]  branch_cond_out_3;   // Branch condition
-logic [3:0]  reg_rd_out_3;        // Future Regfile dest
 logic [3:0]  arith_imm_out_3;     // Imm of Arithmetic Inst
+logic [3:0]  load_save_reg_out_3; // Future Regfile dest
 logic [7:0]  load_save_imm_out_3; // Imm of Load/Save Inst
 logic [11:0] call_out_3;          // Call target
 logic [15:0] PC_out_3;            // Program counter
 logic [15:0] sign_ext_out_3;      // Output of sign extension unit
+logic	     hazard_3;		  // Hazard signaling for pipe stall
 //#4; IDEX_reg --> EX_Unit
 logic        mem_to_reg_out_4;    // LW signal to Memory unit 
 logic        reg_to_mem_out_4;    // SW signal to Memory unit 
-logic [2:0]  branch_out_4;     	  // Branch condition
+logic [2:0]  branch_cond_out_4;   // Branch condition
+logic [11:0] call_target_out_4;   // Call target
+logic 	     branch_out_4;     	  // PC Updater signal for branch
+logic        call_out_4;       	  // Call target
+logic	     ret_out_4;		  // PC Updater signal for ret 
 logic	     alu_src_out_4;       // ALU operand 2 seleciton
 logic [2:0]  alu_op_out_4;    	  // ALU operation
 logic [3:0]  shift_out_4;         // ALU shift input
@@ -51,7 +66,6 @@ logic [15:0] rd_data_1_out_4;     // ALU operand 1
 logic [15:0] rd_data_2_out_4;     // ALU operand 2
 logic [15:0] sign_ext_out_4;   	  // ALU operand 2
 logic [3:0]  reg_rd_out_4;        // Future Regfile dest
-logic [11:0] call_out_4;       	  // Call target
 logic [15:0] PC_out_4;            // PC for branch/call/ret
 //#5; EX_Unit --> EXMEM_reg
 logic        mem_to_reg_out_5; 	  // LW signal to Memory unit 
@@ -103,7 +117,7 @@ end
 	//#1; stage 1 -- Instruction Fetch Module Unit
 	IF_Unit IFU(		.clk(clk), 
 				.rst(rst_g),
-				.hazard(), 			//FIX THIS
+				.hazard(hazard_3),
 				.PC_src(), 			//FIX THIS
 				.PC_branch(), 			//FIX THIS
 				
@@ -112,7 +126,7 @@ end
 
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
-				.hazard(), 			//FIX THIS
+				.hazard(hazard_3), 
 				.instruction(instruction_1),
 				.PC_in(PC_out_1), 
 
@@ -159,50 +173,49 @@ end
 				.read_data_1(read_data_1_3),
                			.read_data_2(read_data_2_3), 
 				.branch_cond_out(branch_cond_out_3), 
-				//.reg_rd_out(reg_rd_out_3),	//FIX THIS
-				.load_save_reg_out(), 		//FIX THIS
+				.load_save_reg_out(load_save_reg_out_3), 
 				.arith_imm_out(arith_imm_out_3), 
                			.load_save_imm_out(load_save_imm_out_3), 
 				.call_out(call_out_3), 
 				.PC_out(PC_out_3), 
 				.sign_ext_out(sign_ext_out_3),
-				.hazard());			//FIX THIS
+				.hazard(hazard_3));
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
-				.PC_in(PC_out_3), 
 				.mem_to_reg_in(mem_to_reg_3), 
 				.reg_to_mem_in(reg_to_mem_3), 
-				.alu_op_in(alu_op_3), 
-				.alu_src_in(alu_src_3), 
-				.shift_in(), 			//FIX THIS
-				.sign_ext_in(sign_ext_out_3), 
-				.load_half_imm_in(), 		//FIX THIS
 				.branch_cond_in(), 		//FIX THIS
 				.call_target_in(), 		//FIX THIS
-				.rd_data_1_in(read_data_1_3), 
-				.rd_data_2_in(read_data_2_3), 
+				.branch_in(branch_3), 
 				.call_in(call_3), 
 				.ret_in(), 			//FIX THIS
-				.branch_in(branch_3), 
-				.reg_rd_in(reg_rd_out_3),
+				.alu_src_in(alu_src_3), 
+				.alu_op_in(alu_op_3), 
+				.shift_in(), 			//FIX THIS
+				.load_half_imm_in(), 		//FIX THIS
+				.rd_data_1_in(read_data_1_3), 
+				.rd_data_2_in(read_data_2_3), 
+				.sign_ext_in(sign_ext_out_3), 
+				.reg_rd_in(reg_rd_out_3), 
+				.PC_in(PC_out_3), 
 
-				.PC_out(PC_out_4), 
 				.mem_to_reg_out(mem_to_reg_out_4), 
 				.reg_to_mem_out(reg_to_mem_out_4), 
-				.alu_op_out(alu_op_out_4), 
+				.branch_cond_out(branch_cond_out_4), 
+				.call_target_out(call_target_out_4), 
+				.branch_out(branch_out_4), 
+				.call_out(call_out_4), 
+				.ret_out(ret_out_4), 
 				.alu_src_out(alu_src_out_4), 
+				.alu_op_out(alu_op_out_4), 
 				.shift_out(shift_out_4), 
-				.sign_ext_out(sign_ext_out_4), 
 				.load_half_imm_out(load_half_imm_out_4), 
-				.branch_cond_out(), 		//FIX THIS
-				.call_target_out(), 		//FIX THIS
 				.rd_data_1_out(rd_data_1_out_4), 
 				.rd_data_2_out(rd_data_2_out_4), 
-				.call_out(call_out_4), 
-				.ret_out(), 			//FIX THIS
-				.branch_out(branch_out_4), 
-				.reg_rd_out(reg_rd_out_4));
+				.sign_ext_out(sign_ext_out_4), 
+				.reg_rd_out(reg_rd_out_4), 
+				.PC_out(PC_out_4));
 
 	//#5; stage 3 -- Execution Module Unit	
 	EX_Unit EXU(		.clk(clk), 
