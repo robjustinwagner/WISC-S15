@@ -59,7 +59,7 @@ initial begin
 	opcode = 4'b0000;
 	passed = 1'b1;
 	#5
-	for(opcode < 16) begin
+	while(opcode < 16) begin
 		#5
 		//data_reg
 		if(opcode == LW || opcode == SW) begin
