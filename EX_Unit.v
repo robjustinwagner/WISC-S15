@@ -1,11 +1,12 @@
 // Author: Graham Nygard, Robert Wagner
 
 module EX_Unit(clk, 
-	RegWrite_in, mem_to_reg_in, reg_to_mem_in, branch_cond, call_target, branch, call_in, PC_in, 
-		ret_future_in, ret_wb, PC_stack_pointer, alu_src, alu_op, shift, 
-		load_half_imm, rd_data_1, rd_data_2, sign_ext, reg_rd_in,
-	RegWrite_out, mem_to_reg_out, reg_to_mem_out, ret_future_out, reg_rd_out, PC_update_done, 
-		PC_src, alu_result, PC_update, sw_data, call_out);
+	RegWrite_in, mem_to_reg_in, reg_to_mem_in, branch_cond, call_target,
+	   branch, call_in, PC_in, ret_future_in, ret_wb, PC_stack_pointer,
+	   alu_src, alu_op, shift, load_half_imm, rd_data_1, rd_data_2,
+	   sign_ext, reg_rd_in,
+	RegWrite_out, mem_to_reg_out, reg_to_mem_out, call_out, ret_future_out,
+	   reg_rd_out, PC_update_done, PC_src, alu_result, PC_update, sw_data);
 
 ////////////////////////////INPUTS/////////////////////////////////
 
@@ -47,10 +48,10 @@ input	[3:0]	reg_rd_in;         // Future Regfile dest
 ///////////////////////////OUTPUTS/////////////////////////////////
 
 //PIPE TO PIPE
-output logic        call_out;       // Signal to decrement SP
 output logic        RegWrite_out;
 output logic        mem_to_reg_out; // LW signal to Memory unit 
 output logic        reg_to_mem_out; // SW signal to Memory unit
+output logic        call_out;       // Signal to decrement SP
 output logic        ret_future_out; // Future ret_wb signal
 output logic [3:0]  reg_rd_out;     // Future Regfile dest
 
@@ -105,7 +106,11 @@ end
 always_comb begin
     
     if (call_in)
-       reg_rd_out = 16'h1111; // <-- Set future save reg as stack pointer
+       reg_rd_out = 4'b1111; // <-- Set future save reg as stack pointer
+    
+    else if (ret_future_in)
+       reg_rd_out = 4'b1111;
+    
     else
        reg_rd_out = reg_rd_in;
        
