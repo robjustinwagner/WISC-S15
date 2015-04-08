@@ -16,7 +16,7 @@ output 	reg		call;		/* Control signal to RegFile to
                                     	Stack_Pointer Register for
                                     	supplying read_data_1 */
 output	reg		rtrn;
-output 	reg [3:0]  	branch;   	// branching control; 0-2 sensitive, 3 pick 
+output 	reg		branch;   	// branching control; 0-2 sensitive, 3 pick 
 output  reg    		mem_to_reg;     // LW signal to Memory unit 
 output  reg   		reg_to_mem;     // SW signal to Memory unit
 output 	reg [2:0] 	alu_op;         // ALU control unit input
