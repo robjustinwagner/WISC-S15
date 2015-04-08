@@ -4,14 +4,11 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, rst, cntrl_opcode, branch_cond_in, reg_rs, 
-               reg_rt_arith, mem_to_reg, reg_rd_wb, reg_rd_data,
-               arith_imm_in, load_save_imm_in, load_save_reg_in,
-               load_save_reg_out, call_in, PC_in, PC_out, mem_to_reg,
-               reg_to_mem, alu_op, alu_src, branch, call, ret,
-               read_data_1, read_data_2, arith_imm_out, sign_ext_out,
-               load_save_imm_out, call_out, branch_cond_out,
-               ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, hazard);
+module ID_Unit(clk, rst, 
+	 mem_to_reg, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
+		load_save_reg_in, load_save_imm_in, call_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
+	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
+		load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, PC_out, sign_ext_out, hazard);
 
 /////////////////////////////INPUTS//////////////////////////////////
 

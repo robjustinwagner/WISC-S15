@@ -1,9 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
-module IFID_reg(clk, hazard, PC_in, instruction, 
-                   branch_cond, reg_rs, reg_rt, reg_rd,
-                   cntrl_input, arith_imm, load_save_imm, 
-                   call, PC_out);
+module IFID_reg(clk, hazard, instruction, PC_in, 
+	cntrl_input, branch_cond, reg_rs, reg_rt, 
+	reg_rd, arith_imm, load_save_imm, call, PC_out);
 
 //INPUTS
 input        clk;
