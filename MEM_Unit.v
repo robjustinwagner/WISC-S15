@@ -1,12 +1,15 @@
 // Author: Graham Nygard, Robert Wagner
 
 module MEM_Unit(clk, 
-	mem_to_reg_in, reg_to_mem, reg_rd_in, alu_result_in, mem_write_data, ret_future_in, RegWrite_in, 
-	ret_future_out, mem_to_reg_out, reg_rd_out, mem_read_data, alu_result_out, RegWrite_out);
+	   call_in, RegWrite_in, mem_to_reg_in, reg_to_mem,
+	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, 
+	   RegWrite_out, ret_future_out, mem_to_reg_out, reg_rd_out,
+	      mem_read_data, alu_result_out);
 
 //INPUTS
 input clk;
 
+input        call_in;
 input        RegWrite_in;
 input        mem_to_reg_in;  // Memory Read to register 
 input        reg_to_mem;     // Memory Write from register
@@ -29,8 +32,16 @@ assign RegWrite_out   = RegWrite_in;
 assign ret_future_out = ret_future_in;
 assign mem_to_reg_out = mem_to_reg_in;
 assign reg_rd_out     = reg_rd_in;
-assign alu_result_out = alu_result_in;
 
+//MUX for updating stack pointer
+always_comb begin
+    
+    if (call_in)
+       alu_result_out = alu_result_in + 2;
+    else
+       alu_result_out = alu_result_in;
+       
+end
 
 //MODULE INSTANTIATIONS
 Data_Memory data_mem(.clk(clk), .addr(alu_result), .re(mem_to_reg_in),
