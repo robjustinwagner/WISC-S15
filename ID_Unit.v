@@ -4,12 +4,12 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, cntrl_opcode, branch_cond_in, reg_rs, reg_rt,
-               reg_rd_in, reg_rd_out, RegWrite, reg_rd_wb,
-               reg_rd_data, arith_imm_in, load_save_imm_in,
-               call_in, PC_in, PC_out, mem_to_reg, reg_to_mem,
-               alu_op, alu_src, branch, call, ret, read_data_1,
-               read_data_2, arith_imm_out, sign_ext_out,
+module ID_Unit(clk, cntrl_opcode, branch_cond_in, reg_rs, 
+               reg_rt_arith, RegWrite, reg_rd_wb, reg_rd_data,
+               arith_imm_in, load_save_imm_in, load_save_reg_in,
+               load_save_reg_out, call_in, PC_in, PC_out, mem_to_reg,
+               reg_to_mem, alu_op, alu_src, branch, call, ret,
+               read_data_1, read_data_2, arith_imm_out, sign_ext_out,
                load_save_imm_out, call_out, branch_cond_out);
 
 /////////////////////////////INPUTS//////////////////////////////////
@@ -112,9 +112,10 @@ HDT_Unit hazard_unit();
 
 always_comb begin
     
-    if (reg_rt_src) begin
+    if (reg_rt_src)
         reg_rt = load_save_reg_in;
-    else begin
+
+    else
         reg_rt = reg_rt_arith;
         
 end
