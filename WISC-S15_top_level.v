@@ -107,7 +107,6 @@ end
 				.PC_src(), 			//FIX THIS
 				.PC_branch(), 			//FIX THIS
 				
-
 				.PC_out(PC_out_1), 
 				.instruction(instruction_1));	
 
@@ -129,23 +128,29 @@ end
 
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
-				.rst(rst_g),
-				.cntrl_opcode(cntrl_input_2), 
-				.branch_cond_in(branch_cond_2), 
+				.rst(rst_g), 
+				.mem_to_reg_in(), 		//FIX THIS
 				.reg_rs(reg_rs_2), 
-				.reg_rt(reg_rt_2), 
-               			.reg_rd_in(reg_rd_2), 
-				.RegWrite(RegWrite_9), 
+				.reg_rt_arith(), 		//FIX THIS
 				.reg_rd_wb(reg_rd_out_9), 
                			.reg_rd_data(write_back_data_9), 
+				.cntrl_opcode(cntrl_input_2), 
+				.branch_cond_in(branch_cond_2), 
 				.arith_imm_in(arith_imm_2), 
+				.load_save_reg_in(), 		//FIX THIS
 				.load_save_imm_in(load_save_imm_2), 
                			.call_in(call_2),
 				.PC_in(PC_out_2),
+				.reg_rt(reg_rt_2), 
+               			.reg_rd_in(reg_rd_2), 
+				.RegWrite(RegWrite_9), 
+
+
+
 
 				.PC_out(PC_out_3), 
 				.reg_rd_out(reg_rd_out_3),
-				.mem_to_reg(mem_to_reg_3), 
+				.mem_to_reg_out(mem_to_reg_3), 
 				.reg_to_mem(reg_to_mem_3),
                			.alu_op(alu_op_3), 
 				.alu_src(alu_src_3), 
@@ -159,14 +164,6 @@ end
                			.load_save_imm_out(load_save_imm_out_3), 
 				.call_out(call_out_3), 
 				.branch_cond_out(branch_cond_out_3));
-
-/*
-module ID_Unit(clk, rst, 
-	 mem_to_reg, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
-		load_save_reg_in, load_save_imm_in, call_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
-	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
-		load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, PC_out, sign_ext_out, hazard);
-*/
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
@@ -276,10 +273,11 @@ input        call;
 	
 	//#9; stage 5 -- WriteBack Module Unit
 	WB_Unit WBU(		.clk(clk),
-				.mem_read_data(mem_read_data_out_8), 
+				.mem_read_data(mem_read_data_out_8),
+				.alu_result(alu_result_out_8),  
 				.mem_to_reg(), 			//FIX THIS
 				.reg_rd_in(reg_rd_out_8),  
-				.alu_result(alu_result_out_8), 
+				
 
 				.write_back_data(write_back_data_9), 
 				.reg_rd_out(reg_rd_out_9), 
