@@ -4,7 +4,7 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, rst_PC, cntrl_opcode, branch_cond_in, reg_rs, 
+module ID_Unit(clk, rst, cntrl_opcode, branch_cond_in, reg_rs, 
                reg_rt_arith, mem_to_reg, reg_rd_wb, reg_rd_data,
                arith_imm_in, load_save_imm_in, load_save_reg_in,
                load_save_reg_out, call_in, PC_in, PC_out, mem_to_reg,
@@ -16,7 +16,7 @@ module ID_Unit(clk, rst_PC, cntrl_opcode, branch_cond_in, reg_rs,
 /////////////////////////////INPUTS//////////////////////////////////
 
 input        clk;              // The global clock input
-input        rst_PC;           // The reset signal from PC
+input        rst;              // The reset signal from PC
 
 //REGFILE INPUT PARAMS
 input        mem_to_reg;       // Regfile RegWrite when not reset
@@ -190,7 +190,7 @@ end
 always_comb begin
     
     // Reset stack pointer
-    if (rst_PC) begin
+    if (rst) begin
         
         RegWrite  = 1;       // Write to SP
         WriteReg  = 4'b1111; // SP register
