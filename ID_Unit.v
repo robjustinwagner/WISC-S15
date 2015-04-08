@@ -5,7 +5,7 @@
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
 module ID_Unit(clk, rst, 
-	 mem_to_reg_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
+	mem_to_reg_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
 		load_save_reg_in, load_save_imm_in, call_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
 	mem_to_reg_out, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
 		load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, PC_out, sign_ext_out, hazard);
@@ -30,7 +30,7 @@ input [2:0]  branch_cond_in;   // Inst[10:8]  - Branch condition
 input [3:0]  arith_imm_in;     // Inst[3:0]   - Imm of Arithmetic Inst
 input [3:0]  load_save_reg_in; // Inst[11:8]  - Register for Load/Save
 input [7:0]  load_save_imm_in; // Inst[7:0]   - Imm of Load/Save Inst
-input [11:0] call_in;          // Inst[11:0]  - Call target
+input [11:0] call_target_in;   // Inst[11:0]  - Call target
 input [15:0] PC_in;            // Program counter
 
 //HAZARD DETECTION REGISTERS
@@ -61,7 +61,7 @@ output [2:0]  branch_cond_out;   // Branch condition
 output [3:0]  load_save_reg_out; // Future Regfile dest
 output [3:0]  arith_imm_out;     // Imm of Arithmetic Inst
 output [7:0]  load_save_imm_out; // Imm of Load/Save Inst
-output [11:0] call_out;          // Call target
+output [11:0] call_target_out;   // Call target
 output [15:0] PC_out;            // Program counter
 
 //SIGN-EXT UNIT OUTPUT
@@ -118,7 +118,7 @@ assign branch_cond_out   = branch_cond_in;
 assign load_save_reg_out = load_save_reg_in;
 assign arith_imm_out     = arith_imm_in;
 assign load_save_imm_out = load_save_imm_in;
-assign call_out          = call_in;
+assign call_target_out   = call_target_in;
 assign PC_out            = PC_in;
 
 //////////////////////////////////////////////////////////////////////
@@ -157,6 +157,11 @@ always_comb begin
         reg_rt = reg_rt_arith;
         
 end
+
+always_comb begin
+    
+    if (c_call)
+       
 
 // Hazard Detection MUX
 always_comb begin

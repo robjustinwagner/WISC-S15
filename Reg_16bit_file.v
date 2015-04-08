@@ -4,14 +4,14 @@
 /* This module defines the regeister interface
    for accessing the 16-bit registers used by
    our processor. */
-module Reg_16bit(clk, RegWrite, DataReg, Call,
+module Reg_16bit(clk, RegWrite, DataReg, StackReg,
                  Read_Reg_1, Read_Reg_2, Write_Reg,
                  Read_Bus_1, Read_Bus_2, Write_Bus);
                  
   input clk;
   input RegWrite; // Writes data to a register when high  
   input DataReg;  // Specifies Data_Segment for Read_Reg_1 
-  input Call;     // Specified Stack_Pointer for Read_Reg_1 
+  input StackReg; // Specified Stack_Pointer for Read_Reg_1 
   
   /* Input address buses */
   input [3:0] Read_Reg_1;
@@ -72,64 +72,70 @@ module Reg_16bit(clk, RegWrite, DataReg, Call,
   Reg_16bit Stack_Pointer(.clk(clk), .en(RegWriteSel[15]), .d(Write_Bus), .q(out16));
   
   /* Read data from the specified registers locations */
-  always @(posedge clk, DataReg, Call, Read_Reg_1, Read_Reg_2) begin
+  always @(posedge clk, DataReg, StackReg, Read_Reg_1, Read_Reg_2) begin
     
-       // The instruction requires the use of the Data_Segment reg
-       if (DataReg) begin
-           Read_Bus_1 = out15;
-       end
        
        // The instruction requires the use of the Stack_Pointer reg
-       else if (Call) begin
+       if (StackReg) begin
            Read_Bus_1 = out16;
+           Read_Bus_2 = 16'h0000;
        end
        
-       // The instruction does not require the use of the special registers       
        else begin
            
-          case(Read_Reg_1)
+          // The instruction requires the use of the Data_Segment reg
+          if (DataReg) begin
+              Read_Bus_1 = out15;
+          end
+       
+          // The instruction does not require the use of special registers       
+          else begin
            
-              REG_0 : Read_Bus_1 = out1;
-              REG_1 : Read_Bus_1 = out2;
-              REG_2 : Read_Bus_1 = out3;
-              REG_3 : Read_Bus_1 = out4;
-              REG_4 : Read_Bus_1 = out5;
-              REG_5 : Read_Bus_1 = out6;
-              REG_6 : Read_Bus_1 = out7;
-              REG_7 : Read_Bus_1 = out8;
-              REG_8 : Read_Bus_1 = out9;
-              REG_9 : Read_Bus_1 = out10;
-              REG_10 : Read_Bus_1 = out11;
-              REG_11 : Read_Bus_1 = out12;
-              REG_12 : Read_Bus_1 = out13;
-              REG_13 : Read_Bus_1 = out14;
-              REG_14 : Read_Bus_1 = out15;
-              REG_15 : Read_Bus_1 = out16;
+             case(Read_Reg_1)
+           
+                 REG_0 : Read_Bus_1 = out1;
+                 REG_1 : Read_Bus_1 = out2;
+                 REG_2 : Read_Bus_1 = out3;
+                 REG_3 : Read_Bus_1 = out4;
+                 REG_4 : Read_Bus_1 = out5;
+                 REG_5 : Read_Bus_1 = out6;
+                 REG_6 : Read_Bus_1 = out7;
+                 REG_7 : Read_Bus_1 = out8;
+                 REG_8 : Read_Bus_1 = out9;
+                 REG_9 : Read_Bus_1 = out10;
+                 REG_10 : Read_Bus_1 = out11;
+                 REG_11 : Read_Bus_1 = out12;
+                 REG_12 : Read_Bus_1 = out13;
+                 REG_13 : Read_Bus_1 = out14;
+                 REG_14 : Read_Bus_1 = out15;
+                 REG_15 : Read_Bus_1 = out16;
+            
+             endcase
+          
+          end
+       
+          case(Read_Reg_2)
+           
+              REG_0 : Read_Bus_2 = out1;
+              REG_1 : Read_Bus_2 = out2;
+              REG_2 : Read_Bus_2 = out3;
+              REG_3 : Read_Bus_2 = out4;
+              REG_4 : Read_Bus_2 = out5;
+              REG_5 : Read_Bus_2 = out6;
+              REG_6 : Read_Bus_2 = out7;
+              REG_7 : Read_Bus_2 = out8;
+              REG_8 : Read_Bus_2 = out9;
+              REG_9 : Read_Bus_2 = out10;
+              REG_10 : Read_Bus_2 = out11;
+              REG_11 : Read_Bus_2 = out12;
+              REG_12 : Read_Bus_2 = out13;
+              REG_13 : Read_Bus_2 = out14;
+              REG_14 : Read_Bus_2 = out15;
+              REG_15 : Read_Bus_2 = out16;
             
           endcase
           
-       end
-       
-       case(Read_Reg_2)
-           
-           REG_0 : Read_Bus_2 = out1;
-           REG_1 : Read_Bus_2 = out2;
-           REG_2 : Read_Bus_2 = out3;
-           REG_3 : Read_Bus_2 = out4;
-           REG_4 : Read_Bus_2 = out5;
-           REG_5 : Read_Bus_2 = out6;
-           REG_6 : Read_Bus_2 = out7;
-           REG_7 : Read_Bus_2 = out8;
-           REG_8 : Read_Bus_2 = out9;
-           REG_9 : Read_Bus_2 = out10;
-           REG_10 : Read_Bus_2 = out11;
-           REG_11 : Read_Bus_2 = out12;
-           REG_12 : Read_Bus_2 = out13;
-           REG_13 : Read_Bus_2 = out14;
-           REG_14 : Read_Bus_2 = out15;
-           REG_15 : Read_Bus_2 = out16;
-            
-       endcase
+      end
       
   end
   
