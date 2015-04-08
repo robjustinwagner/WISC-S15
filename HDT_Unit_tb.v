@@ -24,6 +24,10 @@ initial begin
   
   #50;
   
+  /*************************************************************/
+  /******************IF_ID_reg_rs HAZARD TESTS******************/
+  /*************************************************************/
+  
   /*************************FIRST TEST**************************/
   
   IF_ID_reg_rs = 4'b0000;
@@ -34,15 +38,15 @@ initial begin
   EX_MEM_reg_rd = 4'b1110;
   MEM_WB_reg_rd = 4'b1101;
   
-  #5;
+  #5;   // NO HAZARD
    
   if(hazard) begin
-	$display("FIRST TEST FAILED");
+	$display("REG RS: FIRST TEST FAILED");
 	$stop;
   end
   
   else begin 
-   $display("FIRST TEST PASSED");
+   $display("REG RS: FIRST TEST PASSED");
   end
   
   /*************************************************************/
@@ -59,15 +63,15 @@ initial begin
   EX_MEM_reg_rd = 4'b1110;
   MEM_WB_reg_rd = 4'b1101;
   
-  #5;
+  #5;   // HAZARD
    
   if(!hazard) begin
-	$display("SECOND TEST FAILED");
+	$display("REG RS: SECOND TEST FAILED");
 	$stop;
   end
   
   else begin 
-   $display("SECOND TEST PASSED");
+   $display("REG RS: SECOND TEST PASSED");
   end
   
   /*************************************************************/
@@ -84,23 +88,257 @@ initial begin
   EX_MEM_reg_rd = 4'b0000;
   MEM_WB_reg_rd = 4'b1101;
   
-  #5;
+  #5;   // HAZARD
    
   if(!hazard) begin
-	$display("THIRD TEST FAILED");
+	$display("REG RS: THIRD TEST FAILED");
 	$stop;
   end
   
   else begin 
-   $display("THIRD TEST PASSED");
+   $display("REG RS: THIRD TEST PASSED");
   end
   
   /*************************************************************/
   
   #50;
- 
- 
-$stop; 
+  
+  /*************************FOURTH TEST*************************/
+  
+  IF_ID_reg_rs = 4'b1010;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0010;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0000;
+  MEM_WB_reg_rd = 4'b1010;
+  
+  #5;   // HAZARD
+   
+  if(!hazard) begin
+	$display("REG RS: FOURTH TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RS: FOURTH TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************************************************/
+  /******************IF_ID_reg_rt HAZARD TESTS******************/
+  /*************************************************************/
+  
+  /*************************FIRST TEST**************************/
+  
+  IF_ID_reg_rs = 4'b0100;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0110;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0011;
+  MEM_WB_reg_rd = 4'b0011;
+  
+  #5;   // NO HAZARD
+   
+  if(hazard) begin
+	$display("REG RT: FIRST TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RT: FIRST TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************SECOND TEST*************************/
+  
+  IF_ID_reg_rs = 4'b0000;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0010;
+  
+  ID_EX_reg_rd = 4'b0001;
+  EX_MEM_reg_rd = 4'b1110;
+  MEM_WB_reg_rd = 4'b1101;
+  
+  #5;   // HAZARD
+   
+  if(!hazard) begin
+	$display("REG RT: SECOND TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RT: SECOND TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /**************************THIRD TEST*************************/
+  
+  IF_ID_reg_rs = 4'b0000;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0010;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0001;
+  MEM_WB_reg_rd = 4'b1101;
+  
+  #5;   // HAZARD
+   
+  if(!hazard) begin
+	$display("REG RT: THIRD TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RT: THIRD TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************FOURTH TEST*************************/
+  
+  IF_ID_reg_rs = 4'b1010;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0010;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0000;
+  MEM_WB_reg_rd = 4'b0001;
+  
+  #5;   // HAZARD
+   
+  if(!hazard) begin
+	$display("REG RT: FOURTH TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RT: FOURTH TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************************************************/
+  /******************IF_ID_reg_rd HAZARD TESTS******************/
+  /*************************************************************/
+  
+  /*************************FIRST TEST**************************/
+  
+  IF_ID_reg_rs = 4'b0100;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0110;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0011;
+  MEM_WB_reg_rd = 4'b1011;
+  
+  #5;   // NO HAZARD
+   
+  if(hazard) begin
+	$display("REG RD: FIRST TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RD: FIRST TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************SECOND TEST*************************/
+  
+  IF_ID_reg_rs = 4'b0000;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0010;
+  
+  ID_EX_reg_rd = 4'b0010;
+  EX_MEM_reg_rd = 4'b1110;
+  MEM_WB_reg_rd = 4'b1101;
+  
+  #5;   // HAZARD
+   
+  if(!hazard) begin
+	$display("REG RD: SECOND TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RD: SECOND TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /**************************THIRD TEST*************************/
+  
+  IF_ID_reg_rs = 4'b0000;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0010;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0010;
+  MEM_WB_reg_rd = 4'b1101;
+  
+  #5;   // HAZARD
+   
+  if(!hazard) begin
+	$display("REG RD: THIRD TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RD: THIRD TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************FOURTH TEST*************************/
+  
+  IF_ID_reg_rs = 4'b1010;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0010;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0000;
+  MEM_WB_reg_rd = 4'b0010;
+  
+  #5;   // HAZARD
+   
+  if(!hazard) begin
+	$display("REG RD: FOURTH TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("REG RD: FOURTH TEST PASSED");
+  end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  $display("ALL HDT_Unit TESTS HAVE PASSED");
+  $stop; 
+  
 end
   
 endmodule

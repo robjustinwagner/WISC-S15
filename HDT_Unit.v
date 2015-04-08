@@ -4,7 +4,7 @@ module HDT_Unit(IF_ID_reg_rs, IF_ID_reg_rt, IF_ID_reg_rd,
                 ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
                    hazard);
     
-input [3:0] IF_ID_reg_rs;
+input [3:0] IF_ID_reg_rs;  // Incoming Regfile Read Registers
 input [3:0] IF_ID_reg_rt;
 input [3:0] IF_ID_reg_rd;
 
