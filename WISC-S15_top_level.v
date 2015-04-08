@@ -79,7 +79,9 @@ logic        reg_rd_out_8;
 logic        ret_future_out_8;
 logic        alu_result_out_8;
 //#9; WB_Unit --> IF_Unit
-							 	//FIX THIS
+logic        RegWrite_9;        // Regfile signal to write reg_rd_out
+logic [3:0]  reg_rd_out_9;      // Register to write return_data
+logic [15:0] write_back_data_9; // Data to write back
 
 //OUTPUTS
 
@@ -118,9 +120,9 @@ logic        alu_result_out_8;
 				.reg_rs(reg_rs_2), 
 				.reg_rt(reg_rt_2), 
                			.reg_rd_in(reg_rd_2), 
-				.RegWrite(), 			//FIX THIS
-				.reg_rd_wb(), 			//FIX THIS
-               			.reg_rd_data(), 		//FIX THIS
+				.RegWrite(RegWrite_9), 
+				.reg_rd_wb(reg_rd_out_9), 
+               			.reg_rd_data(write_back_data_9), 
 				.arith_imm_in(arith_imm_2), 
 				.load_save_imm_in(load_save_imm_2), 
                			.call_in(call_2),
@@ -251,14 +253,28 @@ input        call;
 	
 	//#9; stage 5 -- WriteBack Module Unit
 	WB_Unit WBU(		.clk(clk),
-				.mem_read_data_in(mem_read_data_out_8), 
-				.reg_rd_in(reg_rd_out_8), 
-				.ret_future_in(ret_future_out_8), 
-				.alu_result_in(alu_result_out_8), 
+				.mem_read_data(mem_read_data_out_8), 
+				.mem_to_reg(), 			//FIX THIS
+				.reg_rd_in(reg_rd_out_8),  
+				.alu_result(alu_result_out_8), 
 
-				. 				//FIX THIS
-				);	
+				.write_back_data(write_back_data_9), 
+				.reg_rd_out(reg_rd_out_9), 
+				.RegWrite(RegWrite_9));	
 
-//TODO: VERIFY THIS AGAINST ACTUAL MODULES
+/*
+module IFID_reg(clk, hazard, instruction, PC_in, 
+		cntrl_input, branch_cond, reg_rs, reg_rt, reg_rd, 
+		arith_imm, load_save_imm, call, PC_out);
+*/
+
+/*
+module ID_Unit(clk, RegWrite, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, 
+			cntrl_opcode, branch_cond_in, arith_imm_in, load_save_reg_in, 
+			load_save_imm_in, call_in, PC_in, 
+		mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, 
+		read_data_1, read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, 
+		load_save_imm_out, call_out, PC_out, sign_ext_out);
+*/
 
 endmodule

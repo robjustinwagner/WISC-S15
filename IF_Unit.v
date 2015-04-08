@@ -1,22 +1,28 @@
 // Author: Graham Nygard, Robert Wagner
 
-module IF_Unit(clk, PC_src, PC_branch, hazard,
-               PC_out, instruction);
+module IF_Unit(clk, hazard, PC_src, PC_branch, 
+		PC_out, instruction);
 
-//INPUTS
-input        clk;
-input        PC_src;        // Mux select for choosing PC source
-input        hazard;        // Disable PC update for hazards
-input [15:0] PC_branch;
+//////////////////////////INPUTS/////////////////////////////
 
-//OUTPUTS
-output logic [15:0] PC_out;
-output logic [15:0] instruction;
+input			clk;
+input			hazard;        // Disable PC update for hazards
+input			PC_src;        // Mux select for choosing PC source
+input		[15:0]	PC_branch;
+
+/////////////////////////END INPUTS///////////////////////////
+
+//////////////////////////OUTPUTS/////////////////////////////
+
+output	logic	[15:0]	PC_out;
+output	logic	[15:0]	instruction;
+
+////////////////////////END OUTPUTS///////////////////////////
 
 //INTERNAL CONTROL
-logic [15:0] PC_plus_2;
-logic [15:0] PC_update;
-logic [15:0] PC_address;
+logic		[15:0]	PC_plus_2;
+logic		[15:0]	PC_update;
+logic		[15:0]	PC_address;
 
 //MODULE INSTANTIATIONS
 
