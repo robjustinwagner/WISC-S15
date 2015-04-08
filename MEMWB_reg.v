@@ -1,8 +1,10 @@
 // Author: Graham Nygard, Robert Wagner
 
 module MEMWB_reg(clk, 
-	mem_read_data_in, reg_rd_in, ret_in, alu_result_in, 
-	mem_read_data_out, reg_rd_out, ret_out, alu_result_out);
+	mem_read_data_in, reg_rd_in, ret_in,
+	alu_result_in, mem_to_reg_in,
+	   mem_read_data_out, reg_rd_out, ret_out,
+	   alu_result_out, mem_to_reg_out);
 
 //INPUTS
 input        clk;
@@ -22,7 +24,7 @@ output logic [15:0] alu_result_out;
 always @(posedge clk) begin
 	mem_read_data_out <= mem_read_data_in;
 	reg_rd_out        <= reg_rd_in;
-	ret_future_out    <= ret_future_in;
+	ret_out           <= ret_in;
 	alu_result_out    <= alu_result_in;
 end
 

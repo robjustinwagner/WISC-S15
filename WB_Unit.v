@@ -20,7 +20,6 @@ output logic [15:0] write_back_data; // Data to write back
 
 //INTERCONNECTS
 
-assign ret_out = ret_in;
 assign RegWrite = mem_to_reg;
 assign reg_rd_out = reg_rd_in;
 
