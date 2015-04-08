@@ -6,12 +6,12 @@ module IF_Unit(clk, rst,
 
 //////////////////////////INPUTS/////////////////////////////
 
-input			clk;
-input			rst;
+input			    clk;
+input			    rst;
 
-input			hazard;        // Disable PC update for hazards
-input			PC_src;        // Mux select for choosing PC source
-input		[15:0]	PC_branch;
+input			    hazard;        // Disable PC update for hazards
+input			    PC_src;        // Mux select for choosing PC source
+input	[15:0]	PC_branch;
 
 /////////////////////////END INPUTS///////////////////////////
 
@@ -23,9 +23,9 @@ output	logic	[15:0]	instruction;
 ////////////////////////END OUTPUTS///////////////////////////
 
 //INTERNAL CONTROL
-logic		[15:0]	PC_plus_2;
-logic		[15:0]	PC_update;
-logic		[15:0]	PC_address;
+logic	[15:0]	PC_plus_2;
+logic	[15:0]	PC_update;
+logic	[15:0]	PC_address;
 
 //MODULE INSTANTIATIONS
 
