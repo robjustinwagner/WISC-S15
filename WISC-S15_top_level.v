@@ -2,16 +2,6 @@
 
 module WISC_S15_top_level(clk, rst);
 
-/*
-module IDEX_reg(clk, 
-	mem_to_reg_in, reg_to_mem_in, branch_cond_in, call_target_in, branch_in, call_in, ret_in, 
-		alu_src_in, alu_op_in, shift_in, load_half_imm_in, rd_data_1_in, rd_data_2_in, 
-		sign_ext_in, reg_rd_in, PC_in, 
-	mem_to_reg_out, reg_to_mem_out, branch_cond_out, call_target_out, branch_out, call_out, ret_out, 
-		alu_src_out, alu_op_out, shift_out, load_half_imm_out, rd_data_1_out, rd_data_2_out, 
-		sign_ext_out, reg_rd_out, PC_out);
-*/
-
 //INPUTS
 input clk;
 input rst;
@@ -33,6 +23,7 @@ logic [7:0]  load_save_imm_2; 	  // Inst[7:0]   - Imm of Load/Save Inst
 logic [11:0] call_2;          	  // Inst[11:0]  - Call target
 logic [15:0] PC_out_2;        	  // Program counter
 //#3; ID_Unit --> IDEX_reg 
+logic        RegWrite_out_3;      // Regfile RegWrite when not reset
 logic        mem_to_reg_3;        // LW signal to Memory unit  
 logic        reg_to_mem_3;        // SW signal to Memory unit
 logic        alu_src_3;           // ALU operand selection
@@ -69,6 +60,8 @@ logic [15:0] sign_ext_out_4;   	  // ALU operand 2
 logic [3:0]  reg_rd_out_4;        // Future Regfile dest
 logic [15:0] PC_out_4;            // PC for branch/call/ret
 //#5; EX_Unit --> EXMEM_reg
+logic	     call_out_5;
+logic	     RegWrite_out_5;
 logic        mem_to_reg_out_5; 	  // LW signal to Memory unit 
 logic        reg_to_mem_out_5; 	  // SW signal to Memory unit
 logic        ret_future_out_5; 	  // Future ret_wb signal
@@ -79,6 +72,8 @@ logic [15:0] alu_result_5;     	  // Results of ALU operation
 logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 logic [15:0] sw_data_5;        	  // Save Word data
 //#6; EXMEM_reg --> MEM_Unit
+logic	     RegWrite_out_6;
+logic	     call_out_6;
 logic        mem_to_reg_out_6;     // Memory Read to register 
 logic        reg_to_mem_out_6;     // Memory Write from register
 logic [3:0]  reg_rd_out_6;         // Destination of Memory Read
@@ -86,15 +81,18 @@ logic [15:0] alu_result_out_6;     // Results of ALU operation
 logic [15:0] save_word_data_out_6; // Data for Memory Write
 logic        ret_future_out_6;	   // Future ret_wb signal
 //#7; MEM_Unit --> MEMWB_reg
+logic	     RegWrite_out_7;
 logic 	     mem_read_data_7;
 logic	     mem_to_reg_out_7;
 logic 	     reg_rd_out_7;
 logic 	     ret_future_out_7;
 logic 	     alu_result_out_7;
 //#8; MEMWB_reg --> WB_Unit
+logic	     RegWrite_out_8;
+logic	     ret_out_8;
+logic	     mem_to_reg_out_8;
 logic 	     mem_read_data_out_8;
 logic        reg_rd_out_8;
-logic        ret_future_out_8;
 logic        alu_result_out_8;
 //#9; WB_Unit --> IF_Unit
 logic        RegWrite_9;        // Regfile signal to write reg_rd_out
@@ -145,7 +143,7 @@ end
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
 				.rst(rst_g), 
-				.mem_to_reg_in(), 		//FIX THIS
+				.RegWrite_in(), 		//FIX THIS
 				.reg_rs(reg_rs_2), 
 				.reg_rt_arith(), 		//FIX THIS
 				.reg_rd_wb(reg_rd_out_9), 
@@ -165,7 +163,7 @@ end
                			//.reg_rd_in(reg_rd_2), 
 				//.RegWrite(RegWrite_9), 
 				
-				.mem_to_reg_out(mem_to_reg_3),
+				.RegWrite_out(RegWrite_out_3),
 				.reg_to_mem(reg_to_mem_3),
 				.alu_src(alu_src_3), 
 				.alu_op(alu_op_3), 
@@ -185,7 +183,7 @@ end
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
-				.RegWrite_in(RegWrite_in_4), 
+				.RegWrite_in(RegWrite_out_3), 
 				.mem_to_reg_in(mem_to_reg_3), 
 				.reg_to_mem_in(reg_to_mem_3), 
 				.branch_cond_in(), 		//FIX THIS
@@ -223,6 +221,7 @@ end
 
 	//#5; stage 3 -- Execution Module Unit	
 	EX_Unit EXU(		.clk(clk), 
+				.RegWrite_in(RegWrite_out_4), 
 				.mem_to_reg_in(mem_to_reg_out_4), 
 				.reg_to_mem_in(reg_to_mem_out_4), 
 				.branch_cond(branch_cond_out_4), 
@@ -242,6 +241,8 @@ end
 				.sign_ext(sign_ext_out_4), 
 				.reg_rd_in(reg_rd_out_4), 
 
+				.call_out(call_out_5), 
+				.RegWrite_out(RegWrite_out_5), 
                   		.mem_to_reg_out(mem_to_reg_out_5), 
 				.reg_to_mem_out(reg_to_mem_out_5), 
                   		.ret_future_out(ret_future_out_5), 
@@ -253,7 +254,9 @@ end
 				.sw_data(sw_data_5));	
 
 	//#6; Execution/Memory intermediate register	
-	EXMEM_reg EXMEM_r(	.clk(clk),
+	EXMEM_reg EXMEM_r(	.clk(clk), 
+				.RegWrite_in(RegWrite_out_5), 
+				.call_in(call_out_5), 
 				.mem_to_reg_in(mem_to_reg_out_5), 
 				.reg_to_mem_in(reg_to_mem_out_5), 
                  		.reg_rd_in(reg_rd_out_5), 
@@ -261,6 +264,8 @@ end
                  		.save_word_data_in(sw_data_5), 
 				.ret_future_in(ret_future_out_5),
 				
+				.RegWrite_out(RegWrite_out_6), 
+				.call_out(call_out_6), 
                     		.mem_to_reg_out(mem_to_reg_out_6), 
 				.reg_to_mem_out(reg_to_mem_out_6),
                     		.reg_rd_out(reg_rd_out_6), 
@@ -269,7 +274,9 @@ end
 				.ret_future_out(ret_future_out_6));
 	
 	//#7; stage 4 -- Memory Module Unit	
-	MEM_Unit MEMU(		.clk(clk), 			
+	MEM_Unit MEMU(		.clk(clk), 
+				.call_in(call_out_6), 
+				.RegWrite_in(RegWrite_out_6), 		
 				.mem_to_reg_in(mem_to_reg_out_6), 
 				.reg_to_mem(reg_to_mem_out_6), 
 				.reg_rd_in(reg_rd_out_6), 
@@ -277,6 +284,7 @@ end
 				.mem_write_data(), 		//FIX THIS
 				.ret_future_in(ret_future_out_6), 
 
+				.RegWrite_out(RegWrite_out_7), 
 				.ret_future_out(ret_future_out_7), 
 				.mem_to_reg_out(mem_to_reg_out_7), 
 				.reg_rd_out(reg_rd_out_7), 
@@ -285,18 +293,19 @@ end
 
 	//#8; Memory/WriteBack intermediate register
 	MEMWB_reg MEMWB_r(	.clk(clk), 
+				.RegWrite_in(RegWrite_out_7), 
 				.ret_in(), 			//FIX THIS
 				.mem_to_reg_in(), 		//FIX THIS
 				.reg_rd_in(reg_rd_out_7), 
 				.mem_read_data_in(alu_result_out_7), 
 				.alu_result_in(alu_result_out_7), 
 				
-				.ret_out(), 			//FIX THIS
-				.mem_to_reg_out(), 		//FIX THIS
+				.RegWrite_out(RegWrite_out_8), 
+				.ret_out(ret_out_8), 
+				.mem_to_reg_out(mem_to_reg_out_8), 
 				.reg_rd_out(reg_rd_out_8), 
 				.mem_read_data_out(mem_read_data_out_8), 
 				.alu_result_out(alu_result_out_8);
-//				.ret_future_out(ret_future_out_8));	//FIX THIS
 	
 	//#9; stage 5 -- WriteBack Module Unit
 	WB_Unit WBU(		.clk(clk), 
