@@ -1,21 +1,20 @@
 // Author: Graham Nygard, Robert Wagner
 
 module Control_Logic(opcode,
-	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel);
+	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel, reg_rt_src);
 
 //INPUTS
 input 	[3:0] 		opcode;   	//4-bit instruction opcode
-//input	[2:0]		branch_cond;	//3-bit branch condition encoding
 
 //OUTPUTS
 output 	reg    		data_reg;	/* Control signal to Regfile to
-                                    specifiy the contents of the 
-                                    Data Segment Register for
-                                    supplying read_data_1 */
+                                    	specifiy the contents of the 
+                                    	Data Segment Register for
+                                    	supplying read_data_1 */
 output 	reg		call;		/* Control signal to RegFile to
-                                    specify the contents of the
-                                    Stack_Pointer Register for
-                                    supplying read_data_1 */
+                                    	specify the contents of the
+                                    	Stack_Pointer Register for
+                                    	supplying read_data_1 */
 output	reg		rtrn;
 output 	reg [3:0]  	branch;   	// branching control; 0-2 sensitive, 3 pick 
 output  reg    		mem_to_reg;     // LW signal to Memory unit 
@@ -23,6 +22,7 @@ output  reg   		reg_to_mem;     // SW signal to Memory unit
 output 	reg [2:0] 	alu_op;         // ALU control unit input
 output  reg    		alu_src;        // ALU operand seleciton
 output 	reg		sign_ext_sel;   // sign extend select bit
+output	reg		reg_rt_src;	// Read_reg_2 proper SW select
                
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -67,6 +67,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
            
            SUB : begin
@@ -79,6 +80,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
            NAND : begin
@@ -91,6 +93,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
            
            XOR : begin
@@ -103,6 +106,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
                              
            INC : begin
@@ -115,6 +119,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext_sel = 1'b1;
+		 reg_rt_src = 1'b0;
 		 end
            
            SRA : begin
@@ -127,6 +132,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
            
            SRL : begin
@@ -139,6 +145,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
            
            SLL : begin
@@ -151,6 +158,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
 	   LW :  begin
@@ -163,6 +171,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
 	   SW :  begin
@@ -175,6 +184,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b1;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b1;
 		 end
 
 	   LHB : begin
@@ -187,6 +197,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
 	   LLB : begin
@@ -199,6 +210,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
 	   B :   begin
@@ -208,27 +220,10 @@ localparam   TR    =   3'b111;
 		 branch = 1'b1;
 		 mem_to_reg = 1'b0;
 		 reg_to_mem = 1'b0;
-		 //do the specific ALU op for the given branch condition
-		 /*
-                 case(branch_cond[2:0])
-                       EQ : alu_op = SUB[2:0];
-		            if(data_one == data_two) flags[2] = 1;
-                       LT : if(data_one < data_two) flags[1] = 0; flags[0] = 1;
-                       GT : if(data_one > data_two) flags = 3'b000;
-                       OV : {cout, result} = data_one + data_two;
-		            if(cout == 1'b1) flags[1] = 1;
-		            {cout, result} = data_one 
-		            //see lecture on overflow
-                       NE : if(data_one != data_two) flags[2] = 0;
-                       GE : if(data_one >= data_two) flags[1] = 1; flags[0] = 0;
-                       LE : if(data_one <= data_two) flags[2] = 1;
-                       TR : //does not matter
-	               default: 
-    		 endcase
-		 */
-		 alu_op = SUB[2:0];
+		 alu_op = 3'bzzz;
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
 	   CALL : begin
@@ -241,6 +236,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
 	   RET : begin
@@ -253,6 +249,7 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
+		 reg_rt_src = 1'b0;
 		 end
 
 	   ERR : begin end

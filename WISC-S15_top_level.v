@@ -131,42 +131,43 @@ logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
-				.PC_in(), 
-				.mem_to_reg_in(), 
-				.reg_to_mem_in(), 
-				.alu_op_in(), 
-				.alu_src_in(), 
-				.shift_in(), 
-				.sign_ext_in(), 
-				.load_half_imm_in(), 
-				.branch_in(), 
-				.rd_data_1_in(), 
-				.rd_data_2_in(), 
-				.call_in(), 
-				.reg_rd_in(),
-				.PC_out(), 
-				.mem_to_reg_out(), 
-				.reg_to_mem_out(), 
-				.alu_op_out(), 
-				.alu_src_out(), 
-				.shift_out(), 
-				.sign_ext_out(), 
-				.load_half_imm_out(), 
-				.branch_out(), 
-				.rd_data_1_out(), 
-				.rd_data_2_out(), 
-				.call_out(), 
-				.reg_rd_out());	
+				.PC_in(PC_out_3), 
+				.mem_to_reg_in(mem_to_reg_3), 
+				.reg_to_mem_in(reg_to_mem_3), 
+				.alu_op_in(alu_op_3), 
+				.alu_src_in(alu_src_3), 
+				.shift_in(), 			//FIX THIS
+				.sign_ext_in(sign_ext_out_3), 
+				.load_half_imm_in(), 		//FIX THIS
+				.branch_in(branch_3), 
+				.rd_data_1_in(read_data_1_3), 
+				.rd_data_2_in(read_data_2_3), 
+				.call_in(call_3), 
+				.reg_rd_in(reg_rd_out_3),
+
+				.PC_out(PC_out_4), 
+				.mem_to_reg_out(mem_to_reg_out_4), 
+				.reg_to_mem_out(reg_to_mem_out_4), 
+				.alu_op_out(alu_op_out_4), 
+				.alu_src_out(alu_src_out_4), 
+				.shift_out(shift_out_4), 
+				.sign_ext_out(sign_ext_out_4), 
+				.load_half_imm_out(load_half_imm_out_4), 
+				.branch_out(branch_out_4), 
+				.rd_data_1_out(rd_data_1_out_4), 
+				.rd_data_2_out(rd_data_2_out_4), 
+				.call_out(call_out_4), 
+				.reg_rd_out(reg_rd_out_4));
 
 	//#5; stage 3 -- Execution Module Unit	
 	EX_Unit EXU(		.clk(clk), 
-				.mem_to_reg_in(), 
-				.reg_to_mem_in(), 
-				.branch(),
+				.mem_to_reg_in(mem_to_reg_out_4), 
+				.reg_to_mem_in(reg_to_mem_out_4), 
+				.branch(branch_out_4),
 				.ret_wb(),
                			.PC_stack_pointer(), 
-				.alu_src(), 
-				.alu_op(), 
+				.alu_src(alu_src_out_4), 
+				.alu_op(alu_op_out_4), 
 				.shift(), 
 				.load_half_imm(),
                			.rd_data_1(), 
@@ -174,16 +175,22 @@ logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 				.sign_ext(), 
 				.ret_future_in(), 
 				.reg_rd_in(),
-               			.call_imm(), 
-				.PC_in(),
-                  		.mem_to_reg_out(), 
-				.reg_to_mem_out(), 
-				.reg_rd_out(),
-                  		.ret_future_out(), 
-				.alu_result(), 
-				.PC_update(), 
-				.PC_src(),
-                  		.PC_update_done());	
+               			.call_imm(call_out_4), 
+				.PC_in(PC_out_4),
+
+/*
+input [2:0]	 branch_cond;      // Branch condition
+input [11:0]	call_target;      // Call target
+input        call;
+*/
+                  		.mem_to_reg_out(mem_to_reg_out_5), 
+				.reg_to_mem_out(reg_to_mem_out_5), 
+				.reg_rd_out(reg_rd_out_5),
+                  		.ret_future_out(ret_future_out_5), 
+				.alu_result(alu_result_5), 
+				.PC_update(PC_update_5), 
+				.PC_src(PC_src_5),
+                  		.PC_update_done(PC_update_done_5));	
 
 	//#6; Execution/Memory intermediate register	
 	EXMEM_reg EXMEM_r(	.clk(clk),
