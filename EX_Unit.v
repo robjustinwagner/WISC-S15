@@ -1,11 +1,11 @@
 // Author: Graham Nygard, Robert Wagner
 
 module EX_Unit(clk, 
-	mem_to_reg_in, reg_to_mem_in, branch_cond, call_target, branch, call_in, PC_in, 
+	RegWrite_in, mem_to_reg_in, reg_to_mem_in, branch_cond, call_target, branch, call_in, PC_in, 
 		ret_future_in, ret_wb, PC_stack_pointer, alu_src, alu_op, shift, 
-		load_half_imm, rd_data_1, rd_data_2, sign_ext, reg_rd_in, RegWrite_in, 
-	mem_to_reg_out, reg_to_mem_out, ret_future_out, reg_rd_out, PC_update_done, 
-		PC_src, alu_result, PC_update, sw_data, call_out, RegWrite_out);
+		load_half_imm, rd_data_1, rd_data_2, sign_ext, reg_rd_in,
+	RegWrite_out, mem_to_reg_out, reg_to_mem_out, ret_future_out, reg_rd_out, PC_update_done, 
+		PC_src, alu_result, PC_update, sw_data, call_out);
 
 ////////////////////////////INPUTS/////////////////////////////////
 

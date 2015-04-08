@@ -2,7 +2,7 @@
 
 module WB_Unit(clk, 
 	/*ret_in*/, mem_read_data, alu_result, mem_to_reg, reg_rd_in, 
-	/*ret_out*/, write_back_data, reg_rd_out, /*RegWrite*/);
+	/*ret_out*/, /*RegWrite*/, write_back_data, reg_rd_out);
 
 //INPUTS
 input        clk;

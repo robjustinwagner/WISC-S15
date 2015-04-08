@@ -87,6 +87,7 @@ logic [15:0] save_word_data_out_6; // Data for Memory Write
 logic        ret_future_out_6;	   // Future ret_wb signal
 //#7; MEM_Unit --> MEMWB_reg
 logic 	     mem_read_data_7;
+logic	     mem_to_reg_out_7;
 logic 	     reg_rd_out_7;
 logic 	     ret_future_out_7;
 logic 	     alu_result_out_7;
@@ -224,8 +225,8 @@ end
 	EX_Unit EXU(		.clk(clk), 
 				.mem_to_reg_in(mem_to_reg_out_4), 
 				.reg_to_mem_in(reg_to_mem_out_4), 
-				.branch_cond(), 		//FIX THIS
-				.call_target(), 		//FIX THIS
+				.branch_cond(branch_cond_out_4), 
+				.call_target(call_target_out_4), 
 				.branch(branch_out_4), 
 				.call(call_out_4),
 				.PC_in(PC_out_4), 
@@ -277,7 +278,7 @@ end
 				.ret_future_in(ret_future_out_6), 
 
 				.ret_future_out(ret_future_out_7), 
-				.mem_to_reg_out(), 		//FIX THIS
+				.mem_to_reg_out(mem_to_reg_out_7), 
 				.reg_rd_out(reg_rd_out_7), 
                    		.mem_read_data(mem_read_data_7), 
                    		.alu_result_out(alu_result_out_7));
