@@ -69,23 +69,19 @@ always @(posedge clk) begin
 	// Stall the pipe
 	else begin
 	    
-	   // Lock the PC
-      PC_out        <= 16'hzzzz;
+	   // Lock everything
+      PC_out        <= PC_out;
     
-      // Set the input to the control unit
-	   cntrl_input   <= NO_OP[15:12];
+	   cntrl_input   <= cntrl_input;
 
-      // Specify the src and dest registers
-	   reg_rs        <= NO_OP[7:4];
-	   reg_rt        <= NO_OP[3:0];
-	   reg_rd        <= NO_OP[11:8];
+	   reg_rs        <= reg_rs;
+	   reg_rt        <= reg_rt;
+	   reg_rd        <= reg_rd;
 	
-	   // Set the immediate fields of instruction
-	   arith_imm     <= NO_OP[3:0];
-	   load_save_imm <= NO_OP[7:0];
+	   arith_imm     <= arith_imm;
+	   load_save_imm <= load_save_imm;
 	
-	   // Set call target
-	   call          <= NO_OP[11:0];
+	   call          <= call;
 	   
 	end
 	

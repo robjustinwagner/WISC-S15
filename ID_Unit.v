@@ -38,15 +38,15 @@ input [15:0] PC_in;            // Program counter
 
 /////////////////////////////OUTPUTS/////////////////////////////////
 
-//CONTROL OUTPUTS 
-output        mem_to_reg;        // LW signal to Memory unit  
-output        reg_to_mem;        // SW signal to Memory unit
-output        alu_src;           // ALU operand selection
-output [2:0]  alu_op;            // ALU control unit input
+//CONTROL SIGNALS 
+output logic       mem_to_reg;        // LW signal to Memory unit  
+output logic       reg_to_mem;        // SW signal to Memory unit
+output logic       alu_src;           // ALU operand selection
+output logic [2:0] alu_op;            // ALU control unit input
 
-output        branch;            // PC Updater signal for branch   
-output        call;              // PC Updater signal for call 
-output        ret;               // PC Updater signal for ret 
+output logic      branch;            // PC Updater signal for branch   
+output logic      call;              // PC Updater signal for call 
+output logic      ret;               // PC Updater signal for ret 
 
 //REGFILE OUTPUT PARAMS
 output [15:0] read_data_1;       // Regfile Read_Bus_1
@@ -88,8 +88,19 @@ logic sign_ext_sel;              /* Control signal for selecting
                                     values (Arith, L/S) to sign
                                     extend */
                                     
-logic [3:0] reg_rt;             // Regfile source 2
+logic [3:0] reg_rt;              // Regfile source 2
 
+//CONTROL OUTPUTS FOR FUTURE PIPELINE
+logic        c_mem_to_reg;          
+logic        c_reg_to_mem;        
+logic        c_alu_src;           
+logic [2:0]  c_alu_op;            
+
+logic        c_branch;               
+logic        c_call;               
+logic        c_ret;  
+
+//ASSIGN PIPE TO PIPE WIRES              
 assign branch_cond_out   = branch_cond_in;
 assign load_save_reg_out = load_save_reg_in;
 assign arith_imm_out     = arith_imm_in;
@@ -106,9 +117,10 @@ Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        .Read_Bus_2(read_data_2), .Write_Bus(reg_rd_data));
 
 Control_Logic control(.opcode(cntrl_opcode),
-		                  .data_reg(DataReg), .call(Call), .rtrn(ret), .branch(branch),
-                      .mem_to_reg(mem_to_reg), .reg_to_mem(reg_to_mem),
-                      .alu_op(alu_op), .alu_src(alu_src), .sign_ext_sel(sign_ext_out));
+		                .data_reg(DataReg), .stack_reg(StackReg), .call(c_call),
+		                .rtrn(c_ret), .branch(c_branch), .mem_to_reg(c_mem_to_reg),
+		                .reg_to_mem(c_reg_to_mem), .alu_op(c_alu_op), .alu_src(c_alu_src),
+		                .sign_ext_sel(sign_ext_sel));
                       
 Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in), 
                        .load_save_imm(load_save_imm_in),
@@ -117,6 +129,7 @@ Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in),
 
 HDT_Unit hazard_unit();
 
+// Register rt selection
 always_comb begin
     
     if (reg_rt_src)
@@ -126,5 +139,30 @@ always_comb begin
         reg_rt = reg_rt_arith;
         
 end
-        
+
+// Hazard Detection MUX
+always_comb begin
+    
+    if (hazard) begin
+        mem_to_reg = 1'b0;    
+        reg_to_mem = 1'b0; 
+        alu_src    = 1'b0;  
+        alu_op     = 3'b000; 
+        branch     = 1'b0;    
+        call       = 1'b0;   
+        ret        = 1'b0; 
+    end
+    
+    else begin
+        mem_to_reg = c_mem_to_reg;    
+        reg_to_mem = c_reg_to_mem; 
+        alu_src    = c_alu_src;  
+        alu_op     = c_alu_op; 
+        branch     = c_branch;    
+        call       = c_call;   
+        ret        = c_ret;
+    end
+    
+end
+                
 endmodule
