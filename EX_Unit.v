@@ -6,7 +6,7 @@ module EX_Unit(clk, mem_to_reg_in, reg_to_mem_in, branch_cond,ret_wb,
                call_target, PC_in, call, branch,
                   mem_to_reg_out, reg_to_mem_out, reg_rd_out,
                   ret_future_out, alu_result, PC_update, PC_src,
-                  PC_update_done);
+                  PC_update_done, sw_data);
 ;
 ////////////////////////////INPUTS/////////////////////////////////
 
@@ -58,6 +58,8 @@ output logic        PC_src;         // PC source selection
 output logic [15:0] alu_result;     // Results of ALU operation
 
 output logic [15:0] PC_update;      // Updated PC for branch/call/ret
+
+output logic [15:0] sw_data;        // Save Word data
 
 ///////////////////////////////////////////////////////////////////
 
