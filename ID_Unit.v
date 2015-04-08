@@ -4,8 +4,8 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, cntrl_opcode, branch_cond_in, reg_rs, 
-               reg_rt_arith, RegWrite, reg_rd_wb, reg_rd_data,
+module ID_Unit(clk, rst_PC, cntrl_opcode, branch_cond_in, reg_rs, 
+               reg_rt_arith, mem_to_reg, reg_rd_wb, reg_rd_data,
                arith_imm_in, load_save_imm_in, load_save_reg_in,
                load_save_reg_out, call_in, PC_in, PC_out, mem_to_reg,
                reg_to_mem, alu_op, alu_src, branch, call, ret,
@@ -16,9 +16,10 @@ module ID_Unit(clk, cntrl_opcode, branch_cond_in, reg_rs,
 /////////////////////////////INPUTS//////////////////////////////////
 
 input        clk;              // The global clock input
+input        rst_PC;           // The reset signal from PC
 
 //REGFILE INPUT PARAMS
-input        RegWrite;         // Regfile RegWrite
+input        mem_to_reg;       // Regfile RegWrite when not reset
 input [3:0]  reg_rs;           // Inst[7:4]   - Regfile source 1
 input [3:0]  reg_rt_arith;     // Inst[3:0]   - Regfile source 2
 input [3:0]  reg_rd_wb;        // Regfile write back register
@@ -77,6 +78,12 @@ output hazard;
 
 ////////////////////INTERNAL CONTROL OUTPUTS/////////////////////////
 
+logic RegWrite;                  /* Signal for writing register */
+
+logic WriteReg;                  /* Dest register of write data */
+   
+logic WriteData;                 /* Data to write to dest register */
+
 logic DataReg;                   /* Control signal to Regfile to
                                     specifiy the contents of the 
                                     Data Segment Register for
@@ -122,8 +129,8 @@ assign PC_out            = PC_in;
 //MODULE INSTANTIATIONS
 Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        .Call(Call), .Read_Reg_1(reg_rs), .Read_Reg_2(reg_rt),
-                       .WriteReg(reg_rd_wb), .Read_Bus_1(read_data_1),
-                       .Read_Bus_2(read_data_2), .Write_Bus(reg_rd_data));
+                       .WriteReg(WriteReg), .Read_Bus_1(read_data_1),
+                       .Read_Bus_2(read_data_2), .Write_Bus(WriteData));
 
 Control_Logic control(.opcode(cntrl_opcode),
 		                .data_reg(DataReg), .stack_reg(StackReg), .call(c_call),
@@ -175,6 +182,28 @@ always_comb begin
         branch     = c_branch;    
         call       = c_call;   
         ret        = c_ret;
+    end
+    
+end
+
+// Reset Control MUX
+always_comb begin
+    
+    // Reset stack pointer
+    if (rst_PC) begin
+        
+        RegWrite  = 1;       // Write to SP
+        WriteReg  = 4'b1111; // SP register
+        WriteData = 16'hFFFF; // Reset SP
+        
+    end
+    
+    else begin
+    
+        RegWrite  = mem_to_reg;  // Write to SP
+        WriteReg  = reg_rd_wb;   // SP register
+        WriteData = reg_rd_data; // Reset SP
+        
     end
     
 end
