@@ -1,12 +1,12 @@
 // Author: Graham Nygard, Robert Wagner
 
 module IDEX_reg(clk, 
-	PC_in, mem_to_reg_in, reg_to_mem_in, alu_op_in, alu_src_in, shift_in, sign_ext_in, 
-		load_half_imm_in, branch_cond_in, call_target_in, rd_data_1_in, rd_data_2_in, 
-		call_in, ret_in, branch_in, reg_rd_in, RegWrite_in,
-	PC_out, mem_to_reg_out, reg_to_mem_out, alu_op_out, alu_src_out, shift_out, sign_ext_out, 
-		load_half_imm_out, branch_cond_out, call_target_out, rd_data_1_out, rd_data_2_out, 
-		call_out, ret_out, branch_out, reg_rd_out, RegWrite_out);
+	RegWrite_in, mem_to_reg_in, reg_to_mem_in, branch_cond_in, call_target_in, branch_in, call_in, ret_in, 
+		alu_src_in, alu_op_in, shift_in, load_half_imm_in, rd_data_1_in, rd_data_2_in, 
+		sign_ext_in, reg_rd_in, PC_in,
+	RegWrite_out, mem_to_reg_out, reg_to_mem_out, branch_cond_out, call_target_out, branch_out, call_out, ret_out, 
+		alu_src_out, alu_op_out, shift_out, load_half_imm_out, rd_data_1_out, rd_data_2_out, 
+		sign_ext_out, reg_rd_out, PC_out);
 
 //////////////////////////INPUTS/////////////////////////////
 

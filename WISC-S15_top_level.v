@@ -51,6 +51,7 @@ logic [15:0] PC_out_3;            // Program counter
 logic [15:0] sign_ext_out_3;      // Output of sign extension unit
 logic	     hazard_3;		  // Hazard signaling for pipe stall
 //#4; IDEX_reg --> EX_Unit
+logic        RegWrite_out_4;
 logic        mem_to_reg_out_4;    // LW signal to Memory unit 
 logic        reg_to_mem_out_4;    // SW signal to Memory unit 
 logic [2:0]  branch_cond_out_4;   // Branch condition
@@ -183,6 +184,7 @@ end
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
+				.RegWrite_in(RegWrite_in_4), 
 				.mem_to_reg_in(mem_to_reg_3), 
 				.reg_to_mem_in(reg_to_mem_3), 
 				.branch_cond_in(), 		//FIX THIS
@@ -200,6 +202,7 @@ end
 				.reg_rd_in(reg_rd_out_3), 
 				.PC_in(PC_out_3), 
 
+				.RegWrite_out(RegWrite_out_4), 
 				.mem_to_reg_out(mem_to_reg_out_4), 
 				.reg_to_mem_out(reg_to_mem_out_4), 
 				.branch_cond_out(branch_cond_out_4), 
