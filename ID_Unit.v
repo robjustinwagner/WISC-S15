@@ -10,7 +10,8 @@ module ID_Unit(clk, cntrl_opcode, branch_cond_in, reg_rs,
                load_save_reg_out, call_in, PC_in, PC_out, mem_to_reg,
                reg_to_mem, alu_op, alu_src, branch, call, ret,
                read_data_1, read_data_2, arith_imm_out, sign_ext_out,
-               load_save_imm_out, call_out, branch_cond_out);
+               load_save_imm_out, call_out, branch_cond_out,
+               ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, hazard);
 
 /////////////////////////////INPUTS//////////////////////////////////
 
@@ -33,6 +34,11 @@ input [3:0]  load_save_reg_in; // Inst[11:8]  - Register for Load/Save
 input [7:0]  load_save_imm_in; // Inst[7:0]   - Imm of Load/Save Inst
 input [11:0] call_in;          // Inst[11:0]  - Call target
 input [15:0] PC_in;            // Program counter
+
+//HAZARD DETECTION REGISTERS
+input [3:0] ID_EX_reg_rd;  // Corresponds to IDEX_reg's reg_rd_out
+input [3:0] EX_MEM_reg_rd; // Corresponds to EXMEM_reg's reg_rd_out
+input [3:0] MEM_WB_reg_rd; // Corresponds to MEMWB_reg's reg_rd_out
 
 ////////////////////////////END INPUTS///////////////////////////////
 
@@ -62,6 +68,9 @@ output [15:0] PC_out;            // Program counter
 
 //SIGN-EXT UNIT OUTPUT
 output [15:0] sign_ext_out;      // Output of sign extension unit
+
+//HAZARD SIGNALING FOR PIPE STALL
+output hazard;
 
 /////////////////////////END OUTPUTS/////////////////////////////////
 
@@ -127,7 +136,12 @@ Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in),
                        .sign_ext_sel(sign_ext_sel),
                        .sign_ext_out(sign_ext_out));
 
-HDT_Unit hazard_unit();
+HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith),
+                     .IF_ID_reg_rd(load_save_reg_in),
+                     .ID_EX_reg_rd(ID_EX_reg_rd), 
+                     .EX_MEM_reg_rd(EX_MEM_reg_rd),
+                     .MEM_WB_reg_rd(MEM_WB_reg_rd),
+                     .hazard(hazard));
 
 // Register rt selection
 always_comb begin
