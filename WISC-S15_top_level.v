@@ -1,12 +1,14 @@
 // Author: Graham Nygard, Robert Wagner
 
-module WISC_S15_top_level(clk, instr);
+module WISC_S15_top_level(clk, rst);
 
 //INPUTS
 input clk;
-input [15:0] instr;
+input rst;
+//input [15:0] instr;
 
 /* INTERNAL VARIABLES */
+logic rst_g;                     // Global reset for modules
 //#1; IF_Unit --> IFID_reg
 logic [15:0] PC_out_1;
 logic [15:0] instruction_1;
@@ -85,11 +87,21 @@ logic [15:0] write_back_data_9; // Data to write back
 
 //OUTPUTS
 
+//RESET CONTROL
+always_ff @(posedge clk) begin
+    
+    if (rst)
+       rst_g <= 1'b1;
+    else
+       rst_g <= 1'b0;
+       
+end
+
 
 /* INSTANTIATE & CONNECT PIPELINED MODULES */
 	
 	//#1; stage 1 -- Instruction Fetch Module Unit
-	IF_Unit IFU(		.clk(clk), 
+	IF_Unit IFU(		.clk(clk), .rst(rst_g),
 				.PC_src(), 			//FIX THIS
 				.PC_branch(), 			//FIX THIS
 				.hazard(), 			//FIX THIS
@@ -114,7 +126,7 @@ logic [15:0] write_back_data_9; // Data to write back
 				.PC_out(PC_out_2));
 
 	//#3; stage 2 -- Instruction Decode Module Unit	
-	ID_Unit IDU(		.clk(clk), 
+	ID_Unit IDU(		.clk(clk), .rst(rst_g),
 				.cntrl_opcode(cntrl_input_2), 
 				.branch_cond_in(branch_cond_2), 
 				.reg_rs(reg_rs_2), 
@@ -310,8 +322,8 @@ module MEMWB_reg(clk,
 */
 /*
 module WB_Unit(clk, 
-	/*ret_in*/, mem_read_data, alu_result, mem_to_reg, reg_rd_in, 
-	/*ret_out*/, write_back_data, reg_rd_out, RegWrite);
+	/*ret_in*//*, mem_read_data, alu_result, mem_to_reg, reg_rd_in, 
+	/*ret_out*//*, write_back_data, reg_rd_out, RegWrite);
 */
 
 endmodule
