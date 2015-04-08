@@ -18,17 +18,22 @@ logic IDEX_hazard;
 logic EXMEM_hazard;
 logic MEMWB_hazard;
 
-assign IDEX_hazard  = ((IF_ID_reg_rs ~^ ID_EX_reg_rd) |
-                       (IF_ID_reg_rt ~^ ID_EX_reg_rd) |
-                       (IF_ID_reg_rd ~^ ID_EX_reg_rd));
+always_comb begin
+
+
+assign IDEX_hazard  = ( (&(IF_ID_reg_rs ~^ ID_EX_reg_rd)) |
+                        (&(IF_ID_reg_rt ~^ ID_EX_reg_rd)) |
+                        (&(IF_ID_reg_rd ~^ ID_EX_reg_rd)) );
                      
-assign EXMEM_hazard = ((IF_ID_reg_rs ~^ EX_MEM_reg_rd) |
-                       (IF_ID_reg_rt ~^ EX_MEM_reg_rd) |
-                       (IF_ID_reg_rd ~^ EX_MEM_reg_rd));
+assign EXMEM_hazard = ( (&(IF_ID_reg_rs ~^ EX_MEM_reg_rd)) |
+                        (&(IF_ID_reg_rt ~^ EX_MEM_reg_rd)) |
+                        (&(IF_ID_reg_rd ~^ EX_MEM_reg_rd)) );
                      
-assign MEMWB_hazard = ((IF_ID_reg_rs ~^ MEM_WB_reg_rd) |
-                       (IF_ID_reg_rt ~^ MEM_WB_reg_rd) |
-                       (IF_ID_reg_rd ~^ MEM_WB_reg_rd));
+assign MEMWB_hazard = ( (&(IF_ID_reg_rs ~^ MEM_WB_reg_rd)) |
+                        (&(IF_ID_reg_rt ~^ MEM_WB_reg_rd)) |
+                        (&(IF_ID_reg_rd ~^ MEM_WB_reg_rd)) );
+
+end
 
 assign hazard = (IDEX_hazard | EXMEM_hazard | MEMWB_hazard);
 
