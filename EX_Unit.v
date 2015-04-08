@@ -46,13 +46,14 @@ input [3:0]  reg_rd_in;        // Future Regfile dest
 
 ///////////////////////////OUTPUTS/////////////////////////////////
 
+//PIPE TO PIPE
 output logic        mem_to_reg_out; // LW signal to Memory unit 
 output logic        reg_to_mem_out; // SW signal to Memory unit
 output logic        ret_future_out; // Future ret_wb signal
+output logic [3:0]  reg_rd_out;     // Future Regfile dest
+
 output logic        PC_update_done; // Complete branch/call/ret/ update
 output logic        PC_src;         // PC source selection
-
-output logic [3:0]  reg_rd_out;     // Future Regfile dest
 
 output logic [15:0] alu_result;     // Results of ALU operation
 
