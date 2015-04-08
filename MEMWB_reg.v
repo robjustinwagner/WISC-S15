@@ -1,10 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
 module MEMWB_reg(clk, 
-	mem_read_data_in, reg_rd_in, ret_in,
-	alu_result_in, mem_to_reg_in,
-	   mem_read_data_out, reg_rd_out, ret_out,
-	   alu_result_out, mem_to_reg_out);
+	ret_in, mem_to_reg_in, reg_rd_in, mem_read_data_in, alu_result_in, 
+	ret_out, mem_to_reg_out, reg_rd_out, mem_read_data_out, alu_result_out);
 
 //INPUTS
 input        clk;

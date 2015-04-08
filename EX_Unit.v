@@ -1,46 +1,45 @@
 // Author: Graham Nygard, Robert Wagner
 
-module EX_Unit(clk, mem_to_reg_in, reg_to_mem_in, branch_cond,ret_wb,
-               PC_stack_pointer, alu_src, alu_op, shift, load_half_imm,
-               rd_data_1, rd_data_2, sign_ext, ret_future_in, reg_rd_in,
-               call_target, PC_in, call, branch,
-                  mem_to_reg_out, reg_to_mem_out, reg_rd_out,
-                  ret_future_out, alu_result, PC_update, PC_src,
-                  PC_update_done, sw_data);
+module EX_Unit(clk, 
+	mem_to_reg_in, reg_to_mem_in, branch_cond, call_target, branch, call, PC_in, 
+		ret_future_in, ret_wb, PC_stack_pointer, alu_src, alu_op, shift, 
+		load_half_imm, rd_data_1, rd_data_2, sign_ext, reg_rd_in, 
+	mem_to_reg_out, reg_to_mem_out, ret_future_out, reg_rd_out, PC_update_done, 
+		PC_src, alu_result, PC_update, sw_data);
 
 ////////////////////////////INPUTS/////////////////////////////////
 
-input        clk;
-input        mem_to_reg_in;    // LW signal to Memory unit 
-input        reg_to_mem_in;    // SW signal to Memory unit
+input		clk;
+input		mem_to_reg_in;    // LW signal to Memory unit 
+input		reg_to_mem_in;    // SW signal to Memory unit
 
 //PC UPDATER 
-input [2:0]	 branch_cond;      // Branch condition
-input [11:0]	call_target;      // Call target
+input	[2:0]	branch_cond;      // Branch condition
+input	[11:0]	call_target;      // Call target
 
-input        branch;
-input        call;
+input		branch;
+input		call;
 
-input [15:0] PC_in;            // PC for branch/call/ret
+input	[15:0]	PC_in;            // PC for branch/call/ret
 
 //RETURN SIGNALS
-input        ret_future_in;    // Future ret_wb signal
+input		ret_future_in;    // Future ret_wb signal
 
-input        ret_wb;           // Return signal when SP is ready
-input [15:0] PC_stack_pointer; // SP value for PC update
+input		ret_wb;           // Return signal when SP is ready
+input	[15:0]	PC_stack_pointer; // SP value for PC update
 
 //ALU INPUTS
-input	       alu_src;          // ALU operand 2 seleciton
+input		alu_src;          // ALU operand 2 seleciton
 
-input [2:0]	 alu_op;           // ALU operation
-input [3:0]  shift;            // ALU shift input
-input [7:0]  load_half_imm;    // ALU imm load input
-input [15:0] rd_data_1;        // ALU operand 1
-input [15:0] rd_data_2;        // ALU operand 2
-input [15:0]	sign_ext;         // ALU operand 2
+input	[2:0]	alu_op;           // ALU operation
+input	[3:0]	shift;            // ALU shift input
+input	[7:0]	load_half_imm;    // ALU imm load input
+input	[15:0]	rd_data_1;        // ALU operand 1
+input	[15:0]	rd_data_2;        // ALU operand 2
+input	[15:0]	sign_ext;         // ALU operand 2
 
 //PIPELINE TO PIPELINE
-input [3:0]  reg_rd_in;        // Future Regfile dest
+input	[3:0]	reg_rd_in;        // Future Regfile dest
 
 ///////////////////////////////////////////////////////////////////
 

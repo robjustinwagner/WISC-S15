@@ -144,6 +144,14 @@ logic [15:0] write_back_data_9; // Data to write back
                			.load_save_imm_out(load_save_imm_out_3), 
 				.call_out(call_out_3), 
 				.branch_cond_out(branch_cond_out_3));
+/*
+module ID_Unit(clk, 
+	RegWrite, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, 
+		branch_cond_in, arith_imm_in, load_save_reg_in, load_save_imm_in, call_in, PC_in, 
+	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, 
+		branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, 
+		PC_out, sign_ext_out);
+*/
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
@@ -263,18 +271,47 @@ input        call;
 				.RegWrite(RegWrite_9));	
 
 /*
-module IFID_reg(clk, hazard, instruction, PC_in, 
-		cntrl_input, branch_cond, reg_rs, reg_rt, reg_rd, 
-		arith_imm, load_save_imm, call, PC_out);
+module IFID_reg(clk, 
+	hazard, instruction, PC_in, 
+	cntrl_input, branch_cond, reg_rs, reg_rt, reg_rd, arith_imm, load_save_imm, call, PC_out);
 */
 
 /*
-module ID_Unit(clk, RegWrite, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, 
-			cntrl_opcode, branch_cond_in, arith_imm_in, load_save_reg_in, 
-			load_save_imm_in, call_in, PC_in, 
-		mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, 
-		read_data_1, read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, 
-		load_save_imm_out, call_out, PC_out, sign_ext_out);
+module ID_Unit(clk, 
+	RegWrite, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, 
+		branch_cond_in, arith_imm_in, load_save_reg_in, load_save_imm_in, call_in, PC_in, 
+	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, 
+		branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, 
+		PC_out, sign_ext_out);
+*/
+
+/*
+module EX_Unit(clk, 
+	mem_to_reg_in, reg_to_mem_in, branch_cond, call_target, branch, call, PC_in, 
+		ret_future_in, ret_wb, PC_stack_pointer, alu_src, alu_op, shift, 
+		load_half_imm, rd_data_1, rd_data_2, sign_ext, reg_rd_in, 
+	mem_to_reg_out, reg_to_mem_out, ret_future_out, reg_rd_out, PC_update_done, 
+		PC_src, alu_result, PC_update, sw_data);
+*/
+/*
+module EXMEM_reg(clk, 
+	mem_to_reg_in, reg_to_mem_in, reg_rd_in, alu_result_in, save_word_data_in, ret_future_in, 
+	mem_to_reg_out, reg_to_mem_out, reg_rd_out, alu_result_out, save_word_data_out, ret_future_out);
+*/
+/*
+module MEM_Unit(clk, 
+	mem_to_reg_in, reg_to_mem, reg_rd_in, alu_result_in, mem_write_data, ret_future_in, 
+	ret_future_out, mem_to_reg_out, reg_rd_out, mem_read_data, alu_result_out);
+*/
+/*
+module MEMWB_reg(clk, 
+	ret_in, mem_to_reg_in, reg_rd_in, mem_read_data_in, alu_result_in, 
+	ret_out, mem_to_reg_out, reg_rd_out, mem_read_data_out, alu_result_out);
+*/
+/*
+module WB_Unit(clk, 
+	/*ret_in*/, mem_read_data, alu_result, mem_to_reg, reg_rd_in, 
+	/*ret_out*/, write_back_data, reg_rd_out, RegWrite);
 */
 
 endmodule

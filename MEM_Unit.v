@@ -1,9 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
-module MEM_Unit(clk, mem_to_reg_in, reg_to_mem, reg_rd_in,
-                alu_result_in, mem_write_data, ret_future_in,
-                   mem_read_data, reg_rd_out, ret_future_out,
-                   alu_result_out, mem_to_reg_out);
+module MEM_Unit(clk, 
+	mem_to_reg_in, reg_to_mem, reg_rd_in, alu_result_in, mem_write_data, ret_future_in, 
+	ret_future_out, mem_to_reg_out, reg_rd_out, mem_read_data, alu_result_out);
 
 //INPUTS
 input clk;

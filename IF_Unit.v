@@ -1,7 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
-module IF_Unit(clk, hazard, PC_src, PC_branch, 
-		PC_out, instruction);
+module IF_Unit(clk, 
+	hazard, PC_src, PC_branch, 
+	PC_out, instruction);
 
 //////////////////////////INPUTS/////////////////////////////
 
