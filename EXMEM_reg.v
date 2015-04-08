@@ -2,8 +2,10 @@
 
 module EXMEM_reg(clk, mem_to_reg_in, reg_to_mem_in,
                  reg_rd_in, alu_result_in, ret_future_in,
+                 save_word_data_in,
                     mem_to_reg_out, reg_to_mem_out,
-                    reg_rd_out, alu_result_out, ret_future_out);
+                    reg_rd_out, alu_result_out, ret_future_out,
+                    save_word_data_out);
 
 ////////////////////////////INPUTS///////////////////////////////
 

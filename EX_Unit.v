@@ -7,7 +7,7 @@ module EX_Unit(clk, mem_to_reg_in, reg_to_mem_in, branch_cond,ret_wb,
                   mem_to_reg_out, reg_to_mem_out, reg_rd_out,
                   ret_future_out, alu_result, PC_update, PC_src,
                   PC_update_done, sw_data);
-;
+
 ////////////////////////////INPUTS/////////////////////////////////
 
 input        clk;
@@ -69,6 +69,11 @@ logic alu_done;
 
 logic [2:0] set_flags;
 logic [2:0] updated_flags;
+
+assign mem_to_reg_out = mem_to_reg_in;
+assign reg_to_mem_out = reg_to_mem_in;
+assign ret_future_out = ret_future_in;
+assign reg_rd_out     = reg_rd_in;
 
 ///////////////////////////////////////////////////////////////////
 

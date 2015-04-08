@@ -52,7 +52,7 @@ output        ret;               // PC Updater signal for ret
 output [15:0] read_data_1;       // Regfile Read_Bus_1
 output [15:0] read_data_2;       // Regfile Read_Bus_2
 
-//PIPELINE TO PIPELINE
+//PIPE TO PIPE
 output [2:0]  branch_cond_out;   // Branch condition
 output [3:0]  load_save_reg_out; // Future Regfile dest
 output [3:0]  arith_imm_out;     // Imm of Arithmetic Inst
@@ -89,6 +89,13 @@ logic sign_ext_sel;              /* Control signal for selecting
                                     extend */
                                     
 logic [3:0] reg_rt;             // Regfile source 2
+
+assign branch_cond_out   = branch_cond_in;
+assign load_save_reg_out = load_save_reg_in;
+assign arith_imm_out     = arith_imm_in;
+assign load_save_imm_out = load_save_imm_in;
+assign call_out          = call_in;
+assign PC_out            = PC_in;
 
 //////////////////////////////////////////////////////////////////////
                                     
