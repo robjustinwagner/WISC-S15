@@ -5,10 +5,10 @@
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
 module ID_Unit(clk, rst, 
-	mem_to_reg_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
-		load_save_reg_in, load_save_imm_in, call_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
-	mem_to_reg_out, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
-		load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, PC_out, sign_ext_out, hazard);
+	reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
+		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, RegWrite_in,
+	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
+		load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, sign_ext_out, hazard, RegWrite_out);
 
 /////////////////////////////INPUTS//////////////////////////////////
 
@@ -16,7 +16,7 @@ input        clk;              // The global clock input
 input        rst;              // The reset signal from PC
 
 //REGFILE INPUT PARAMS
-input        mem_to_reg_in;       // Regfile RegWrite when not reset
+input        RegWrite_in;      // Regfile RegWrite when not reset
 input [3:0]  reg_rs;           // Inst[7:4]   - Regfile source 1
 input [3:0]  reg_rt_arith;     // Inst[3:0]   - Regfile source 2
 input [3:0]  reg_rd_wb;        // Regfile write back register
@@ -43,14 +43,15 @@ input [3:0] MEM_WB_reg_rd; // Corresponds to MEMWB_reg's reg_rd_out
 /////////////////////////////OUTPUTS/////////////////////////////////
 
 //CONTROL SIGNALS 
-output logic       mem_to_reg_out;        // LW signal to Memory unit  
-output logic       reg_to_mem;        // SW signal to Memory unit
-output logic       alu_src;           // ALU operand selection
-output logic [2:0] alu_op;            // ALU control unit input
+output logic       RegWrite_out;   // Initial output from control
+output logic       mem_to_reg; // LW signal to Memory unit  
+output logic       reg_to_mem;     // SW signal to Memory unit
+output logic       alu_src;        // ALU operand selection
+output logic [2:0] alu_op;         // ALU control unit input
 
-output logic	branch;            // PC Updater signal for branch   
-output logic	call;              // PC Updater signal for call 
-output logic	ret;               // PC Updater signal for ret 
+output logic	branch;             // PC Updater signal for branch   
+output logic	call;               // PC Updater signal for call 
+output logic	ret;                // PC Updater signal for ret 
 
 //REGFILE OUTPUT PARAMS
 output [15:0] read_data_1;       // Regfile Read_Bus_1
@@ -158,16 +159,11 @@ always_comb begin
         
 end
 
-always_comb begin
-    
-    if (c_call)
-       
-
 // Hazard Detection MUX
 always_comb begin
     
     if (hazard) begin
-        mem_to_reg_out = 1'b0;    
+        mem_to_reg     = 1'b0;    
         reg_to_mem     = 1'b0; 
         alu_src        = 1'b0;  
         alu_op         = 3'b000; 
@@ -177,7 +173,7 @@ always_comb begin
     end
     
     else begin
-        mem_to_reg_out = c_mem_to_reg;    
+        mem_to_reg     = c_mem_to_reg;    
         reg_to_mem     = c_reg_to_mem; 
         alu_src        = c_alu_src;  
         alu_op         = c_alu_op; 
@@ -194,17 +190,17 @@ always_comb begin
     // Reset stack pointer
     if (rst) begin
         
-        RegWrite  = 1;       // Write to SP
-        WriteReg  = 4'b1111; // SP register
+        RegWrite  = 1;        // Write to SP
+        WriteReg  = 4'b1111;  // SP register
         WriteData = 16'hFFFF; // Reset SP
         
     end
     
     else begin
     
-        RegWrite  = mem_to_reg;  // Write to SP
-        WriteReg  = reg_rd_wb;   // SP register
-        WriteData = reg_rd_data; // Reset SP
+        RegWrite  = RegWrite_in;
+        WriteReg  = reg_rd_wb;
+        WriteData = reg_rd_data;
         
     end
     

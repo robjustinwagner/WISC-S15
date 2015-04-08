@@ -1,15 +1,16 @@
 // Author: Graham Nygard, Robert Wagner
 
 module EX_Unit(clk, 
-	mem_to_reg_in, reg_to_mem_in, branch_cond, call_target, branch, call, PC_in, 
+	mem_to_reg_in, reg_to_mem_in, branch_cond, call_target, branch, call_in, PC_in, 
 		ret_future_in, ret_wb, PC_stack_pointer, alu_src, alu_op, shift, 
-		load_half_imm, rd_data_1, rd_data_2, sign_ext, reg_rd_in, 
+		load_half_imm, rd_data_1, rd_data_2, sign_ext, reg_rd_in, RegWrite_in, 
 	mem_to_reg_out, reg_to_mem_out, ret_future_out, reg_rd_out, PC_update_done, 
-		PC_src, alu_result, PC_update, sw_data);
+		PC_src, alu_result, PC_update, sw_data, call_out, RegWrite_out);
 
 ////////////////////////////INPUTS/////////////////////////////////
 
 input		clk;
+input  RegWrite_in;
 input		mem_to_reg_in;          // LW signal to Memory unit 
 input		reg_to_mem_in;          // SW signal to Memory unit
 
@@ -47,6 +48,7 @@ input	[3:0]	reg_rd_in;         // Future Regfile dest
 
 //PIPE TO PIPE
 output logic        call_out;       // Signal to decrement SP
+output logic        RegWrite_out;
 output logic        mem_to_reg_out; // LW signal to Memory unit 
 output logic        reg_to_mem_out; // SW signal to Memory unit
 output logic        ret_future_out; // Future ret_wb signal
@@ -72,10 +74,10 @@ logic [2:0] updated_flags;
 
 logic  alu_op_2;
 
+assign RegWrite_out   = RegWrite_in;
 assign mem_to_reg_out = mem_to_reg_in;
 assign reg_to_mem_out = reg_to_mem_in;
 assign ret_future_out = ret_future_in;
-assign reg_rd_out     = reg_rd_in;
 
 ///////////////////////////////////////////////////////////////////
 
@@ -85,7 +87,7 @@ always_comb begin
     if (alu_src)
        alu_op_2 = sign_ext;
     else
-       alu_op_2 = read_data_2;
+       alu_op_2 = rd_data_2;
        
 end
 
@@ -96,6 +98,16 @@ always_comb begin
        sw_data = PC_in;
     else
        sw_data = rd_data_2;
+       
+end
+
+//REGISTER WRITE SELECT
+always_comb begin
+    
+    if (call_in)
+       reg_rd_out = 16'h1111; // <-- Set future save reg as stack pointer
+    else
+       reg_rd_out = reg_rd_in;
        
 end
 

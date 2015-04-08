@@ -1,13 +1,14 @@
 // Author: Graham Nygard, Robert Wagner
 
 module EXMEM_reg(clk, 
-	mem_to_reg_in, reg_to_mem_in, reg_rd_in, alu_result_in, save_word_data_in, ret_future_in, call_in,
-	mem_to_reg_out, reg_to_mem_out, reg_rd_out, alu_result_out, save_word_data_out, ret_future_out, call_out);
+	mem_to_reg_in, reg_to_mem_in, reg_rd_in, alu_result_in, save_word_data_in, ret_future_in, call_in, RegWrite_in,
+	mem_to_reg_out, reg_to_mem_out, reg_rd_out, alu_result_out, save_word_data_out, ret_future_out, call_out, RegWrite_out);
 
 ////////////////////////////INPUTS///////////////////////////////
 
 input clk;
 
+input        RegWrite_in;
 input        call_in;           // Signal to decrement SP
 input        mem_to_reg_in;     // LW signal to Memory unit 
 input        reg_to_mem_in;     // SW signal to Memory unit
@@ -22,6 +23,7 @@ input        ret_future_in;     // Future ret_wb signal
 ////////////////////////////OUTPUTS//////////////////////////////
 
 //INPUT TO MEMORY UNIT
+output logic        RegWrite_out;
 output logic        call_out;           
 output logic        mem_to_reg_out;     // Memory Read to register 
 output logic        reg_to_mem_out;     // Memory Write from register  <-- Should be set on call
@@ -43,6 +45,7 @@ always @(posedge clk) begin
 	save_word_data_out <= save_word_data_in;
 	ret_future_out     <= ret_future_in;
 	call_out           <= call_in;
+	RegWrite_out       <= RegWrite_in;
 	
 end
 
