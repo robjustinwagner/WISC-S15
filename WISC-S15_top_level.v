@@ -7,10 +7,10 @@ input clk;
 input [15:0] instr;
 
 /* INTERNAL VARIABLES */
-//IF_Unit --> IFID_reg
+//#1; IF_Unit --> IFID_reg
 logic [15:0] PC_out_1;
 logic [15:0] instruction_1;
-//IFID_reg --> ID_Unit
+//#2; IFID_reg --> ID_Unit
 logic [3:0]  cntrl_input_2;   	  // Inst[15:12] - Opcode
 logic [3:0]  branch_cond_2;   	  // Inst[11:8]  - Branch condition
 logic [3:0]  reg_rs_2;        	  // Inst[7:4]   - Register rs
@@ -20,7 +20,7 @@ logic [3:0]  arith_imm_2;     	  // Inst[3:0]   - Imm of Arithmetic Inst
 logic [7:0]  load_save_imm_2; 	  // Inst[7:0]   - Imm of Load/Save Inst
 logic [11:0] call_2;          	  // Inst[11:0]  - Call target
 logic [15:0] PC_out_2;        	  // Program counter
-//ID_Unit --> IDEX_reg 
+//#3; ID_Unit --> IDEX_reg 
 logic        mem_to_reg_3;        // LW signal to Memory unit  
 logic        reg_to_mem_3;        // SW signal to Memory unit
 logic        alu_src_3;           // ALU operand selection
@@ -37,7 +37,7 @@ logic [7:0]  load_save_imm_out_3; // Imm of Load/Save Inst
 logic [11:0] call_out_3;          // Call target
 logic [15:0] PC_out_3;            // Program counter
 logic [15:0] sign_ext_out_3;      // Output of sign extension unit
-//IDEX_reg --> EX_Unit
+//#4; IDEX_reg --> EX_Unit
 logic        mem_to_reg_out_4;    // LW signal to Memory unit 
 logic        reg_to_mem_out_4;    // SW signal to Memory unit 
 logic [2:0]  branch_out_4;     	  // Branch condition
@@ -51,7 +51,7 @@ logic [15:0] sign_ext_out_4;   	  // ALU operand 2
 logic [3:0]  reg_rd_out_4;        // Future Regfile dest
 logic [11:0] call_out_4;       	  // Call target
 logic [15:0] PC_out_4;            // PC for branch/call/ret
-//EX_Unit --> EXMEM_reg
+//#5; EX_Unit --> EXMEM_reg
 logic        mem_to_reg_out_5; 	  // LW signal to Memory unit 
 logic        reg_to_mem_out_5; 	  // SW signal to Memory unit
 logic        ret_future_out_5; 	  // Future ret_wb signal
@@ -60,12 +60,26 @@ logic        PC_src_5;         	  // PC source selection
 logic [3:0]  reg_rd_out_5;     	  // Future Regfile dest
 logic [15:0] alu_result_5;     	  // Results of ALU operation
 logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
-//EXMEM_reg --> MEM_Unit
-
-//MEMWB_reg --> WB_Unit
-
-//WB_Unit --> IF_Unit
-
+logic [15:0] sw_data_5;        	  // Save Word data
+//#6; EXMEM_reg --> MEM_Unit
+logic        mem_to_reg_out_6;     // Memory Read to register 
+logic        reg_to_mem_out_6;     // Memory Write from register
+logic [3:0]  reg_rd_out_6;         // Destination of Memory Read
+logic [15:0] alu_result_out_6;     // Results of ALU operation
+logic [15:0] save_word_data_out_6; // Data for Memory Write
+logic        ret_future_out_6;	   // Future ret_wb signal
+//#7; MEM_Unit --> MEMWB_reg
+logic 	     mem_read_data_7;
+logic 	     reg_rd_out_7;
+logic 	     ret_future_out_7;
+logic 	     alu_result_out_7;
+//#8; MEMWB_reg --> WB_Unit
+logic 	     mem_read_data_out_8;
+logic        reg_rd_out_8;
+logic        ret_future_out_8;
+logic        alu_result_out_8;
+//#9; WB_Unit --> IF_Unit
+							 	//FIX THIS
 
 //OUTPUTS
 
@@ -134,7 +148,7 @@ logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 				.PC_in(PC_out_3), 
 				.mem_to_reg_in(mem_to_reg_3), 
 				.reg_to_mem_in(reg_to_mem_3), 
-				.alu_op_in(alu_op_3), 
+				.alu_op_insw_data_5(alu_op_3), 
 				.alu_src_in(alu_src_3), 
 				.shift_in(), 			//FIX THIS
 				.sign_ext_in(sign_ext_out_3), 
@@ -149,7 +163,7 @@ logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 				.mem_to_reg_out(mem_to_reg_out_4), 
 				.reg_to_mem_out(reg_to_mem_out_4), 
 				.alu_op_out(alu_op_out_4), 
-				.alu_src_out(alu_src_out_4), 
+				.alu_src_osw_data_5ut(alu_src_out_4), 
 				.shift_out(shift_out_4), 
 				.sign_ext_out(sign_ext_out_4), 
 				.load_half_imm_out(load_half_imm_out_4), 
@@ -164,17 +178,17 @@ logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 				.mem_to_reg_in(mem_to_reg_out_4), 
 				.reg_to_mem_in(reg_to_mem_out_4), 
 				.branch(branch_out_4),
-				.ret_wb(),
-               			.PC_stack_pointer(), 
+				.ret_wb(), 			//FIX THIS
+               			.PC_stack_pointer(), 	 	//FIX THIS
 				.alu_src(alu_src_out_4), 
 				.alu_op(alu_op_out_4), 
-				.shift(), 
-				.load_half_imm(),
-               			.rd_data_1(), 
-				.rd_data_2(), 
-				.sign_ext(), 
-				.ret_future_in(), 
-				.reg_rd_in(),
+				.shift(shift_out_4), 
+				.load_half_imm(load_half_imm_out_4), 
+               			.rd_data_1(rd_data_1_out_4), 
+				.rd_data_2(rd_data_2_out_4), 
+				.sign_ext(sign_ext_out_4), 
+				.ret_future_in(),  		//FIX THIS
+				.reg_rd_in(reg_rd_out_4), 
                			.call_imm(call_out_4), 
 				.PC_in(PC_out_4),
 
@@ -190,22 +204,61 @@ input        call;
 				.alu_result(alu_result_5), 
 				.PC_update(PC_update_5), 
 				.PC_src(PC_src_5),
-                  		.PC_update_done(PC_update_done_5));	
+                  		.PC_update_done(PC_update_done_5), 
+				.sw_data(sw_data_5));	
 
 	//#6; Execution/Memory intermediate register	
 	EXMEM_reg EXMEM_r(	.clk(clk),
-				);
+				.mem_to_reg_in(mem_to_reg_out_5), 
+				.reg_to_mem_in(reg_to_mem_out_5), 
+                 		.reg_rd_in(reg_rd_out_5), 
+				.alu_result_in(alu_result_5), 
+				.ret_future_in(ret_future_out_5),
+                 		.save_word_data_in(sw_data_5),
+				
+                    		.mem_to_reg_out(mem_to_reg_out_6), 
+				.reg_to_mem_out(reg_to_mem_out_6),
+                    		.reg_rd_out(reg_rd_out_6), 
+				.alu_result_out(alu_result_out_6), 
+				.ret_future_out(ret_future_out_6),
+                    		.save_word_data_out(save_word_data_out_6));
 	
 	//#7; stage 4 -- Memory Module Unit	
-	MEM_Unit MEMU(		.clk(clk), 
-				);	
-	
+	MEM_Unit MEMU(		.clk(clk), 			
+				.mem_to_reg(mem_to_reg_out_6), 
+				.reg_to_mem(reg_to_mem_out_6), 
+				.reg_rd_in(reg_rd_out_6), 
+   	 		        .alu_result_in(alu_result_out_6), 
+				.mem_write_data(), 		//FIX THIS
+				.ret_future_in(ret_future_out_6), 
+
+                   		.mem_read_data(mem_read_data_7), 
+				.reg_rd_out(reg_rd_out_7), 
+				.ret_future_out(ret_future_out_7), 
+                   		.alu_result_out(alu_result_out_7));
+
 	//#8; Memory/WriteBack intermediate register
 	MEMWB_reg MEMWB_r(	.clk(clk),
-				);	
+				.mem_read_data_in(alu_result_out_7), 
+				.reg_rd_in(reg_rd_out_7), 
+				.ret_future_in(ret_future_out_7), 
+				.alu_result_in(alu_result_out_7), 
+				
+				.mem_read_data_out(mem_read_data_out_8), 
+				.reg_rd_out(reg_rd_out_8), 
+				.ret_future_out(ret_future_out_8), 
+				.alu_result_out(alu_result_out_8));
 	
 	//#9; stage 5 -- WriteBack Module Unit
 	WB_Unit WBU(		.clk(clk),
+				.mem_read_data_in(mem_read_data_out_8), 
+				.reg_rd_in(reg_rd_out_8), 
+				.ret_future_in(ret_future_out_8), 
+				.alu_result_in(alu_result_out_8), 
+
+				. 				//FIX THIS
 				);	
+
+//TODO: VERIFY THIS AGAINST ACTUAL MODULES
 
 endmodule
