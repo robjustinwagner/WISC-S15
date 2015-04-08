@@ -48,9 +48,9 @@ output logic       reg_to_mem;        // SW signal to Memory unit
 output logic       alu_src;           // ALU operand selection
 output logic [2:0] alu_op;            // ALU control unit input
 
-output logic      branch;            // PC Updater signal for branch   
-output logic      call;              // PC Updater signal for call 
-output logic      ret;               // PC Updater signal for ret 
+output logic	branch;            // PC Updater signal for branch   
+output logic	call;              // PC Updater signal for call 
+output logic	ret;               // PC Updater signal for ret 
 
 //REGFILE OUTPUT PARAMS
 output [15:0] read_data_1;       // Regfile Read_Bus_1

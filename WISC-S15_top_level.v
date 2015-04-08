@@ -103,9 +103,10 @@ end
 	//#1; stage 1 -- Instruction Fetch Module Unit
 	IF_Unit IFU(		.clk(clk), 
 				.rst(rst_g),
+				.hazard(), 			//FIX THIS
 				.PC_src(), 			//FIX THIS
 				.PC_branch(), 			//FIX THIS
-				.hazard(), 			//FIX THIS
+				
 
 				.PC_out(PC_out_1), 
 				.instruction(instruction_1));	
@@ -113,14 +114,14 @@ end
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
 				.hazard(), 			//FIX THIS
+				.instruction(instruction_1),
 				.PC_in(PC_out_1), 
-				.instruction(instruction_1), 
 
+                   		.cntrl_input(cntrl_input_2), 
                    		.branch_cond(branch_cond_2), 
 				.reg_rs(reg_rs_2), 
 				.reg_rt(reg_rt_2), 
 				.reg_rd(reg_rd_2),
-                   		.cntrl_input(cntrl_input_2), 
 				.arith_imm(arith_imm_2), 
 				.load_save_imm(load_save_imm_2), 
                    		.call(call_2), 
@@ -158,13 +159,13 @@ end
                			.load_save_imm_out(load_save_imm_out_3), 
 				.call_out(call_out_3), 
 				.branch_cond_out(branch_cond_out_3));
+
 /*
-module ID_Unit(clk, 
-	RegWrite, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, 
-		branch_cond_in, arith_imm_in, load_save_reg_in, load_save_imm_in, call_in, PC_in, 
-	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, 
-		branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, 
-		PC_out, sign_ext_out);
+module ID_Unit(clk, rst, 
+	 mem_to_reg, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
+		load_save_reg_in, load_save_imm_in, call_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
+	mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
+		load_save_reg_out, arith_imm_out, load_save_imm_out, call_out, PC_out, sign_ext_out, hazard);
 */
 
 	//#4; Instruction Decode/Execution intermediate register	

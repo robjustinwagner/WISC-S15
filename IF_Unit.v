@@ -7,11 +7,11 @@ module IF_Unit(clk, rst,
 //////////////////////////INPUTS/////////////////////////////
 
 input			clk;
-input    rst;
+input			rst;
 
-input			    hazard;        // Disable PC update for hazards
-input			    PC_src;        // Mux select for choosing PC source
-input	[15:0]	PC_branch;
+input			hazard;        // Disable PC update for hazards
+input			PC_src;        // Mux select for choosing PC source
+input		[15:0]	PC_branch;
 
 /////////////////////////END INPUTS///////////////////////////
 
