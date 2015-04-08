@@ -11,7 +11,7 @@ input        mem_to_reg_in;  // Memory Read to register
 input        reg_to_mem;     // Memory Write from register
 input [3:0]  reg_rd_in;      // Destination of Memory Read
 input [15:0] alu_result_in;  // Results of ALU operation
-input [15:0] mem_write_data; // Data for Memory Write
+input [15:0] mem_write_data; // Data for Memory Write      <-- PC during call
 
 //PIPE TO PIPE
 input        ret_future_in; // Future ret_wb signal
