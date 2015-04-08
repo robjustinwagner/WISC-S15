@@ -1,0 +1,12 @@
+LLB R1, 0x00
+	LHB R1, 0x02		# R1=0x0200
+	
+LLB R2, 0x01
+	LHB R2, 0x00		# R2=0x0001
+	
+LLB R3, 0x00
+	LHB R3, 0x00		# R3=0x0000
+Repeat: SUB R1, R1, R2
+	
+B   NEQ, Repeat
+	ADD R3, R3, R2		# R3=R3+0x0001

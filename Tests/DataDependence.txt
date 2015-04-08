@@ -1,0 +1,11 @@
+lhb R14, 0x00		#R14 <= 0x00xx
+llb R14, 0x00		#R14 <= 0x0000
+lhb R1, 0x00		#R1 <= 0x00xx
+llb R1, 0x06		#R1 <= 0x0006
+add R4, R1, R1 		#R4 <= 0x000C 					//Forwarding R1 from llb in EX_MEM
+sub R1, R1, R1 		#R1 <= 0x0000 					//Forwarding R1 from llb in MEM_WB
+add R2, R1, R4 		#R2 <= 0x000C 					//Forwarding R1 from sub in EX_MEM and R4 from add in MEM_WB
+sw R1, 0x01 		#mem[1] <= 0x0000 				//No forwarding needed
+lw R2, 0x01 		#R2 <= mem[1] == 0x0000 			//No forwarding needed
+sw R2, 0x07 		#mem[7] <= 0x0000				//No forwarding needed
+lw R3, 0x07		#R3 <= mem[7] == 0x0000				//No forwarding needed

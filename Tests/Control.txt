@@ -1,0 +1,29 @@
+##################################################
+# This test focuses more on control instructions #
+##################################################
+		LHB R15, 0x00
+		LLB R15, 0x0F		# R15=0x000F
+
+		LHB R1, 0x00
+		LLB R1, 0x05		# R1=0x00AA
+		B UNCOND, CONT		# branch to CONT1
+		SUB R0, R1, R1		# R0=0
+
+CONT: 		CALL FUNC		# call to function
+		LHB R4, 0x00
+		LLB R4, 0x57
+		SUB R0, R3, R4
+		B EQ, PASS
+		ADD R0, R0, R0
+
+FUNC:		LHB	R3, 0x00
+		LLB	R3, 0x57
+		RET			# return
+	
+FAIL:		LHB R2, 0xFF		# R2 will contain 0xFFxx
+		LLB R2, 0xFF		# R2 will contain 0xFFFF (indicates failure)		
+
+PASS:		LHB R1, 0xAA		# R1 will contain 0xAAAA (indicated pass)
+
+		
+
