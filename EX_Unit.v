@@ -11,9 +11,12 @@ module EX_Unit(clk,
 ////////////////////////////INPUTS/////////////////////////////////
 
 input		clk;
+
+//PIPE TO PIPE
 input  RegWrite_in;
 input		mem_to_reg_in;          // LW signal to Memory unit 
 input		reg_to_mem_in;          // SW signal to Memory unit
+input		ret_future_in;    // Future ret_wb signal
 
 //PC UPDATER 
 input	[2:0]	 branch_cond;      // Branch condition
@@ -23,9 +26,6 @@ input		      branch;
 input		      call_in;
 
 input	[15:0]	PC_in;            // PC for branch/call/ret
-
-//RETURN SIGNALS
-input		      ret_future_in;    // Future ret_wb signal
 
 input		      ret_wb;           // Return signal when SP is ready
 input	[15:0]	PC_stack_pointer; // SP value for PC update
@@ -51,8 +51,9 @@ input	[3:0]	reg_rd_in;         // Future Regfile dest
 output logic        RegWrite_out;
 output logic        mem_to_reg_out; // LW signal to Memory unit 
 output logic        reg_to_mem_out; // SW signal to Memory unit
-output logic        call_out;       // Signal to decrement SP
 output logic        ret_future_out; // Future ret_wb signal
+
+output logic        call_out;       // Signal to decrement SP
 output logic [3:0]  reg_rd_out;     // Future Regfile dest
 
 output logic        PC_update_done; // Complete branch/call/ret/ update
@@ -75,6 +76,7 @@ logic [2:0] updated_flags;
 
 logic  alu_op_2;
 
+//PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
 assign mem_to_reg_out = mem_to_reg_in;
 assign reg_to_mem_out = reg_to_mem_in;
@@ -105,11 +107,8 @@ end
 //REGISTER WRITE SELECT
 always_comb begin
     
-    if (call_in)
-       reg_rd_out = 4'b1111; // <-- Set future save reg as stack pointer
-    
-    else if (ret_future_in)
-       reg_rd_out = 4'b1111;
+    if (call_in | ret_future_in) // BAD STYLE, POSSIBLY FIX IF TIME
+       reg_rd_out = 4'b1111;     // <-- Set future save reg as stack pointer
     
     else
        reg_rd_out = reg_rd_in;

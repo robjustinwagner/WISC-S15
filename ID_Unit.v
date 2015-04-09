@@ -59,10 +59,11 @@ output [15:0] read_data_1;       // Regfile Read_Bus_1
 output [15:0] read_data_2;       // Regfile Read_Bus_2
 
 //PIPE TO PIPE
-output [2:0]  branch_cond_out;   // Branch condition
-output [3:0]  load_save_reg_out; // Future Regfile dest
 output [3:0]  arith_imm_out;     // Imm of Arithmetic Inst
 output [7:0]  load_save_imm_out; // Imm of Load/Save Inst
+
+output [2:0]  branch_cond_out;   // Branch condition
+output [3:0]  load_save_reg_out; // Future Regfile dest
 output [11:0] call_target_out;   // Call target
 output [15:0] PC_out;            // Program counter
 
@@ -81,7 +82,7 @@ logic RegWrite;                  /* Signal for writing register */
 
 logic WriteReg;                  /* Dest register of write data */
    
-logic WriteData;                 /* Data to write to dest register */
+logic [15:0] WriteData;          /* Data to write to dest register */
 
 logic DataReg;                   /* Control signal to Regfile to
                                     specifiy the contents of the 
@@ -115,11 +116,12 @@ logic        c_branch;
 logic        c_call;               
 logic        c_ret;  
 
-//ASSIGN PIPE TO PIPE WIRES              
+//PIPE TO PIPE   
+assign arith_imm_out     = arith_imm_in;  
+assign load_save_imm_out = load_save_imm_in; 
+        
 assign branch_cond_out   = branch_cond_in;
 assign load_save_reg_out = load_save_reg_in;
-assign arith_imm_out     = arith_imm_in;
-assign load_save_imm_out = load_save_imm_in;
 assign call_target_out   = call_target_in;
 assign PC_out            = PC_in;
 
