@@ -1,7 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
 module Control_Logic(opcode,
-	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel, reg_rt_src, RegWrite);
+	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel, reg_rt_src, RegWrite, half_spec);
 
 //INPUTS
 input 	[3:0] 		opcode;   	//4-bit instruction opcode
@@ -24,6 +24,7 @@ output  reg    		alu_src;        // ALU operand seleciton
 output 	reg		sign_ext_sel;   // sign extend select bit
 output	reg		reg_rt_src;	// Read_reg_2 proper SW select
 output	reg		RegWrite;
+output  reg		half_spec;	//0 is LHB, 1 is LLB
                
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -70,6 +71,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
            
            SUB : begin
@@ -84,6 +86,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
 
            NAND : begin
@@ -98,6 +101,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
            
            XOR : begin
@@ -112,6 +116,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
                              
            INC : begin
@@ -126,6 +131,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b1;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
            
            SRA : begin
@@ -140,6 +146,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
            
            SRL : begin
@@ -154,6 +161,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
            
            SLL : begin
@@ -168,6 +176,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
 
 	   LW :  begin
@@ -182,6 +191,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
 
 	   SW :  begin
@@ -196,6 +206,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b1;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
 
 	   LHB : begin
@@ -210,6 +221,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
 
 	   LLB : begin
@@ -224,6 +236,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b1;
 		 end
 
 	   B :   begin
@@ -238,6 +251,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 half_spec = 1'b0;
 		 end
 
 	   CALL : begin
@@ -252,6 +266,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b1;
+		 half_spec = 1'b0;
 		 end
 
 	   RET : begin
@@ -266,6 +281,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b1;
+		 half_spec = 1'b0;
 		 end
 
 	   ERR : begin end

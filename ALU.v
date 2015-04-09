@@ -1,13 +1,12 @@
 // Author: Graham Nygard, Robert Wagner
 
-module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flags);
+module ALU(data_one, data_two, shift, control, done, result, flags);
 
 //combinational logic --change asynck
 
    //INPUTS
    input signed [15:0] data_one, data_two;   //data in
    input unsigned [3:0] shift;	//SRA, SRL, SLL shift amount
-   input signed [7:0] load_half_imm; //LHB, LLB
    input [2:0] control;   //opcode control
    
    //OUTPUTS
@@ -98,7 +97,7 @@ module ALU(data_one, data_two, shift, load_half_imm, control, done, result, flag
 		 end
                              
            INC : begin
-		 {cout, result} = data_one + data_two;            //FIX THIS
+		 {cout, result} = data_one + data_two;
                  if(!(|result))
                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0

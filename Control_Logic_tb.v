@@ -23,6 +23,7 @@ wire	    		alu_src;        // ALU operand seleciton
 wire			sign_ext_sel;   // sign extend select bit
 wire			reg_rt_src;	// Read_reg_2 proper SW select
 wire			RegWrite;
+wire			half_spec;
 
 reg passed;
 
@@ -49,7 +50,7 @@ localparam   ERR   =   4'b1111;
 Control_Logic Control_Logic_DUT(.opcode(opcode),
 	.data_reg(data_reg), .call(call), .rtrn(rtrn), .branch(branch), .mem_to_reg(mem_to_reg), 
 	.reg_to_mem(reg_to_mem), .alu_op(alu_op), .alu_src(alu_src), .sign_ext_sel(sign_ext_sel), 
-	.reg_rt_src(reg_rt_src), .RegWrite(RegWrite));
+	.reg_rt_src(reg_rt_src), .RegWrite(RegWrite), .half_spec(half_spec));
                             
 initial begin
 
@@ -183,6 +184,18 @@ initial begin
 				passed = 1'b0;
 			end
 		end
+		//half_spec
+		if(opcode == LLB) begin
+			if(half_spec != 1'b1) begin
+				passed = 1'b0;
+			end
+		end
+		else begin
+			if(half_spec != 1'b0) begin
+				passed = 1'b0;
+			end
+		end
+
 
 		//update opcode
 		opcode = opcode + 1;	

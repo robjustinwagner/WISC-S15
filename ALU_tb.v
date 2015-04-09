@@ -16,8 +16,7 @@ wire [2:0] flags;
 reg passed;
 reg tmp;
 
-ALU ALU_DUT(.data_one(stim1), .data_two(stim2), .shift(shift_amt), 
-		.load_half_imm(load_half_imm), .control(control), 
+ALU ALU_DUT(.data_one(stim1), .data_two(stim2), .shift(shift_amt), .control(control), 
 	.done(done), .result(result), .flags(flags));
                             
 initial begin
