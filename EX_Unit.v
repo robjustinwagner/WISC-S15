@@ -17,6 +17,7 @@ input  RegWrite_in;
 input		mem_to_reg_in;          // LW signal to Memory unit 
 input		reg_to_mem_in;          // SW signal to Memory unit
 input		ret_future_in;    // Future ret_wb signal
+input	[3:0]	reg_rd_in;         // Future Regfile dest
 
 //PC UPDATER 
 input	[2:0]	 branch_cond;      // Branch condition
@@ -35,13 +36,14 @@ input		      alu_src;          // ALU operand 2 seleciton
 
 input	[2:0]	 alu_op;           // ALU operation
 input	[3:0]	 shift;            // ALU shift input
-input	[7:0]	 load_half_imm;    // ALU imm load input
 input	[15:0]	rd_data_1;        // ALU operand 1
 input	[15:0]	rd_data_2;        // ALU operand 2
 input	[15:0]	sign_ext;         // ALU operand 2
 
-//PIPELINE TO PIPELINE
-input	[3:0]	reg_rd_in;         // Future Regfile dest
+//LOAD HALF INSTRUCTIONS
+input        load_half;        // Specifies the ALU result
+input        half_spec;        // (0 -> LHB, 1 -> LLB)
+input	[7:0]	 load_half_imm;    // ALU imm load input
 
 ///////////////////////////////////////////////////////////////////
 
@@ -71,6 +73,8 @@ output logic [15:0] sw_data;        // Save Word data
 
 logic alu_done;
 
+logic [15:0] load_half_result;
+
 logic [2:0] set_flags;
 logic [2:0] updated_flags;
 
@@ -83,6 +87,11 @@ assign reg_to_mem_out = reg_to_mem_in;
 assign ret_future_out = ret_future_in;
 
 ///////////////////////////////////////////////////////////////////
+
+alyways_comb begin
+    
+    if (!half_spec)
+       load_half_result = {
 
 //ALU SOURCE SELECT
 always_comb begin
@@ -118,8 +127,7 @@ end
 /////////////////////MODULE INSTANTIATIONS/////////////////////////
 
 ALU       alu(.data_one(read_data_1), .data_two(alu_op_2),
-              .shift(shift), .load_half_imm(load_half_imm),
-              .control(alu_op), .result(alu_result),
+              .shift(shift), .control(alu_op), .result(alu_result),
               .flags(set_flags));		                           
 
 Flag_reg  flags(.clk(clk), .en(alu_done), .d(set_flags), .q(updated_flags));
