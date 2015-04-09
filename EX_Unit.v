@@ -14,10 +14,11 @@ input		clk;
 
 //PIPE TO PIPE
 input  RegWrite_in;
-input        MemWrite_in;
-input        MemRead_in;
+input  MemWrite_in;
+input  MemRead_in;
+
 input		mem_to_reg_in;          // LW signal to Memory unit 
-input		ret_future_in;    // Future ret_wb signal
+input		ret_future_in;          // Future ret_wb signal
 input	[3:0]	reg_rd_in;         // Future Regfile dest
 
 //PC UPDATER 
@@ -73,7 +74,7 @@ output logic [15:0] sw_data;        // Save Word data
 
 ////////////////////////INTERCONNECTS//////////////////////////////
 
-logic alu_done;
+logic        alu_done;
 logic [15:0] alu_out;
 
 logic [15:0] load_half_result;
@@ -87,12 +88,13 @@ logic  alu_op_2;
 assign RegWrite_out   = RegWrite_in;
 assign MemWrite_out   = MemWrite_in;
 assign MemRead_out    = MemRead_in;
+
 assign mem_to_reg_out = mem_to_reg_in;
 assign ret_future_out = ret_future_in;
 
 ///////////////////////////////////////////////////////////////////
 
-///////LOAD HALF INSTRUCTIONS///////
+////////LHB, LLB INSTRUCTIONS///////
 always_comb begin
     
     if (!half_spec)

@@ -33,9 +33,9 @@ logic alu_addr;
 
 //PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
-assign ret_future_out = ret_future_in;
 assign mem_to_reg_out = mem_to_reg_in;
 assign reg_rd_out     = reg_rd_in;
+assign ret_future_out = ret_future_in;
 
 //MUX for updating stack pointer with Call
 always_comb begin
