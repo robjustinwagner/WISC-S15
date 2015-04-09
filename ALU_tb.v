@@ -16,10 +16,11 @@ wire [2:0] flags;
 reg passed;
 reg tmp1;		//temporary variables
 reg tmp2;		//
+reg unsigned [4:0] i;	//
 reg [3:0] ctr;		//
 reg [15:0] stim_cache;	//
 
-ALU ALU_DUT(.data_one(stim1), .data_two(stim2), .shift(shift_amt), .control(control), 
+ALU ALU_DUT(.data_one(stim1), .data_two(stim2), .shift(shift), .control(control), 
 	.done(done), .result(result), .flags(flags));
                             
 initial begin
@@ -28,7 +29,7 @@ initial begin
 	
 	#20;
 	
-	/* Begin ADD  */
+	/* Begin ADD 
 	stim1 = -32768;
 	stim2 = -32768;
 	shift = 4'b0000;
@@ -38,14 +39,16 @@ initial begin
 	#5
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
-		while(stim2 <= 32694) begin
-			#5			
+		#5
+		while(stim2 <= 32694) begin		
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
 			//tmp2 --> cout[14] (for overflow)
 			tmp1 = 1'b0;
-			for(int i = 0; i < 16; i++) begin
-				if(i == 15) begin
+			i = 5'b00000;
+			while(i < 16) begin
+				#1
+				if(i == 5'b01111) begin
 					tmp2 = tmp1;
 				end
 				case({stim1[i], stim2[i], tmp1})
@@ -100,10 +103,7 @@ initial begin
 					end
 				
 				endcase
-			end
-			//check cout bit
-			if(ALU_DUT.cout != tmp1) begin
-				passed = 1'b0;
+			i = i + 1;
 			end
 			//test flags
 			#5
@@ -152,7 +152,7 @@ initial begin
 		$display("ENDING TEST PREMATURELY...");
 		$stop;
 	end
-	/* End ADD */
+	End ADD */
 
 	#20;
 	
@@ -166,14 +166,16 @@ initial begin
 	#5
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
-		while(stim2 <= 32694) begin
-			#5			
+		#5
+		while(stim2 <= 32694) begin		
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
 			//tmp2 --> cout[14] (for overflow)
 			tmp1 = 1'b0;
-			for(int i = 0; i < 16; i++) begin
-				if(i == 15) begin
+			i = 5'b00000;
+			while(i < 16) begin
+				#1
+				if(i == 5'b01111) begin
 					tmp2 = tmp1;
 				end
 				case({stim1[i], stim2[i], tmp1})
@@ -228,10 +230,7 @@ initial begin
 					end
 				
 				endcase
-			end
-			//check cout bit
-			if(ALU_DUT.cout != tmp1) begin
-				passed = 1'b0;
+			i = i + 1;
 			end
 			//test flags
 			#5
@@ -247,16 +246,43 @@ initial begin
 				end
 			end
 			//overflow
-			if((tmp1 ^ tmp2) == 1'b0) begin
-				if(flags[1] != 1'b0) begin
-					passed = 1'b0;
+			case({stim1[15], stim2[15]})
+			2'b00:	begin
+					if(flags[1] != 1'b0) begin
+						passed = 1'b0;
+					end
 				end
-			end
-			else begin
-				if(flags[1] != 1'b1) begin
-					passed = 1'b0;
+			2'b01: 	begin
+					if(result[15] == 1'b1) begin	//if overflow
+						if(flags[1] != 1'b1) begin	//flag must be set
+							passed = 1'b0;
+						end
+					end
+					else begin			//if not overflow
+						if(flags[1] != 1'b0) begin	//flag must be clear
+							passed = 1'b0;
+						end
+					end
+
 				end
-			end
+			2'b10:	begin
+					if(result[15] == 1'b0) begin	//if overflow
+						if(flags[1] != 1'b1) begin	//flag must be set
+							passed = 1'b0;
+						end
+					end
+					else begin
+						if(flags[1] != 1'b0) begin	//if not overflow
+							passed = 1'b0;		//flag must be clear
+						end
+					end
+				end
+			2'b11:	begin
+					if(flags[1] != 1'b0) begin
+						passed = 1'b0;
+					end
+				end
+		 	endcase
 			//sign
 			if(ALU_DUT.result[15] == 1'b0) begin
 				if(flags[0] != 1'b0) begin
@@ -358,14 +384,16 @@ initial begin
 	#5
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
-		while(stim2 <= 32694) begin
-			#5			
+		#1
+		while(stim2 <= 32694) begin		
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
 			//tmp2 --> cout[14] (for overflow)
 			tmp1 = 1'b0;
-			for(int i = 0; i < 16; i++) begin
-				if(i == 15) begin
+			i = 5'b00000;
+			while(i < 16) begin
+				#1
+				if(i == 5'b01111) begin
 					tmp2 = tmp1;
 				end
 				case({stim1[i], stim2[i], tmp1})
@@ -420,10 +448,7 @@ initial begin
 					end
 				
 				endcase
-			end
-			//check cout bit
-			if(ALU_DUT.cout != tmp1) begin
-				passed = 1'b0;
+			i = i + 1;
 			end
 			//test flags
 			#5
@@ -678,7 +703,7 @@ initial begin
 end
 
 always begin
-	#5 clk = ~clk;
+	#1 clk = ~clk;
 end
 
 endmodule
