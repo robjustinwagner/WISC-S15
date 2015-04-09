@@ -4,16 +4,17 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, rst, 
+module ID_Unit(clk, rst, PC_update,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
 		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
 	RegWrite_out, mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
-		load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, sign_ext_out, hazard,);
+		load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, sign_ext_out, hazard);
 
 /////////////////////////////INPUTS//////////////////////////////////
 
 input        clk;              // The global clock input
 input        rst;              // The reset signal from PC
+input        PC_update;        // Signal for unhaulting pipe
 
 //REGFILE INPUT PARAMS
 input        RegWrite_in;      // Regfile RegWrite when not reset
@@ -34,9 +35,9 @@ input [11:0] call_target_in;   // Inst[11:0]  - Call target
 input [15:0] PC_in;            // Program counter
 
 //HAZARD DETECTION REGISTERS
-input [3:0] ID_EX_reg_rd;  // Corresponds to IDEX_reg's reg_rd_out
-input [3:0] EX_MEM_reg_rd; // Corresponds to EXMEM_reg's reg_rd_out
-input [3:0] MEM_WB_reg_rd; // Corresponds to MEMWB_reg's reg_rd_out
+input [3:0] ID_EX_reg_rd;      // Corresponds to IDEX_reg's reg_rd_out
+input [3:0] EX_MEM_reg_rd;     // Corresponds to EXMEM_reg's reg_rd_out
+input [3:0] MEM_WB_reg_rd;     // Corresponds to MEMWB_reg's reg_rd_out
 
 ////////////////////////////END INPUTS///////////////////////////////
 
@@ -44,7 +45,7 @@ input [3:0] MEM_WB_reg_rd; // Corresponds to MEMWB_reg's reg_rd_out
 
 //CONTROL SIGNALS 
 output logic       RegWrite_out;   // Initial output from control
-output logic       mem_to_reg; // LW signal to Memory unit  
+output logic       mem_to_reg;     // LW signal to Memory unit  
 output logic       reg_to_mem;     // SW signal to Memory unit
 output logic       alu_src;        // ALU operand selection
 output logic [2:0] alu_op;         // ALU control unit input
@@ -142,10 +143,9 @@ Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in),
                        .sign_ext_out(sign_ext_out));
 
 HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith),
-                     .IF_ID_reg_rd(load_save_reg_in),
-                     .ID_EX_reg_rd(ID_EX_reg_rd), 
-                     .EX_MEM_reg_rd(EX_MEM_reg_rd),
-                     .MEM_WB_reg_rd(MEM_WB_reg_rd),
+                        .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
+                        .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd),
+                        .ret(c_ret), .call(c_call), .PC_update(PC_update),
                      .hazard(hazard));
 
 // Register rt selection
