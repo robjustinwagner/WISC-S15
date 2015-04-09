@@ -3,8 +3,8 @@
 module EX_Unit(clk, 
 	RegWrite_in, mem_to_reg_in, reg_to_mem_in, branch_cond, call_target,
 	   branch, call_in, PC_in, ret_future_in, ret_wb, PC_stack_pointer,
-	   alu_src, alu_op, shift, load_half_imm, rd_data_1, rd_data_2,
-	   sign_ext, reg_rd_in,
+	   alu_src, alu_op, shift, rd_data_1, rd_data_2, sign_ext, reg_rd_in,
+	   load_half, half_spec, load_half_imm, 
 	RegWrite_out, mem_to_reg_out, reg_to_mem_out, call_out, ret_future_out,
 	   reg_rd_out, PC_update_done, PC_src, alu_result, PC_update, sw_data);
 
@@ -72,6 +72,7 @@ output logic [15:0] sw_data;        // Save Word data
 ////////////////////////INTERCONNECTS//////////////////////////////
 
 logic alu_done;
+logic [15:0] alu_out;
 
 logic [15:0] load_half_result;
 
@@ -88,10 +89,25 @@ assign ret_future_out = ret_future_in;
 
 ///////////////////////////////////////////////////////////////////
 
-alyways_comb begin
+///////LOAD HALF INSTRUCTIONS///////
+always_comb begin
     
     if (!half_spec)
-       load_half_result = {
+       load_half_result = {load_half_imm, rd_data_2[7:0]};
+    else
+       load_half_result = {rd_data_2[15:8], load_half_imm};
+       
+end
+
+always_comb begin
+    
+    if (load_half)
+       alu_result = load_half_result;
+    else
+       alu_result = alu_out;
+       
+end
+/////////////////////////////////////
 
 //ALU SOURCE SELECT
 always_comb begin
@@ -127,7 +143,7 @@ end
 /////////////////////MODULE INSTANTIATIONS/////////////////////////
 
 ALU       alu(.data_one(read_data_1), .data_two(alu_op_2),
-              .shift(shift), .control(alu_op), .result(alu_result),
+              .shift(shift), .control(alu_op), .result(alu_out),
               .flags(set_flags));		                           
 
 Flag_reg  flags(.clk(clk), .en(alu_done), .d(set_flags), .q(updated_flags));
