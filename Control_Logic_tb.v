@@ -133,7 +133,7 @@ initial begin
 			end
 		end
 		//alu_op
-		if(opcode == CALL || opcode == RET) begin
+		if(opcode == CALL || opcode == RET || opcode == SW) begin
 			if(alu_op != ADD[2:0]) begin
 				passed = 1'b0;
 			end

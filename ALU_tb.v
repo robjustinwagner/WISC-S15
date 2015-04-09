@@ -36,8 +36,9 @@ initial begin
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
-		while(stim2 <= 32767) begin
+	while(stim1 <= 32694) begin
+		stim2 = -32768;
+		while(stim2 <= 32694) begin
 			#5			
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
@@ -118,6 +119,31 @@ initial begin
 				end
 			end
 			//overflow
+			case({stim1[15], stim2[15]})
+			2'b00:	begin
+					if(ALU_DUT.result[15] == 1'b1) begin
+						if(flags[1] != 1'b1) passed = 1'b0;
+					end
+					else begin
+						if(flags[1] != 1'b0) passed = 1'b0;
+					end
+				end
+			2'b01: 	begin
+					if(flags[1] != 1'b0) passed = 1'b0;
+				end
+			2'b10:	begin
+					if(flags[1] != 1'b0) passed = 1'b0;
+				end
+			2'b11:	begin
+					if(ALU_DUT.result[15] == 1'b0) begin
+						if(flags[1] != 1'b1) passed = 1'b0;
+					end
+					else begin
+						if(flags[1] != 1'b0) passed = 1'b0;
+					end
+				end
+			endcase
+			/*
 			if((tmp1 ^ tmp2) == 1'b0) begin
 				if(flags[1] != 1'b0) begin
 					passed = 1'b0;
@@ -128,8 +154,9 @@ initial begin
 					passed = 1'b0;
 				end
 			end
+			*/
 			//sign
-			if(tmp1 == 1'b0) begin
+			if(ALU_DUT.result[15] == 1'b0) begin
 				if(flags[0] != 1'b0) begin
 					passed = 1'b0;
 				end
@@ -139,9 +166,9 @@ initial begin
 					passed = 1'b0;
 				end
 			end
-			stim2 = stim2 + 1;
+			stim2 = stim2 + 73;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("ADD TEST PASSED.");
@@ -163,8 +190,9 @@ initial begin
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
-		while(stim2 <= 32767) begin
+	while(stim1 <= 32694) begin
+		stim2 = -32768;
+		while(stim2 <= 32694) begin
 			#5			
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
@@ -245,6 +273,31 @@ initial begin
 				end
 			end
 			//overflow
+			case({stim1[15], stim2[15]})
+			2'b00:	begin
+					if(ALU_DUT.result[15] == 1'b1) begin
+						if(flags[1] != 1'b1) passed = 1'b0;
+					end
+					else begin
+						if(flags[1] != 1'b0) passed = 1'b0;
+					end
+				end
+			2'b01: 	begin
+					if(flags[1] != 1'b0) passed = 1'b0;
+				end
+			2'b10:	begin
+					if(flags[1] != 1'b0) passed = 1'b0;
+				end
+			2'b11:	begin
+					if(ALU_DUT.result[15] == 1'b0) begin
+						if(flags[1] != 1'b1) passed = 1'b0;
+					end
+					else begin
+						if(flags[1] != 1'b0) passed = 1'b0;
+					end
+				end
+			endcase
+			/*
 			if((tmp1 ^ tmp2) == 1'b0) begin
 				if(flags[1] != 1'b0) begin
 					passed = 1'b0;
@@ -255,8 +308,9 @@ initial begin
 					passed = 1'b0;
 				end
 			end
+			*/
 			//sign
-			if(tmp1 == 1'b0) begin
+			if(ALU_DUT.result[15] == 1'b0) begin
 				if(flags[0] != 1'b0) begin
 					passed = 1'b0;
 				end
@@ -266,9 +320,9 @@ initial begin
 					passed = 1'b0;
 				end
 			end
-			stim2 = stim2 + 1;
+			stim2 = stim2 + 73;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("SUB TEST PASSED.");
@@ -290,8 +344,9 @@ initial begin
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
-		while(stim2 <= 32767) begin
+	while(stim1 <= 32694) begin
+		stim2 = -32768;
+		while(stim2 <= 32694) begin
 			#5 
 			//test that each bit is correct
 			for(int i = 0; i < 16; i++) begin
@@ -329,9 +384,9 @@ initial begin
 			if(flags[1] != 1'b0 || flags[0] != 1'b0) begin
 				passed = 1'b0;
 			end
-			stim2 = stim2 + 1;
+			stim2 = stim2 + 73;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("NAND TEST PASSED.");
@@ -346,15 +401,16 @@ initial begin
 	#20;
 
 	/* Begin INC */
-		stim1 = -32768;
+	stim1 = -32768;
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
-		while(stim2 <= 32767) begin
+	while(stim1 <= 32694) begin
+		stim2 = -32768;
+		while(stim2 <= 32694) begin
 			#5			
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
@@ -435,6 +491,31 @@ initial begin
 				end
 			end
 			//overflow
+			case({stim1[15], stim2[15]})
+			2'b00:	begin
+					if(ALU_DUT.result[15] == 1'b1) begin
+						if(flags[1] != 1'b1) passed = 1'b0;
+					end
+					else begin
+						if(flags[1] != 1'b0) passed = 1'b0;
+					end
+				end
+			2'b01: 	begin
+					if(flags[1] != 1'b0) passed = 1'b0;
+				end
+			2'b10:	begin
+					if(flags[1] != 1'b0) passed = 1'b0;
+				end
+			2'b11:	begin
+					if(ALU_DUT.result[15] == 1'b0) begin
+						if(flags[1] != 1'b1) passed = 1'b0;
+					end
+					else begin
+						if(flags[1] != 1'b0) passed = 1'b0;
+					end
+				end
+			endcase
+			/*
 			if((tmp1 ^ tmp2) == 1'b0) begin
 				if(flags[1] != 1'b0) begin
 					passed = 1'b0;
@@ -445,8 +526,9 @@ initial begin
 					passed = 1'b0;
 				end
 			end
+			*/
 			//sign
-			if(tmp1 == 1'b0) begin
+			if(ALU_DUT.result[15] == 1'b0) begin
 				if(flags[0] != 1'b0) begin
 					passed = 1'b0;
 				end
@@ -456,9 +538,9 @@ initial begin
 					passed = 1'b0;
 				end
 			end
-			stim2 = stim2 + 1;
+			stim2 = stim2 + 73;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("INC TEST PASSED.");
@@ -480,8 +562,9 @@ initial begin
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
-		while(stim2 <= 32767) begin
+	while(stim1 <= 32694) begin
+		stim2 = -32768;
+		while(stim2 <= 32694) begin
 			#5 
 			//test that each bit is correct
 			for(int i = 0; i < 16; i++) begin
@@ -519,9 +602,9 @@ initial begin
 			if(flags[1] != 1'b0 || flags[0] != 1'b0) begin
 				passed = 1'b0;
 			end
-			stim2 = stim2 + 1;
+			stim2 = stim2 + 73;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("XOR TEST PASSED.");
@@ -543,7 +626,7 @@ initial begin
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
+	while(stim1 <= 32694) begin
 		ctr = 4'b0000;
 		shift = 4'b0000;
 		stim_cache = stim1;
@@ -566,7 +649,7 @@ initial begin
 			shift = shift + 1;
 			ctr = ctr + 1;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("SRA TEST PASSED.");
@@ -588,7 +671,7 @@ initial begin
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
+	while(stim1 <= 32694) begin
 		ctr = 4'b0000;
 		shift = 4'b0000;
 		stim_cache = stim1;
@@ -611,7 +694,7 @@ initial begin
 			shift = shift + 1;
 			ctr = ctr + 1;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("SRL TEST PASSED.");
@@ -623,6 +706,8 @@ initial begin
 	end
 	/* End SRL */
 
+	#20;
+
 	/* Begin SLL  */
 	stim1 = -32768;
 	stim2 = -32768;
@@ -631,7 +716,7 @@ initial begin
 	control = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(stim1 <= 32767) begin
+	while(stim1 <= 32694) begin
 		ctr = 4'b0000;
 		shift = 4'b0000;
 		stim_cache = stim1;
@@ -654,7 +739,7 @@ initial begin
 			shift = shift + 1;
 			ctr = ctr + 1;
 		end
-		stim1 = stim1 + 1;
+		stim1 = stim1 + 73;
 	end
 	if (passed) begin 
 		$display("SLL TEST PASSED.");
