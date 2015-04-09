@@ -7,8 +7,9 @@
 module ID_Unit(clk, rst, PC_update,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
 		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
-	RegWrite_out, mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, read_data_1, read_data_2, branch_cond_out, 
-		load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, sign_ext_out, hazard);
+	RegWrite_out, mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
+		read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, 
+		sign_ext_out, hazard);
 
 /////////////////////////////INPUTS//////////////////////////////////
 
@@ -53,6 +54,9 @@ output logic [2:0] alu_op;         // ALU control unit input
 output logic	branch;             // PC Updater signal for branch   
 output logic	call;               // PC Updater signal for call 
 output logic	ret;                // PC Updater signal for ret 
+
+output	logic	load_half;	    // Specifies the ALU result
+output	logic	half_spec;	    // (0 -> LHB, 1 -> LLB)
 
 //REGFILE OUTPUT PARAMS
 output [15:0] read_data_1;       // Regfile Read_Bus_1
@@ -116,6 +120,7 @@ logic        c_branch;
 logic        c_call;               
 logic        c_ret;  
 
+
 //PIPE TO PIPE   
 assign arith_imm_out     = arith_imm_in;  
 assign load_save_imm_out = load_save_imm_in; 
@@ -137,7 +142,7 @@ Control_Logic control(.opcode(cntrl_opcode),
 		                .data_reg(DataReg), .call(c_call), .rtrn(c_ret), .branch(c_branch), 
 				.mem_to_reg(c_mem_to_reg), .reg_to_mem(c_reg_to_mem), .alu_op(c_alu_op), 
 				.alu_src(c_alu_src), .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), 
-				.RegWrite(RegWrite), .half_spec(half_spec));
+				.RegWrite(RegWrite), .load_half(load_half), .half_spec(half_spec));
                       
 Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in), 
                        .load_save_imm(load_save_imm_in),

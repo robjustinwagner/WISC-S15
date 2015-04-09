@@ -2,7 +2,7 @@
 
 module Control_Logic(opcode,
 	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, 
-		sign_ext_sel, reg_rt_src, RegWrite, half_spec);
+		sign_ext_sel, reg_rt_src, RegWrite, load_half, half_spec);
 
 //INPUTS
 input 	[3:0] 		opcode;   	//4-bit instruction opcode
@@ -25,7 +25,8 @@ output  reg    		alu_src;        // ALU operand seleciton
 output 	reg		sign_ext_sel;   // sign extend select bit
 output	reg		reg_rt_src;	// Read_reg_2 proper SW select
 output	reg		RegWrite;
-output  reg		half_spec;	//0 is LHB, 1 is LLB
+output	reg		load_half;	// Specifies the ALU result
+output  reg		half_spec;	// (0 -> LHB, 1 -> LLB)
                
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -72,6 +73,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
            
@@ -87,6 +89,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
 
@@ -102,6 +105,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
            
@@ -117,6 +121,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
                              
@@ -132,6 +137,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b1;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
            
@@ -147,6 +153,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
            
@@ -162,6 +169,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
            
@@ -177,6 +185,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
 
@@ -192,6 +201,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
 
@@ -207,6 +217,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b1;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
 
@@ -222,6 +233,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b1;
 		 RegWrite = 1'b1;
+		 load_half = 1'b1;
 		 half_spec = 1'b0;
 		 end
 
@@ -237,6 +249,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b1;
 		 RegWrite = 1'b1;
+		 load_half = 1'b1;
 		 half_spec = 1'b1;
 		 end
 
@@ -252,6 +265,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b0;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
 
@@ -267,6 +281,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b1;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
 
@@ -282,6 +297,7 @@ localparam   TR    =   3'b111;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
 		 RegWrite = 1'b1;
+		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end
 

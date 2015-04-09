@@ -31,6 +31,8 @@ logic [2:0]  alu_op_3;            // ALU control unit input
 logic        branch_3;            // PC Updater signal for branch   
 logic        call_3;              // PC Updater signal for call 
 logic        ret_3;               // PC Updater signal for ret 
+logic	     load_half_out_3;	  // Specifies the ALU result
+logic	     half_spec_out_3;	  // (0 -> LHB, 1 -> LLB)
 logic [15:0] read_data_1_3;       // Regfile Read_Bus_1
 logic [15:0] read_data_2_3;       // Regfile Read_Bus_2
 logic [2:0]  branch_cond_out_3;   // Branch condition
@@ -59,6 +61,8 @@ logic [15:0] rd_data_2_out_4;     // ALU operand 2
 logic [15:0] sign_ext_out_4;   	  // ALU operand 2
 logic [3:0]  reg_rd_out_4;        // Future Regfile dest
 logic [15:0] PC_out_4;            // PC for branch/call/ret
+logic	     load_half_out_4;	  // Specifies the ALU result
+logic	     half_spec_out_4;	  // (0 -> LHB, 1 -> LLB)
 //#5; EX_Unit --> EXMEM_reg
 logic	     call_out_5;
 logic	     RegWrite_out_5;
@@ -168,6 +172,8 @@ end
 				.branch(branch_3), 
 				.call(call_3), 
 				.ret(ret_3), 
+				.load_half(load_half_out_3), 
+				.half_spec(half_spec_out_3), 
 				.read_data_1(read_data_1_3),
                			.read_data_2(read_data_2_3), 
 				.branch_cond_out(branch_cond_out_3), 
@@ -198,6 +204,8 @@ end
 				.sign_ext_in(sign_ext_out_3), 
 				.reg_rd_in(reg_rd_out_3), 
 				.PC_in(PC_out_3), 
+				.load_half_in(load_half_out_3), 
+				.half_spec_in(half_spec_out_3), 
 
 				.RegWrite_out(RegWrite_out_4), 
 				.mem_to_reg_out(mem_to_reg_out_4), 
@@ -215,7 +223,9 @@ end
 				.rd_data_2_out(rd_data_2_out_4), 
 				.sign_ext_out(sign_ext_out_4), 
 				.reg_rd_out(reg_rd_out_4), 
-				.PC_out(PC_out_4));
+				.PC_out(PC_out_4), 
+				.load_half_out(load_half_out_4), 
+				.half_spec_out(half_spec_out_4));
 
 	//#5; stage 3 -- Execution Module Unit	
 	EX_Unit EXU(		.clk(clk), 
@@ -233,11 +243,13 @@ end
 				.alu_src(alu_src_out_4), 
 				.alu_op(alu_op_out_4), 
 				.shift(shift_out_4), 
-				.load_half_imm(load_half_imm_out_4), 
                			.rd_data_1(rd_data_1_out_4), 
 				.rd_data_2(rd_data_2_out_4), 
 				.sign_ext(sign_ext_out_4), 
 				.reg_rd_in(reg_rd_out_4), 
+				.load_half(load_half_out_4), 
+				.half_spec(half_spec_out_4), 
+				.load_half_imm(load_half_imm_out_4), 
 
 				.call_out(call_out_5), 
 				.RegWrite_out(RegWrite_out_5), 
@@ -303,7 +315,7 @@ end
 				.mem_to_reg_out(mem_to_reg_out_8), 
 				.reg_rd_out(reg_rd_out_8), 
 				.mem_read_data_out(mem_read_data_out_8), 
-				.alu_result_out(alu_result_out_8);
+				.alu_result_out(alu_result_out_8));
 	
 	//#9; stage 5 -- WriteBack Module Unit
 	WB_Unit WBU(		.clk(clk), 
