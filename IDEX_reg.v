@@ -1,16 +1,18 @@
 // Author: Graham Nygard, Robert Wagner
 
 module IDEX_reg(clk, 
-	RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, branch_cond_in, call_target_in, branch_in, call_in, ret_in, 
+	PC_hazard_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, branch_cond_in, call_target_in, branch_in, call_in, ret_in, 
 		alu_src_in, alu_op_in, shift_in, load_half_imm_in, rd_data_1_in, rd_data_2_in, 
 		sign_ext_in, reg_rd_in, PC_in, load_half_in, half_spec_in, 
-	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg_out, branch_cond_out, call_target_out, branch_out, call_out, ret_out, 
+	PC_hazard_out, RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg_out, branch_cond_out, call_target_out, branch_out, call_out, ret_out, 
 		alu_src_out, alu_op_out, shift_out, load_half_imm_out, rd_data_1_out, rd_data_2_out, 
 		sign_ext_out, reg_rd_out, PC_out, load_half_out, half_spec_out);
 
 //////////////////////////INPUTS/////////////////////////////
 
 input			clk;
+
+input        PC_hazard_in;                // Loop back for call/ret pipe haulting
 
 input        RegWrite_in;   
 input        MemWrite_in;
@@ -45,6 +47,8 @@ input			    half_spec_in;	  // (0 -> LHB, 1 -> LLB)
 /////////////////////////END INPUTS///////////////////////////
 
 //////////////////////////OUTPUTS/////////////////////////////
+
+output logic        PC_hazard_out;
 
 output logic        RegWrite_out;
 output logic        MemWrite_out;

@@ -4,18 +4,19 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, rst, PC_update,
+module ID_Unit(clk, rst, PC_update, PC_hazard_in,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
-		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
+		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
 		read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, 
-		sign_ext_out, hazard);
+		sign_ext_out, data_hazard, PC_hazard_out);
 
 /////////////////////////////INPUTS//////////////////////////////////
 
 input        clk;              // The global clock input
 input        rst;              // The reset signal from PC
 input        PC_update;        // Signal for unhaulting pipe
+input        PC_hazard_in;
 
 //REGFILE INPUT PARAMS
 input        RegWrite_in;      // Regfile RegWrite when not reset
@@ -76,7 +77,8 @@ output [15:0] PC_out;            // Program counter
 output logic [15:0] sign_ext_out;      // Output of sign extension unit
 
 //HAZARD SIGNALING FOR PIPE STALL
-output hazard;
+output logic data_hazard;
+output logic PC_hazard_out;
 
 /////////////////////////END OUTPUTS/////////////////////////////////
 
@@ -151,7 +153,7 @@ HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith),
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
                         .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd),
                         .ret(c_ret), .call(c_call), .PC_update(PC_update),
-                     .hazard(hazard));
+                     .data_hazard(data_hazard), .PC_hazard(PC_hazard_out));
 
 // Register rt selection
 always_comb begin
@@ -182,7 +184,7 @@ end
 // Hazard Detection MUX
 always_comb begin
     
-    if (hazard) begin
+    if (data_hazard | PC_hazard_in) begin
         mem_to_reg     = 1'b0;    
         RegWrite_out   = 1'b0; 
         MemWrite_out   = 1'b0;

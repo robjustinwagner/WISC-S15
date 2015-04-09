@@ -43,7 +43,8 @@ logic [7:0]  load_save_imm_out_3; // Imm of Load/Save Inst
 logic [11:0] call_target_out_3;   // Call target
 logic [15:0] PC_out_3;            // Program counter
 logic [15:0] sign_ext_out_3;      // Output of sign extension unit
-logic	     hazard_3;		  // Hazard signaling for pipe stall
+logic	     data_hazard_3;		  // Hazard signaling for pipe stall
+logic      PC_hazard_3;
 //#4; IDEX_reg --> EX_Unit
 logic        RegWrite_out_4;
 logic        MemWrite_out_4;      // SW signal to Memory unit
@@ -65,6 +66,7 @@ logic [3:0]  reg_rd_out_4;        // Future Regfile dest
 logic [15:0] PC_out_4;            // PC for branch/call/ret
 logic	     load_half_out_4;	  // Specifies the ALU result
 logic	     half_spec_out_4;	  // (0 -> LHB, 1 -> LLB)
+logic      PC_hazard_4;
 //#5; EX_Unit --> EXMEM_reg
 logic	     call_out_5;
 logic	     RegWrite_out_5;
@@ -125,7 +127,7 @@ end
 	//#1; stage 1 -- Instruction Fetch Module Unit
 	IF_Unit IFU(		.clk(clk), 
 				.rst(rst_g),
-				.hazard(hazard_3),
+				.hazard(data_hazard_3),
 				.PC_src(PC_src_5), 
 				.PC_branch(PC_update_5), 
 				
@@ -134,7 +136,7 @@ end
 
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
-				.hazard(hazard_3), 
+				.hazard(data_hazard_3), 
 				.instruction(instruction_1),
 				.PC_in(PC_out_1), 
 
@@ -151,7 +153,8 @@ end
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
 				.rst(rst_g), 
-				.PC_update(PC_update_done_5), 
+				.PC_update(PC_update_done_5),
+				.PC_hazard_in(PC_hazard_4),
 				.RegWrite_in(RegWrite_out_8), 
 				.reg_rs(reg_rs_2), 
 				.reg_rt_arith(reg_rt_2), 
@@ -188,7 +191,8 @@ end
 				.call_target_out(call_target_out_3), 
 				.PC_out(PC_out_3), 
 				.sign_ext_out(sign_ext_out_3),
-				.hazard(hazard_3));
+				.data_hazard(data_hazard_3),
+				.PC_hazard_out(PC_hazard_3));
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
@@ -212,7 +216,9 @@ end
 				.PC_in(PC_out_3), 
 				.load_half_in(load_half_out_3), 
 				.half_spec_in(half_spec_out_3), 
+				.PC_hazard_in(PC_hazard_3),
 
+            .PC_hazard_out(PC_hazard_4),
 				.RegWrite_out(RegWrite_out_4),
 				.MemWrite_out(MemWrite_out_4),
             .MemRead_out(MemRead_out_4),      
