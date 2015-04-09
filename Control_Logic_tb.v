@@ -155,7 +155,7 @@ initial begin
 			end
 		end
 		//sign_ext_sel
-		if(opcode == INC) begin
+		if(opcode == INC || opcode == LW || opcode == SW || opcode == B) begin
 			if(sign_ext_sel != 1'b1) begin
 				passed = 1'b0;
 			end
