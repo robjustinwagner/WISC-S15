@@ -163,7 +163,7 @@ initial begin
 			end
 		end
 		//reg_rt_src
-		if(opcode == SW) begin
+		if(opcode == LHB || opcode == LLB || opcode == SW) begin
 			if(reg_rt_src != 1'b1) begin
 				passed = 1'b0;
 			end
@@ -174,7 +174,7 @@ initial begin
 			end
 		end
 		//RegWrite
-		if(opcode == CALL || opcode == RET) begin
+		if(opcode == LHB || opcode == LLB || opcode == CALL || opcode == RET) begin
 			if(RegWrite != 1'b1) begin
 				passed = 1'b0;
 			end

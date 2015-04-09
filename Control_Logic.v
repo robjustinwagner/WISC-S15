@@ -1,7 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
 module Control_Logic(opcode,
-	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, sign_ext_sel, reg_rt_src, RegWrite, half_spec);
+	data_reg, call, rtrn, branch, mem_to_reg, reg_to_mem, alu_op, alu_src, 
+		sign_ext_sel, reg_rt_src, RegWrite, half_spec);
 
 //INPUTS
 input 	[3:0] 		opcode;   	//4-bit instruction opcode
@@ -219,8 +220,8 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
-		 reg_rt_src = 1'b0;
-		 RegWrite = 1'b0;
+		 reg_rt_src = 1'b1;
+		 RegWrite = 1'b1;
 		 half_spec = 1'b0;
 		 end
 
@@ -234,8 +235,8 @@ localparam   TR    =   3'b111;
 		 alu_op = opcode[2:0];
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
-		 reg_rt_src = 1'b0;
-		 RegWrite = 1'b0;
+		 reg_rt_src = 1'b1;
+		 RegWrite = 1'b1;
 		 half_spec = 1'b1;
 		 end
 

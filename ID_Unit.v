@@ -134,10 +134,10 @@ Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        .Read_Bus_2(read_data_2), .Write_Bus(WriteData));
 
 Control_Logic control(.opcode(cntrl_opcode),
-		                .data_reg(DataReg), .stack_reg(StackReg), .call(c_call),
-		                .rtrn(c_ret), .branch(c_branch), .mem_to_reg(c_mem_to_reg),
-		                .reg_to_mem(c_reg_to_mem), .alu_op(c_alu_op), .alu_src(c_alu_src),
-		                .sign_ext_sel(sign_ext_sel));
+		                .data_reg(DataReg), .call(c_call), .rtrn(c_ret), .branch(c_branch), 
+				.mem_to_reg(c_mem_to_reg), .reg_to_mem(c_reg_to_mem), .alu_op(c_alu_op), 
+				.alu_src(c_alu_src), .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), 
+				.RegWrite(RegWrite), .half_spec(half_spec));
                       
 Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in), 
                        .load_save_imm(load_save_imm_in),
