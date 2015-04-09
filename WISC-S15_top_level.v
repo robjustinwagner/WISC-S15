@@ -119,7 +119,7 @@ end
 				.rst(rst_g),
 				.hazard(hazard_3),
 				.PC_src(PC_src_5), 
-				.PC_branch(), 			//FIX THIS
+				.PC_branch(), 
 				
 				.PC_out(PC_out_1), 
 				.instruction(instruction_1));	

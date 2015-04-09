@@ -22,6 +22,7 @@ wire	 [2:0] 		alu_op;         // ALU control unit input
 wire	    		alu_src;        // ALU operand seleciton
 wire			sign_ext_sel;   // sign extend select bit
 wire			reg_rt_src;	// Read_reg_2 proper SW select
+wire			RegWrite;
 
 reg passed;
 
@@ -48,7 +49,7 @@ localparam   ERR   =   4'b1111;
 Control_Logic Control_Logic_DUT(.opcode(opcode),
 	.data_reg(data_reg), .call(call), .rtrn(rtrn), .branch(branch), .mem_to_reg(mem_to_reg), 
 	.reg_to_mem(reg_to_mem), .alu_op(alu_op), .alu_src(alu_src), .sign_ext_sel(sign_ext_sel), 
-	.reg_rt_src(reg_rt_src));
+	.reg_rt_src(reg_rt_src), .RegWrite(RegWrite));
                             
 initial begin
 
@@ -59,7 +60,7 @@ initial begin
 	opcode = 4'b0000;
 	passed = 1'b1;
 	#5
-	while(opcode < 16) begin
+	while(opcode < 15) begin
 		#5
 		//data_reg
 		if(opcode == LW || opcode == SW) begin
@@ -117,7 +118,7 @@ initial begin
 			end
 		end
 		//reg_to_mem
-		if(opcode == SW) begin
+		if(opcode == SW || opcode == CALL) begin
 			if(reg_to_mem != 1'b1) begin
 				passed = 1'b0;
 			end
@@ -128,8 +129,15 @@ initial begin
 			end
 		end
 		//alu_op
-		if(alu_op != opcode[2:0]) begin
-			passed = 1'b0;
+		if(opcode == CALL || opcode == RET) begin
+			if(alu_op != ADD[2:0]) begin
+				passed = 1'b0;
+			end
+		end
+		else begin
+			if(alu_op != opcode[2:0]) begin
+				passed = 1'b0;
+			end
 		end
 		//alu_src
 		if(opcode == LW || opcode == SW || opcode == INC) begin
@@ -161,6 +169,17 @@ initial begin
 		end
 		else begin
 			if(reg_rt_src != 1'b0) begin
+				passed = 1'b0;
+			end
+		end
+		//RegWrite
+		if(opcode == CALL || opcode == RET) begin
+			if(RegWrite != 1'b1) begin
+				passed = 1'b0;
+			end
+		end
+		else begin
+			if(RegWrite != 1'b0) begin
 				passed = 1'b0;
 			end
 		end
