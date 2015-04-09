@@ -118,7 +118,7 @@ end
 	IF_Unit IFU(		.clk(clk), 
 				.rst(rst_g),
 				.hazard(hazard_3),
-				.PC_src(), 			//FIX THIS
+				.PC_src(PC_src_5), 
 				.PC_branch(), 			//FIX THIS
 				
 				.PC_out(PC_out_1), 
