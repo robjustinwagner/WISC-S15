@@ -249,7 +249,7 @@ end
 				.branch_cond(branch_cond_out_4), 
 				.call_target(call_target_out_4), 
 				.branch(branch_out_4), 
-				.call_in(call_out_4),
+				.call(call_out_4),
 				.PC_in(PC_out_4), 
 				.ret_future_in(ret_out_4), 
 				.ret_wb(ret_out_8), 
@@ -336,7 +336,7 @@ end
 				.alu_result_out(alu_result_out_8));
 	
 	//#9; stage 5 -- WriteBack Module Unit
-	WB_Unit WBU(
+	WB_Unit WBU(		.clk(clk), 
 				.mem_read_data(mem_read_data_out_8),
 				.alu_result(alu_result_out_8),  
 				.mem_to_reg(mem_to_reg_out_8), 

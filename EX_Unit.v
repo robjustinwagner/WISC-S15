@@ -158,7 +158,7 @@ PC_Update pc_update(.PC_in(PC_in), .PC_stack_pointer(PC_stack_pointer), .alu_don
                     .branch_cond(branch_cond), .branch(branch), .call(call_in), .ret(ret),
                     .PC_update(PC_update), .PC_src(PC_src), .update_done(PC_update_done));
  
-//Forwarding_Unit FU(); //FIX THIS
+Forwarding_Unit FU(); //FIX THIS
 
 ///////////////////////////////////////////////////////////////////
 
