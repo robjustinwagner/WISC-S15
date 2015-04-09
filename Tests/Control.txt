@@ -4,6 +4,7 @@
 		LHB R15, 0x00
 		LLB R15, 0x0F		# R15=0x000F
 
+		
 		LHB R1, 0x00
 		LLB R1, 0x05		# R1=0x00AA
 		B UNCOND, CONT		# branch to CONT1
@@ -11,12 +12,17 @@
 
 CONT: 		CALL FUNC		# call to function
 		LHB R4, 0x00
+		
 		LLB R4, 0x57
 		SUB R0, R3, R4
 		B EQ, PASS
+		
 		ADD R0, R0, R0
 
+
+
 FUNC:		LHB	R3, 0x00
+		
 		LLB	R3, 0x57
 		RET			# return
 	

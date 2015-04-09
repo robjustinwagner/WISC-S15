@@ -189,21 +189,16 @@ initial begin
   
   #50;
   
-  reg_rd_wb = 4'b0011;
-  reg_rd_data = 16'h3321;
-  
-  #50;
-  
   RegWrite_in = 0;
   
   /**************************NAND TEST**************************/
   
-  instruction = 16'b0010_0000_0001_0011;
+  instruction = 16'b0010_0000_0001_0001;
   
   repeat(50)@(posedge clk);
  
   if( (read_data_1 != 16'h0FFF) ||
-      (read_data_2 != 16'h3321) ||
+      (read_data_2 != 16'h0FFF) ||
       (mem_to_reg != 0)         ||
       (RegWrite_out != 1)       ||
       (MemWrite_out != 0)       ||

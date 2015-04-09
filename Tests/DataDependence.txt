@@ -1,6 +1,9 @@
 lhb R14, 0x00		#R14 <= 0x00xx
+
 llb R14, 0x00		#R14 <= 0x0000
+
 lhb R1, 0x00		#R1 <= 0x00xx
+
 llb R1, 0x06		#R1 <= 0x0006
 add R4, R1, R1 		#R4 <= 0x000C 					//Forwarding R1 from llb in EX_MEM
 sub R1, R1, R1 		#R1 <= 0x0000 					//Forwarding R1 from llb in MEM_WB
