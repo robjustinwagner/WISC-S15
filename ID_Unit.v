@@ -168,7 +168,7 @@ always_comb begin
         mem_to_reg     = 1'b0;    
         reg_to_mem     = 1'b0; 
         alu_src        = 1'b0;  
-        alu_op         = 3'b000; 
+        alu_op         = 3'b111; 
         branch         = 1'b0;    
         call           = 1'b0;   
         ret            = 1'b0; 
