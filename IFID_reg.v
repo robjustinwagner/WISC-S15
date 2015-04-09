@@ -2,7 +2,7 @@
 
 module IFID_reg(clk, hazard, instruction, PC_in, 
 	cntrl_input, branch_cond, reg_rs, reg_rt, 
-	reg_rd, arith_imm, load_save_imm, call, PC_out);
+	reg_rd, arith_imm, load_save_imm, call_target, PC_out);
 
 //INPUTS
 input        clk;
@@ -18,26 +18,11 @@ output logic [3:0]  reg_rt;        // Inst[3:0]   - Register rt
 output logic [3:0]  reg_rd;        // Inst[11:8]  - Register rd
 output logic [3:0]  arith_imm;     // Inst[3:0]   - Imm of Arithmetic Inst
 output logic [7:0]  load_save_imm; // Inst[7:0]   - Imm of Load/Save Inst
-output logic [11:0] call;          // Inst[11:0]  - Call target
+output logic [11:0] call_target;   // Inst[11:0]  - Call target
 output logic [15:0] PC_out;        // Program counter
 
 //NO OPERATION FOR PIPE STALL
 logic [15:0] NO_OP = 16'hF000;
-
-                            /* YANK THIS OUT TO SEPARATE MODULE
-//PIPELINE ENABLE COUNTER
-logic [1:0] counter;
-logic rst_counter;
-logic enable;
-
-//PIPELINE ENABLE COUNTER
-always @(posedge clk) begin
-   counter <= counter + 1;
-end
-
-//ENABLE THE PIPELINE
-assign enable = &counter;
-                                END OF THE YANK */
 
 // Pipeline register will be sensitive flopped clock
 always @(posedge clk) begin
@@ -61,7 +46,7 @@ always @(posedge clk) begin
 	   load_save_imm <= instruction[7:0];
 	
 	   // Set call target
-	   call          <= instruction[11:0];
+	   call_target   <= instruction[11:0];
 	   
 	   // Set branch condition
 	   branch_cond   <= instruction[10:8];
@@ -83,7 +68,7 @@ always @(posedge clk) begin
 	   arith_imm     <= arith_imm;
 	   load_save_imm <= load_save_imm;
 	
-	   call          <= call;
+	   call_target   <= call_target;
 	   
 	   branch_cond   <= branch_cond;
 	   

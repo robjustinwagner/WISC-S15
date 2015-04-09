@@ -20,7 +20,7 @@ logic [3:0]  reg_rt_2;        	  // Inst[3:0]   - Register rt
 logic [3:0]  reg_rd_2;        	  // Inst[11:8]  - Register rd
 logic [3:0]  arith_imm_2;     	  // Inst[3:0]   - Imm of Arithmetic Inst
 logic [7:0]  load_save_imm_2; 	  // Inst[7:0]   - Imm of Load/Save Inst
-logic [11:0] call_2;          	  // Inst[11:0]  - Call target
+logic [11:0] call_target_2;      // Inst[11:0]  - Call target
 logic [15:0] PC_out_2;        	  // Program counter
 //#3; ID_Unit --> IDEX_reg 
 logic        RegWrite_out_3;      // Regfile RegWrite when not reset
@@ -138,14 +138,14 @@ end
 				.instruction(instruction_1),
 				.PC_in(PC_out_1), 
 
-                   		.cntrl_input(cntrl_input_2), 
-                   		.branch_cond(branch_cond_2), 
+          		.cntrl_input(cntrl_input_2), 
+          		.branch_cond(branch_cond_2), 
 				.reg_rs(reg_rs_2), 
 				.reg_rt(reg_rt_2), 
 				.reg_rd(reg_rd_2),
 				.arith_imm(arith_imm_2), 
 				.load_save_imm(load_save_imm_2), 
-                   		.call(call_2), 
+          		.call_target(call_target_2), 
 				.PC_out(PC_out_2));
 
 	//#3; stage 2 -- Instruction Decode Module Unit	
@@ -162,7 +162,7 @@ end
 				.arith_imm_in(arith_imm_2), 
 				.load_save_reg_in(reg_rd_2), 
 				.load_save_imm_in(load_save_imm_2), 
-         			.call_target_in(call_2),
+         			.call_target_in(call_target_2),
 				.PC_in(PC_out_2),
 				.ID_EX_reg_rd(reg_rd_out_4), 
 				.EX_MEM_reg_rd(reg_rd_out_6), 

@@ -9,11 +9,11 @@ reg [2:0] branch_cond;
 reg [3:0] reg_rs, reg_rt_arith, reg_rd_wb, cntrl_opcode, arith_imm_in,
           load_save_reg_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd;
 reg [7:0] load_save_imm;
-reg [11:0] call_in;
+reg [11:0] call_target;
 reg [15:0] reg_rd_data, PC_in;
 
 //OUTPUTS
-wire mem_to_reg_out, reg_to_mem, alu_src, branch, call, ret, hazard;
+wire       mem_to_reg_out, reg_to_mem, alu_src, branch, call, ret, hazard;
 
 wire [2:0] branch_cond_out;
 
@@ -30,11 +30,22 @@ initial begin
   forever #5 clk = ~clk; 
 end
 
+assign cntrl_opcode = instruction[15:12];
+assign reg_rs      = instruction[7:4];
+assign reg_rt      = instruction[3:0];
+assign	reg_rd      = instruction[11:8];
+assign arith_imm     = instruction[3:0];
+assign load_save_imm = instruction[7:0];
+assign call_target         = instruction[11:0];
+	   
+	   // Set branch condition
+	   branch_cond   <= instruction[10:8];
+
 ID_Unit DUT(.clk(clk), .rst(rst), 
 	        .mem_to_reg_in(mem_to_reg_in), .reg_rs(reg_rs), .reg_rt_arith(reg_rt_arith),
 	          .reg_rd_wb(reg_rd_wb), .reg_rd_data(reg_rd_data), .cntrl_opcode(cntrl_opcode),
 	          .branch_cond_in(branch_cond_in), .arith_imm_in(arith_imm_in), .load_save_reg_in(load_save_reg_in),
-	          .load_save_imm_in(load_save_imm_in), .call_in(call_in), .PC_in(PC_in),
+	          .load_save_imm_in(load_save_imm_in), .call_target_in(call_target), .PC_in(PC_in),
 	          .ID_EX_reg_rd(ID_EX_reg_rd), .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd), 
 	        .mem_to_reg_out(mem_to_reg_out), .reg_to_mem(reg_to_mem), .alu_src(alu_src),
 	          .alu_op(alu_op), .branch(branch), .call(call), .ret(ret), .read_data_1(read_data_1),
