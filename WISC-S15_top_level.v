@@ -37,7 +37,7 @@ logic [2:0]  branch_cond_out_3;   // Branch condition
 logic [3:0]  arith_imm_out_3;     // Imm of Arithmetic Inst
 logic [3:0]  load_save_reg_out_3; // Future Regfile dest
 logic [7:0]  load_save_imm_out_3; // Imm of Load/Save Inst
-logic [11:0] call_out_3;          // Call target
+logic [11:0] call_target_out_3;   // Call target
 logic [15:0] PC_out_3;            // Program counter
 logic [15:0] sign_ext_out_3;      // Output of sign extension unit
 logic	     hazard_3;		  // Hazard signaling for pipe stall
@@ -82,10 +82,10 @@ logic [15:0] save_word_data_out_6; // Data for Memory Write
 logic        ret_future_out_6;	   // Future ret_wb signal
 //#7; MEM_Unit --> MEMWB_reg
 logic	     RegWrite_out_7;
-logic 	     mem_read_data_7;
+logic 	     ret_future_out_7;
 logic	     mem_to_reg_out_7;
 logic 	     reg_rd_out_7;
-logic 	     ret_future_out_7;
+logic 	     mem_read_data_out_7;
 logic 	     alu_result_out_7;
 //#8; MEMWB_reg --> WB_Unit
 logic	     RegWrite_out_8;
@@ -119,7 +119,7 @@ end
 				.rst(rst_g),
 				.hazard(hazard_3),
 				.PC_src(PC_src_5), 
-				.PC_branch(), 
+				.PC_branch(PC_update_5), 
 				
 				.PC_out(PC_out_1), 
 				.instruction(instruction_1));	
@@ -144,27 +144,24 @@ end
 	ID_Unit IDU(		.clk(clk), 
 				.rst(rst_g), 
 				.PC_update(PC_update_done_5), 
-				.RegWrite_in(), 		//FIX THIS
+				.RegWrite_in(RegWrite_out_8), 
 				.reg_rs(reg_rs_2), 
-				.reg_rt_arith(), 		//FIX THIS
+				.reg_rt_arith(reg_rt_2), 
 				.reg_rd_wb(reg_rd_out_9), 
                			.reg_rd_data(write_back_data_9), 
 				.cntrl_opcode(cntrl_input_2), 
 				.branch_cond_in(branch_cond_2), 
 				.arith_imm_in(arith_imm_2), 
-				.load_save_reg_in(), 		//FIX THIS
+				.load_save_reg_in(reg_rd_2), 
 				.load_save_imm_in(load_save_imm_2), 
-               			.call_in(call_2),
+               			.call_target_in(call_2),
 				.PC_in(PC_out_2),
-				.ID_EX_reg_rd(), 		//FIX THIS
-				.EX_MEM_reg_rd(),		//FIX THIS 
-				.MEM_WB_reg_rd(),		//FIX THIS
-				//DEPRICATED??			//FIX THIS
-				//.reg_rt(reg_rt_2), 
-               			//.reg_rd_in(reg_rd_2), 
-				//.RegWrite(RegWrite_9), 
+				.ID_EX_reg_rd(reg_rd_out_4), 
+				.EX_MEM_reg_rd(reg_rd_out_6), 
+				.MEM_WB_reg_rd(reg_rd_out_8), 
 				
 				.RegWrite_out(RegWrite_out_3),
+				.mem_to_reg(mem_to_reg_3), 
 				.reg_to_mem(reg_to_mem_3),
 				.alu_src(alu_src_3), 
 				.alu_op(alu_op_3), 
@@ -177,7 +174,7 @@ end
 				.load_save_reg_out(load_save_reg_out_3), 
 				.arith_imm_out(arith_imm_out_3), 
                			.load_save_imm_out(load_save_imm_out_3), 
-				.call_out(call_out_3), 
+				.call_target_out(call_target_out_3), 
 				.PC_out(PC_out_3), 
 				.sign_ext_out(sign_ext_out_3),
 				.hazard(hazard_3));
@@ -188,14 +185,14 @@ end
 				.mem_to_reg_in(mem_to_reg_3), 
 				.reg_to_mem_in(reg_to_mem_3), 
 				.branch_cond_in(branch_cond_out_3), 
-				.call_target_in(), 		//FIX THIS
+				.call_target_in(call_target_out_3), 
 				.branch_in(branch_3), 
 				.call_in(call_3), 
 				.ret_in(ret_3), 
 				.alu_src_in(alu_src_3), 
 				.alu_op_in(alu_op_3), 
-				.shift_in(), 			//FIX THIS
-				.load_half_imm_in(), 		//FIX THIS
+				.shift_in(arith_imm_out_3), 
+				.load_half_imm_in(load_save_imm_out_3), 
 				.rd_data_1_in(read_data_1_3), 
 				.rd_data_2_in(read_data_2_3), 
 				.sign_ext_in(sign_ext_out_3), 
@@ -230,9 +227,9 @@ end
 				.branch(branch_out_4), 
 				.call(call_out_4),
 				.PC_in(PC_out_4), 
-				.ret_future_in(),  		//FIX THIS
-				.ret_wb(), 			//FIX THIS
-               			.PC_stack_pointer(), 	 	//FIX THIS
+				.ret_future_in(ret_out_4), 
+				.ret_wb(ret_out_8), 
+               			.PC_stack_pointer(mem_read_data_out_8), 
 				.alu_src(alu_src_out_4), 
 				.alu_op(alu_op_out_4), 
 				.shift(shift_out_4), 
@@ -282,23 +279,23 @@ end
 				.reg_to_mem(reg_to_mem_out_6), 
 				.reg_rd_in(reg_rd_out_6), 
    	 		        .alu_result_in(alu_result_out_6), 
-				.mem_write_data(), 		//FIX THIS
+				.mem_write_data(save_word_data_out_6), 
 				.ret_future_in(ret_future_out_6), 
 
 				.RegWrite_out(RegWrite_out_7), 
 				.ret_future_out(ret_future_out_7), 
 				.mem_to_reg_out(mem_to_reg_out_7), 
 				.reg_rd_out(reg_rd_out_7), 
-                   		.mem_read_data(mem_read_data_7), 
+                   		.mem_read_data(mem_read_data_out_7), 
                    		.alu_result_out(alu_result_out_7));
 
 	//#8; Memory/WriteBack intermediate register
 	MEMWB_reg MEMWB_r(	.clk(clk), 
 				.RegWrite_in(RegWrite_out_7), 
-				.ret_in(), 			//FIX THIS
+				.ret_in(ret_future_out_7), 
 				.mem_to_reg_in(mem_to_reg_out_7), 
 				.reg_rd_in(reg_rd_out_7), 
-				.mem_read_data_in(alu_result_out_7), 
+				.mem_read_data_in(mem_read_data_out_7), 
 				.alu_result_in(alu_result_out_7), 
 				
 				.RegWrite_out(RegWrite_out_8), 
@@ -316,7 +313,6 @@ end
 				.reg_rd_in(reg_rd_out_8),  
 
 				.write_back_data(write_back_data_9), 
-				.reg_rd_out(reg_rd_out_9), 
-				.RegWrite(RegWrite_9));	
+				.reg_rd_out(reg_rd_out_9));	
 
 endmodule
