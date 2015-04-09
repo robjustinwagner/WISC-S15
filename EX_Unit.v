@@ -1,11 +1,11 @@
 // Author: Graham Nygard, Robert Wagner
 
 module EX_Unit(clk, 
-	RegWrite_in, mem_to_reg_in, reg_to_mem_in, branch_cond, call_target,
+	RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, branch_cond, call_target,
 	   branch, call_in, PC_in, ret_future_in, ret_wb, PC_stack_pointer,
 	   alu_src, alu_op, shift, rd_data_1, rd_data_2, sign_ext, reg_rd_in,
 	   load_half, half_spec, load_half_imm, 
-	RegWrite_out, mem_to_reg_out, reg_to_mem_out, call_out, ret_future_out,
+	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg_out, call_out, ret_future_out,
 	   reg_rd_out, PC_update_done, PC_src, alu_result, PC_update, sw_data);
 
 ////////////////////////////INPUTS/////////////////////////////////
@@ -14,8 +14,9 @@ input		clk;
 
 //PIPE TO PIPE
 input  RegWrite_in;
+input        MemWrite_in;
+input        MemRead_in;
 input		mem_to_reg_in;          // LW signal to Memory unit 
-input		reg_to_mem_in;          // SW signal to Memory unit
 input		ret_future_in;    // Future ret_wb signal
 input	[3:0]	reg_rd_in;         // Future Regfile dest
 
@@ -51,8 +52,9 @@ input	[7:0]	 load_half_imm;    // ALU imm load input
 
 //PIPE TO PIPE
 output logic        RegWrite_out;
+output logic        MemWrite_out;
+output logic        MemRead_out;
 output logic        mem_to_reg_out; // LW signal to Memory unit 
-output logic        reg_to_mem_out; // SW signal to Memory unit
 output logic        ret_future_out; // Future ret_wb signal
 
 output logic        call_out;       // Signal to decrement SP
@@ -83,8 +85,9 @@ logic  alu_op_2;
 
 //PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
+assign MemWrite_out   = MemWrite_in;
+assign MemRead_out    = MemRead_in;
 assign mem_to_reg_out = mem_to_reg_in;
-assign reg_to_mem_out = reg_to_mem_in;
 assign ret_future_out = ret_future_in;
 
 ///////////////////////////////////////////////////////////////////

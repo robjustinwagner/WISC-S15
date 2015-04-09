@@ -1,7 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
 module MEM_Unit(clk, 
-	   call_in, RegWrite_in, mem_to_reg_in, reg_to_mem,
+	   call_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, 
 	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, 
 	   RegWrite_out, ret_future_out, mem_to_reg_out, reg_rd_out,
 	      mem_read_data, alu_result_out);
@@ -11,8 +11,10 @@ input clk;
 
 input        call_in;
 input        RegWrite_in;
+input        MemWrite_in;
+input        MemRead_in;
+
 input        mem_to_reg_in;  // Memory Read to register 
-input        reg_to_mem;     // Memory Write from register
 input [3:0]  reg_rd_in;      // Destination of Memory Read
 input [15:0] alu_result_in;  // Results of ALU operation
 input [15:0] mem_write_data; // Data for Memory Write      <-- PC during call
@@ -56,8 +58,8 @@ always_comb begin
 end
 
 //MODULE INSTANTIATIONS
-Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(mem_to_reg_in),
-                     .we(reg_to_mem), .wrt_data(mem_write_data),
+Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
+                     .we(MemWrite_in), .wrt_data(mem_write_data),
                      .rd_data(mem_read_data));
 
 

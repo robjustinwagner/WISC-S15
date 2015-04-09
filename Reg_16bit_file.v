@@ -4,9 +4,10 @@
 /* This module defines the regeister interface
    for accessing the 16-bit registers used by
    our processor. */
-module Reg_16bit(clk, RegWrite, DataReg, StackReg,
-                 Read_Reg_1, Read_Reg_2, Write_Reg,
-                 Read_Bus_1, Read_Bus_2, Write_Bus);
+module Reg_16bit_file(clk, RegWrite, DataReg, StackReg,
+                       Read_Reg_1, Read_Reg_2, Write_Reg,
+                       Write_Bus,
+                      Read_Bus_1, Read_Bus_2);
                  
   input clk;
   input RegWrite; // Writes data to a register when high  

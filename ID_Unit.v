@@ -7,7 +7,7 @@
 module ID_Unit(clk, rst, PC_update,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
 		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, 
-	RegWrite_out, mem_to_reg, reg_to_mem, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
+	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
 		read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, 
 		sign_ext_out, hazard);
 
@@ -46,8 +46,9 @@ input [3:0] MEM_WB_reg_rd;     // Corresponds to MEMWB_reg's reg_rd_out
 
 //CONTROL SIGNALS 
 output logic       RegWrite_out;   // Initial output from control
-output logic       mem_to_reg;     // LW signal to Memory unit  
-output logic       reg_to_mem;     // SW signal to Memory unit
+output logic       MemWrite_out;   // SW signal to Memory unit
+output logic       MemRead_out;    // LW signal to Memory unit
+output logic       mem_to_reg;     // Writeback data specifier
 output logic       alu_src;        // ALU operand selection
 output logic [2:0] alu_op;         // ALU control unit input
 
@@ -112,14 +113,15 @@ logic [3:0] reg_rt;              // Regfile source 2
 
 //CONTROL OUTPUTS FOR FUTURE PIPELINE
 logic        c_mem_to_reg;          
-logic        c_reg_to_mem;        
+logic        c_RegWrite;
+logic        c_MemWrite;
+logic        c_MemRead;        
 logic        c_alu_src;           
 logic [2:0]  c_alu_op;            
 
 logic        c_branch;               
 logic        c_call;               
 logic        c_ret;  
-
 
 //PIPE TO PIPE   
 assign arith_imm_out     = arith_imm_in;  
@@ -134,15 +136,16 @@ assign PC_out            = PC_in;
                                     
 //MODULE INSTANTIATIONS
 Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
-                       .Call(Call), .Read_Reg_1(reg_rs), .Read_Reg_2(reg_rt),
+                       .StackReg(StackReg), .Read_Reg_1(reg_rs), .Read_Reg_2(reg_rt),
                        .WriteReg(WriteReg), .Read_Bus_1(read_data_1),
                        .Read_Bus_2(read_data_2), .Write_Bus(WriteData));
 
 Control_Logic control(.opcode(cntrl_opcode),
-		                .data_reg(DataReg), .call(c_call), .rtrn(c_ret), .branch(c_branch), 
-				.mem_to_reg(c_mem_to_reg), .reg_to_mem(c_reg_to_mem), .alu_op(c_alu_op), 
-				.alu_src(c_alu_src), .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), 
-				.RegWrite(RegWrite), .load_half(load_half), .half_spec(half_spec));
+		               .data_reg(DataReg), .stack_reg(StackReg), .call(c_call), .rtrn(c_ret), .branch(c_branch), 
+				         .mem_to_reg(c_mem_to_reg), .alu_op(c_alu_op), .alu_src(c_alu_src),
+				         .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), .RegWrite(c_RegWrite),
+				         .MemWrite(c_MemWrite), .MemRead(c_MemRead), .load_half(load_half),
+				         .half_spec(half_spec));
                       
 Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in), 
                        .load_save_imm(load_save_imm_in),
@@ -171,7 +174,9 @@ always_comb begin
     
     if (hazard) begin
         mem_to_reg     = 1'b0;    
-        reg_to_mem     = 1'b0; 
+        RegWrite_out   = 1'b0; 
+        MemWrite_out   = 1'b0;
+        MemRead_out    = 1'b0;
         alu_src        = 1'b0;  
         alu_op         = 3'b111; 
         branch         = 1'b0;    
@@ -181,7 +186,9 @@ always_comb begin
     
     else begin
         mem_to_reg     = c_mem_to_reg;    
-        reg_to_mem     = c_reg_to_mem; 
+        RegWrite_out   = c_RegWrite; 
+        MemWrite_out   = c_MemWrite;
+        MemRead_out    = c_MemRead;
         alu_src        = c_alu_src;  
         alu_op         = c_alu_op; 
         branch         = c_branch;    
