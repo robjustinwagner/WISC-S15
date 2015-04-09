@@ -73,7 +73,7 @@ output [11:0] call_target_out;   // Call target
 output [15:0] PC_out;            // Program counter
 
 //SIGN-EXT UNIT OUTPUT
-output [15:0] sign_ext_out;      // Output of sign extension unit
+output logic [15:0] sign_ext_out;      // Output of sign extension unit
 
 //HAZARD SIGNALING FOR PIPE STALL
 output hazard;
@@ -85,7 +85,7 @@ output hazard;
 
 logic RegWrite;                  /* Signal for writing register */
 
-logic WriteReg;                  /* Dest register of write data */
+logic [3:0]  WriteReg;                  /* Dest register of write data */
    
 logic [15:0] WriteData;          /* Data to write to dest register */
 
@@ -137,7 +137,7 @@ assign PC_out            = PC_in;
 //MODULE INSTANTIATIONS
 Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        .StackReg(StackReg), .Read_Reg_1(reg_rs), .Read_Reg_2(reg_rt),
-                       .WriteReg(WriteReg), .Read_Bus_1(read_data_1),
+                       .Write_Reg(WriteReg), .Read_Bus_1(read_data_1),
                        .Read_Bus_2(read_data_2), .Write_Bus(WriteData));
 
 Control_Logic control(.opcode(cntrl_opcode),
@@ -146,11 +146,6 @@ Control_Logic control(.opcode(cntrl_opcode),
 				         .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), .RegWrite(c_RegWrite),
 				         .MemWrite(c_MemWrite), .MemRead(c_MemRead), .load_half(load_half),
 				         .half_spec(half_spec));
-                      
-Sign_Ext_Unit sign_ext(.arith_imm(arith_imm_in), 
-                       .load_save_imm(load_save_imm_in),
-                       .sign_ext_sel(sign_ext_sel),
-                       .sign_ext_out(sign_ext_out));
 
 HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith),
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
@@ -167,6 +162,21 @@ always_comb begin
     else
         reg_rt = reg_rt_arith;
         
+end
+
+// Sign_Ext_Unit
+always_comb begin
+    
+    // Default to use Immediate of Load/Save
+    if (sign_ext_sel) begin
+        sign_ext_out = {{8{load_save_imm_in[7]}}, load_save_imm_in};
+    end
+    
+    // Otherwise, sign extend Immediate of Arith
+    else begin
+        sign_ext_out = {{12{arith_imm_in[3]}}, arith_imm_in};
+    end
+
 end
 
 // Hazard Detection MUX
