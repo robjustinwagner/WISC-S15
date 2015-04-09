@@ -143,6 +143,7 @@ end
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
 				.rst(rst_g), 
+				.PC_update(PC_update_done_5), 
 				.RegWrite_in(), 		//FIX THIS
 				.reg_rs(reg_rs_2), 
 				.reg_rt_arith(), 		//FIX THIS
@@ -186,11 +187,11 @@ end
 				.RegWrite_in(RegWrite_out_3), 
 				.mem_to_reg_in(mem_to_reg_3), 
 				.reg_to_mem_in(reg_to_mem_3), 
-				.branch_cond_in(), 		//FIX THIS
+				.branch_cond_in(branch_cond_out_3), 
 				.call_target_in(), 		//FIX THIS
 				.branch_in(branch_3), 
 				.call_in(call_3), 
-				.ret_in(), 			//FIX THIS
+				.ret_in(ret_3), 
 				.alu_src_in(alu_src_3), 
 				.alu_op_in(alu_op_3), 
 				.shift_in(), 			//FIX THIS
@@ -295,7 +296,7 @@ end
 	MEMWB_reg MEMWB_r(	.clk(clk), 
 				.RegWrite_in(RegWrite_out_7), 
 				.ret_in(), 			//FIX THIS
-				.mem_to_reg_in(), 		//FIX THIS
+				.mem_to_reg_in(mem_to_reg_out_7), 
 				.reg_rd_in(reg_rd_out_7), 
 				.mem_read_data_in(alu_result_out_7), 
 				.alu_result_in(alu_result_out_7), 
@@ -311,7 +312,7 @@ end
 	WB_Unit WBU(		.clk(clk), 
 				.mem_read_data(mem_read_data_out_8),
 				.alu_result(alu_result_out_8),  
-				.mem_to_reg(), 			//FIX THIS
+				.mem_to_reg(mem_to_reg_out_8), 
 				.reg_rd_in(reg_rd_out_8),  
 
 				.write_back_data(write_back_data_9), 
