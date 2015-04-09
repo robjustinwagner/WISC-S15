@@ -17,7 +17,6 @@ input [3:0]  reg_rd_in;      // Destination of Memory Read
 input [15:0] alu_result_in;  // Results of ALU operation
 input [15:0] mem_write_data; // Data for Memory Write      <-- PC during call
 
-//PIPE TO PIPE
 input        ret_future_in; // Future ret_wb signal
 
 //OUTPUTS
@@ -30,6 +29,7 @@ output logic [15:0] alu_result_out;
 
 logic alu_addr;
 
+//PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
 assign ret_future_out = ret_future_in;
 assign mem_to_reg_out = mem_to_reg_in;
