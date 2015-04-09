@@ -153,7 +153,7 @@ HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith),
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
                         .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd),
                         .ret(c_ret), .call(c_call), .PC_update(PC_update),
-                     .data_hazard(data_hazard), .PC_hazard(PC_hazard_out));
+                     .data_hazard(data_hazard), .PC_hazard(PC_hazard_out), .rst(rst), .clk(clk));
 
 // Register rt selection
 always_comb begin

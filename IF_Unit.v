@@ -30,18 +30,22 @@ logic	[15:0]	PC_address;
 //MODULE INSTANTIATIONS
 
 // Program Counter
-always_ff @(posedge clk) begin
+always_ff @(posedge clk, posedge hazard) begin
     
-    if (!rst)
+    if (!rst /*& !hazard*/)
        PC_address <= PC_update;
-    else
+
+    else if (rst)
        PC_address <= 16'h0000;
+       
+    else
+       PC_address <= PC_address;
        
 end
 
 // Instruction cache
 Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
-                             .instr(instruction), .rd_en(!hazard));
+                             .instr(instruction), .rd_en(1));
 
 //PC update logic (branch target or next instr)
 always_comb begin
