@@ -24,7 +24,7 @@ output logic [15:0] alu_result_out;
 
 always @(posedge clk) begin
     
-   	mem_to_reg_out    <= mem_to_reg_in;
+   mem_to_reg_out    <= mem_to_reg_in;
 	mem_read_data_out <= mem_read_data_in;
 	reg_rd_out        <= reg_rd_in;
 	ret_out           <= ret_in;
