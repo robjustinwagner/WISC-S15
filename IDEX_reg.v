@@ -83,21 +83,37 @@ output	logic		    half_spec_out;	// (0 -> LHB, 1 -> LLB)
 
 always @(posedge clk) begin
 	
-	// Pass on all inputs to next section of the pipe
-	RegWrite_out      <= RegWrite_in;
-	MemWrite_out      <= MemWrite_in;
-	MemRead_out       <= MemRead_in;
-	PC_out            <= PC_in;
-	mem_to_reg_out    <= mem_to_reg_in;
-	alu_op_out        <= alu_op_in;
-	alu_src_out       <= alu_src_in;
-	shift_out         <= shift_in;
-	sign_ext_out      <= sign_ext_in;
-	load_half_imm_out <= load_half_imm_in;
-	branch_out        <= branch_in;
-	rd_data_1_out     <= rd_data_1_in;
-	rd_data_2_out     <= rd_data_2_in;
-	call_out          <= call_in;
+	
+	PC_hazard_out <= PC_hazard_in;
+
+   RegWrite_out <= RegWrite_in;
+   MemWrite_out <= MemWrite_in;
+   MemRead_out <= MemRead_in;
+
+   mem_to_reg_out <= mem_to_reg_in;
+
+   branch_cond_out <= branch_cond_in;
+   call_target_out <= call_target_in;  
+
+   branch_out <= branch_in;
+   call_out <= call_in;      
+   ret_out <= ret_in;        
+
+   alu_src_out <= alu_src_in;
+
+   alu_op_out <= alu_op_in;      
+   shift_out <= shift_in;      
+   load_half_imm_out <= load_half_imm_in;
+   rd_data_1_out <= rd_data_1_in;   
+   rd_data_2_out <= rd_data_2_in;    
+   sign_ext_out <= sign_ext_in;  
+
+   reg_rd_out <= reg_rd_in;       
+
+   PC_out <= PC_in;  
+
+   load_half_out <=	load_half_in;
+   half_spec_out <= half_spec_in;
 	
 end
 

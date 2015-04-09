@@ -14,7 +14,7 @@ logic [15:0] PC_out_1;
 logic [15:0] instruction_1;
 //#2; IFID_reg --> ID_Unit
 logic [3:0]  cntrl_input_2;   	  // Inst[15:12] - Opcode
-logic [3:0]  branch_cond_2;   	  // Inst[11:8]  - Branch condition
+logic [2:0]  branch_cond_2;   	  // Inst[11:8]  - Branch condition
 logic [3:0]  reg_rs_2;        	  // Inst[7:4]   - Register rs
 logic [3:0]  reg_rt_2;        	  // Inst[3:0]   - Register rt
 logic [3:0]  reg_rd_2;        	  // Inst[11:8]  - Register rd
@@ -94,16 +94,16 @@ logic        ret_future_out_6;	   // Future ret_wb signal
 logic	     RegWrite_out_7; 
 logic        mem_to_reg_out_7;
 logic 	     ret_future_out_7;
-logic 	     reg_rd_out_7;
-logic 	     mem_read_data_out_7;
-logic 	     alu_result_out_7;
+logic 	     [3:0] reg_rd_out_7;
+logic 	     [15:0] mem_read_data_out_7;
+logic 	     [15:0] alu_result_out_7;
 //#8; MEMWB_reg --> WB_Unit
 logic	     RegWrite_out_8;
 logic	     ret_out_8;
 logic	     mem_to_reg_out_8;
-logic 	     mem_read_data_out_8;
-logic        reg_rd_out_8;
-logic        alu_result_out_8;
+logic 	     [15:0] mem_read_data_out_8;
+logic        [3:0] reg_rd_out_8;
+logic        [15:0] alu_result_out_8;
 //#9; WB_Unit --> IF_Unit
 logic        RegWrite_9;        // Regfile signal to write reg_rd_out
 logic [3:0]  reg_rd_out_9;      // Register to write return_data
@@ -212,7 +212,7 @@ end
 				.rd_data_1_in(read_data_1_3), 
 				.rd_data_2_in(read_data_2_3), 
 				.sign_ext_in(sign_ext_out_3), 
-				.reg_rd_in(reg_rd_out_3), 
+				.reg_rd_in(load_save_reg_out_3), 
 				.PC_in(PC_out_3), 
 				.load_half_in(load_half_out_3), 
 				.half_spec_in(half_spec_out_3), 
@@ -253,11 +253,11 @@ end
 				.PC_in(PC_out_4), 
 				.ret_future_in(ret_out_4), 
 				.ret_wb(ret_out_8), 
-               			.PC_stack_pointer(mem_read_data_out_8), 
+         			.PC_stack_pointer(mem_read_data_out_8), 
 				.alu_src(alu_src_out_4), 
 				.alu_op(alu_op_out_4), 
 				.shift(shift_out_4), 
-               			.rd_data_1(rd_data_1_out_4), 
+         			.rd_data_1(rd_data_1_out_4), 
 				.rd_data_2(rd_data_2_out_4), 
 				.sign_ext(sign_ext_out_4), 
 				.reg_rd_in(reg_rd_out_4), 

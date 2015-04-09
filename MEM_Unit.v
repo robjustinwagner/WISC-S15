@@ -29,7 +29,7 @@ output logic [3:0]  reg_rd_out;
 output logic [15:0] mem_read_data;
 output logic [15:0] alu_result_out;
 
-logic alu_addr;
+logic [15:0] alu_addr;
 
 //PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;

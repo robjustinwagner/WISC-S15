@@ -82,7 +82,7 @@ logic [15:0] load_half_result;
 logic [2:0] set_flags;
 logic [2:0] updated_flags;
 
-logic  alu_op_2;
+logic [15:0] alu_op_2;
 
 //PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
@@ -147,14 +147,14 @@ end
 
 /////////////////////MODULE INSTANTIATIONS/////////////////////////
 
-ALU       alu(.data_one(read_data_1), .data_two(alu_op_2),
+ALU       alu(.data_one(rd_data_1), .data_two(alu_op_2),
               .shift(shift), .control(alu_op), .result(alu_out),
-              .flags(set_flags));		                           
+              .flags(set_flags), .done(alu_done));		                           
 
 Flag_reg  flags(.clk(clk), .en(alu_done), .d(set_flags), .q(updated_flags));
 
 PC_Update pc_update(.PC_in(PC_in), .PC_stack_pointer(PC_stack_pointer), .alu_done(alu_done), 
-                    .flags(updated_flags), .call_imm(call_imm), .sign_ext(sign_ext),
+                    .flags(updated_flags), .call_imm(call_target), .sign_ext(sign_ext),
                     .branch_cond(branch_cond), .branch(branch), .call(call_in), .ret(ret),
                     .PC_update(PC_update), .PC_src(PC_src), .update_done(PC_update_done));
  
