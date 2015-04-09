@@ -2,7 +2,7 @@
 
 module HDT_Unit_tb();
     
-reg clk;
+reg clk, call, ret, PC_update;
     
 reg [3:0] IF_ID_reg_rs, IF_ID_reg_rt, IF_ID_reg_rd;
 reg [3:0] ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd;
@@ -16,7 +16,7 @@ end
 HDT_Unit DUT(.IF_ID_reg_rs(IF_ID_reg_rs), .IF_ID_reg_rt(IF_ID_reg_rt),
              .IF_ID_reg_rd(IF_ID_reg_rd), .ID_EX_reg_rd(ID_EX_reg_rd),
              .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd),
-             .hazard(hazard));
+             .call(call), .ret(ret), .PC_update(PC_update), .hazard(hazard));
 
 initial begin
     
@@ -331,6 +331,112 @@ initial begin
   else begin 
    $display("REG RD: FOURTH TEST PASSED");
   end
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************************************************/
+  /********************Haulting Pipe with Call******************/
+  /*************************************************************/
+  
+  /*************************FIRST TEST**************************/
+  
+  IF_ID_reg_rs = 4'b0100;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0110;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0011;
+  MEM_WB_reg_rd = 4'b1011;
+  
+  call = 1;
+  
+  #5;
+   
+  if(!hazard) begin
+	$display("Call: FIRST TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("Call: FIRST TEST PASSED");
+  end
+  
+  call = 0;
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************SECOND TEST*************************/
+  
+  PC_update = 1;
+  
+  #5;
+   
+  if(hazard) begin
+	$display("Call: SECOND TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("Call: SECOND TEST PASSED");
+  end
+  
+  PC_update = 0;
+  
+  /*************************************************************/
+  
+  /*************************************************************/
+  /*******************Haulting Pipe with Ret********************/
+  /*************************************************************/
+  
+  /*************************FIRST TEST**************************/
+  
+  IF_ID_reg_rs = 4'b0100;
+  IF_ID_reg_rt = 4'b0001;
+  IF_ID_reg_rd = 4'b0110;
+  
+  ID_EX_reg_rd = 4'b1111;
+  EX_MEM_reg_rd = 4'b0011;
+  MEM_WB_reg_rd = 4'b1011;
+  
+  ret = 1;
+  
+  #5;
+   
+  if(!hazard) begin
+	$display("Ret: FIRST TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("Ret: FIRST TEST PASSED");
+  end
+  
+  ret = 0;
+  
+  /*************************************************************/
+  
+  #50;
+  
+  /*************************SECOND TEST*************************/
+  
+  PC_update = 1;
+  
+  #5;
+   
+  if(hazard) begin
+	$display("Ret: SECOND TEST FAILED");
+	$stop;
+  end
+  
+  else begin 
+   $display("Ret: SECOND TEST PASSED");
+  end
+  
+  PC_update = 0;
   
   /*************************************************************/
   
