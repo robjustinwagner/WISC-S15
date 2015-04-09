@@ -119,31 +119,6 @@ initial begin
 				end
 			end
 			//overflow
-			case({stim1[15], stim2[15]})
-			2'b00:	begin
-					if(ALU_DUT.result[15] == 1'b1) begin
-						if(flags[1] != 1'b1) passed = 1'b0;
-					end
-					else begin
-						if(flags[1] != 1'b0) passed = 1'b0;
-					end
-				end
-			2'b01: 	begin
-					if(flags[1] != 1'b0) passed = 1'b0;
-				end
-			2'b10:	begin
-					if(flags[1] != 1'b0) passed = 1'b0;
-				end
-			2'b11:	begin
-					if(ALU_DUT.result[15] == 1'b0) begin
-						if(flags[1] != 1'b1) passed = 1'b0;
-					end
-					else begin
-						if(flags[1] != 1'b0) passed = 1'b0;
-					end
-				end
-			endcase
-			/*
 			if((tmp1 ^ tmp2) == 1'b0) begin
 				if(flags[1] != 1'b0) begin
 					passed = 1'b0;
@@ -154,7 +129,6 @@ initial begin
 					passed = 1'b0;
 				end
 			end
-			*/
 			//sign
 			if(ALU_DUT.result[15] == 1'b0) begin
 				if(flags[0] != 1'b0) begin
@@ -273,31 +247,6 @@ initial begin
 				end
 			end
 			//overflow
-			case({stim1[15], stim2[15]})
-			2'b00:	begin
-					if(ALU_DUT.result[15] == 1'b1) begin
-						if(flags[1] != 1'b1) passed = 1'b0;
-					end
-					else begin
-						if(flags[1] != 1'b0) passed = 1'b0;
-					end
-				end
-			2'b01: 	begin
-					if(flags[1] != 1'b0) passed = 1'b0;
-				end
-			2'b10:	begin
-					if(flags[1] != 1'b0) passed = 1'b0;
-				end
-			2'b11:	begin
-					if(ALU_DUT.result[15] == 1'b0) begin
-						if(flags[1] != 1'b1) passed = 1'b0;
-					end
-					else begin
-						if(flags[1] != 1'b0) passed = 1'b0;
-					end
-				end
-			endcase
-			/*
 			if((tmp1 ^ tmp2) == 1'b0) begin
 				if(flags[1] != 1'b0) begin
 					passed = 1'b0;
@@ -308,7 +257,6 @@ initial begin
 					passed = 1'b0;
 				end
 			end
-			*/
 			//sign
 			if(ALU_DUT.result[15] == 1'b0) begin
 				if(flags[0] != 1'b0) begin
@@ -491,31 +439,6 @@ initial begin
 				end
 			end
 			//overflow
-			case({stim1[15], stim2[15]})
-			2'b00:	begin
-					if(ALU_DUT.result[15] == 1'b1) begin
-						if(flags[1] != 1'b1) passed = 1'b0;
-					end
-					else begin
-						if(flags[1] != 1'b0) passed = 1'b0;
-					end
-				end
-			2'b01: 	begin
-					if(flags[1] != 1'b0) passed = 1'b0;
-				end
-			2'b10:	begin
-					if(flags[1] != 1'b0) passed = 1'b0;
-				end
-			2'b11:	begin
-					if(ALU_DUT.result[15] == 1'b0) begin
-						if(flags[1] != 1'b1) passed = 1'b0;
-					end
-					else begin
-						if(flags[1] != 1'b0) passed = 1'b0;
-					end
-				end
-			endcase
-			/*
 			if((tmp1 ^ tmp2) == 1'b0) begin
 				if(flags[1] != 1'b0) begin
 					passed = 1'b0;
@@ -526,7 +449,6 @@ initial begin
 					passed = 1'b0;
 				end
 			end
-			*/
 			//sign
 			if(ALU_DUT.result[15] == 1'b0) begin
 				if(flags[0] != 1'b0) begin

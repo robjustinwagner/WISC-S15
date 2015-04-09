@@ -46,14 +46,37 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
               
            ADD : begin
 		 {cout, result} = data_one + data_two;
+		 //ZERO
                  if(!(|result))
                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0
                     flags &= 3'b011;   //clear zero (Z)
-                 if(cout == 1'b0)
-                    flags &= 3'b101;   //clear overflow (V)
-                 else //cout == 1
-                    flags |= 3'b010;   //set overflow (V)
+		 //OVERFLOW
+		 case({data_one[15], data_two[15]})
+			2'b00:	begin
+					if(result[15] == 1'b1) begin
+						flags |= 3'b010;   //set overflow (V)
+					end
+					else begin
+						flags &= 3'b101;   //clear overflow (V)
+					end
+				end
+			2'b01: 	begin
+					flags &= 3'b101;   //clear overflow (V)
+				end
+			2'b10:	begin
+					flags &= 3'b101;   //clear overflow (V)
+				end
+			2'b11:	begin
+					if(result[15] == 1'b0) begin
+						flags |= 3'b010;   //set overflow (V)
+					end
+					else begin
+						flags &= 3'b101;   //clear overflow (V)
+					end
+				end
+		 endcase
+		 //SIGN
                  if(result[15] == 1)
                     flags |= 3'b001;   //set sign (N) to neg (1)
                  else
@@ -62,14 +85,38 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
            
            SUB : begin
 		 {cout, result} = data_one - data_two;
+		 //ZERO
                  if(!(|result))
                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0
                     flags &= 3'b011;   //clear zero (Z)
-                 if(cout == 1'b0)
-                    flags &= 3'b101;   //clear overflow (V)
-                 else //cout == 1
-                    flags |= 3'b010;   //set overflow (V)
+		 //OVERFLOW
+                 case({data_one[15], data_two[15]})
+			2'b00:	begin
+					flags &= 3'b101;   //clear overflow (V)
+				end
+			2'b01: 	begin
+					if(result[15] == 1'b1) begin
+						flags |= 3'b010;   //set overflow (V)
+					end
+					else begin
+						flags &= 3'b101;   //clear overflow (V)
+					end
+
+				end
+			2'b10:	begin
+					if(result[15] == 1'b0) begin
+						flags |= 3'b010;   //set overflow (V)
+					end
+					else begin
+						flags &= 3'b101;   //clear overflow (V)
+					end
+				end
+			2'b11:	begin
+					flags &= 3'b101;   //clear overflow (V)
+				end
+		 endcase
+		 //SIGN
                  if(result[15] == 1)
                     flags |= 3'b001;   //set sign (N) to neg (1)
                  else
@@ -78,6 +125,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
            
            NAND : begin
 		 result = data_one &~ data_two;
+		 //FLAGS
                  if(!(|result))
                      flags |= 3'b100;   //set zero (Z)
                  else //result != 0
@@ -88,6 +136,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
            
            XOR : begin
 		 result = data_one ^ data_two;
+		 //FLAGS
                  if(!(|result))
                      flags |= 3'b100;   //set zero (Z)
                  else //result != 0
@@ -98,14 +147,37 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
                              
            INC : begin
 		 {cout, result} = data_one + data_two;
+		 //ZERO
                  if(!(|result))
                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0
                     flags &= 3'b011;   //clear zero (Z)
-                 if(cout == 1'b0)
-                    flags &= 3'b101;   //clear overflow (V)
-                 else //cout == 1
-                    flags |= 3'b010;   //set overflow (V)
+		 //OVERFLOW
+		 case({data_one[15], data_two[15]})
+			2'b00:	begin
+					if(result[15] == 1'b1) begin
+						flags |= 3'b010;   //set overflow (V)
+					end
+					else begin
+						flags &= 3'b101;   //clear overflow (V)
+					end
+				end
+			2'b01: 	begin
+					flags &= 3'b101;   //clear overflow (V)
+				end
+			2'b10:	begin
+					flags &= 3'b101;   //clear overflow (V)
+				end
+			2'b11:	begin
+					if(result[15] == 1'b0) begin
+						flags |= 3'b010;   //set overflow (V)
+					end
+					else begin
+						flags &= 3'b101;   //clear overflow (V)
+					end
+				end
+		 endcase
+		 //SIGN
                  if(result[15] == 1)
                     flags |= 3'b001;   //set sign (N) to neg (1)
                  else
