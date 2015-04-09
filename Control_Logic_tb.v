@@ -23,6 +23,8 @@ wire	    		alu_src;        // ALU operand seleciton
 wire			sign_ext_sel;   // sign extend select bit
 wire			reg_rt_src;	// Read_reg_2 proper SW select
 wire			RegWrite;
+wire			MemRead;
+wire			MemWrite;
 wire			load_half;	// Specifies the ALU result
 wire			half_spec;	// (0 -> LHB, 1 -> LLB)
 
@@ -51,7 +53,7 @@ localparam   ERR   =   4'b1111;
 Control_Logic Control_Logic_DUT(.opcode(opcode),
 	.data_reg(data_reg), .call(call), .rtrn(rtrn), .branch(branch), .mem_to_reg(mem_to_reg), 
 	.reg_to_mem(reg_to_mem), .alu_op(alu_op), .alu_src(alu_src), .sign_ext_sel(sign_ext_sel), 
-	.reg_rt_src(reg_rt_src), .RegWrite(RegWrite), .load_half(load_half), .half_spec(half_spec));
+	.reg_rt_src(reg_rt_src), .RegWrite(RegWrite), .MemRead(MemRead), .MemWrite(MemWrite), .load_half(load_half), .half_spec(half_spec));
                             
 initial begin
 
@@ -175,13 +177,35 @@ initial begin
 			end
 		end
 		//RegWrite
-		if(opcode == LHB || opcode == LLB || opcode == CALL || opcode == RET) begin
-			if(RegWrite != 1'b1) begin
+		if(opcode == SW || opcode == B) begin
+			if(RegWrite != 1'b0) begin
 				passed = 1'b0;
 			end
 		end
 		else begin
-			if(RegWrite != 1'b0) begin
+			if(RegWrite != 1'b1) begin
+				passed = 1'b0;
+			end
+		end
+		//MemRead
+		if(opcode == LW || opcode == RET) begin
+			if(MemRead != 1'b1) begin
+				passed = 1'b0;
+			end
+		end
+		else begin
+			if(MemRead != 1'b0) begin
+				passed = 1'b0;
+			end
+		end
+		//MemWrite
+		if(opcode == SW || opcode == CALL) begin
+			if(MemWrite != 1'b1) begin
+				passed = 1'b0;
+			end
+		end
+		else begin
+			if(MemWrite != 1'b0) begin
 				passed = 1'b0;
 			end
 		end

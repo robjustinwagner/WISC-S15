@@ -50,7 +50,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0
                     flags &= 3'b011;   //clear zero (Z)
-                 if(cout == 0)
+                 if(cout == 1'b0)
                     flags &= 3'b101;   //clear overflow (V)
                  else //cout == 1
                     flags |= 3'b010;   //set overflow (V)
@@ -66,7 +66,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0
                     flags &= 3'b011;   //clear zero (Z)
-                 if(cout == 0)
+                 if(cout == 1'b0)
                     flags &= 3'b101;   //clear overflow (V)
                  else //cout == 1
                     flags |= 3'b010;   //set overflow (V)
@@ -102,7 +102,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
                     flags |= 3'b100;   //set zero (Z)
                  else //result != 0
                     flags &= 3'b011;   //clear zero (Z)
-                 if(cout == 0)
+                 if(cout == 1'b0)
                     flags &= 3'b101;   //clear overflow (V)
                  else //cout == 1
                     flags |= 3'b010;   //set overflow (V)

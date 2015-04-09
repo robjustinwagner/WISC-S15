@@ -164,7 +164,9 @@ localparam   TR    =   3'b111;
 		 alu_src = 1'b0;
 		 sign_ext_sel = 1'b0;
 		 reg_rt_src = 1'b0;
-		 RegWrite = 1'b0;
+		 RegWrite = 1'b1;
+		 MemWrite = 1'b0;
+		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
 		 end

@@ -14,7 +14,8 @@ wire [15:0] result;
 wire [2:0] flags;
 
 reg passed;
-reg tmp;
+reg tmp1;		//temporary variables
+reg tmp2;		//
 
 ALU ALU_DUT(.data_one(stim1), .data_two(stim2), .shift(shift_amt), .control(control), 
 	.done(done), .result(result), .flags(flags));
@@ -25,7 +26,7 @@ initial begin
 	
 	#20;
 	
-	/* Begin ADD  */					//FIX THIS
+	/* Begin ADD  */
 	stim1 = -32768;
 	stim2 = -32768;
 	shift = 4'b0000;
@@ -35,14 +36,107 @@ initial begin
 	#5
 	for (stim1 <= 32767) begin
 		for(stim2 <= 32767) begin
-			#5 
-			{cout, result} = stim1 + stim2;
-			if(ALU_DUT.cout != cout 
-			|| ALU_DUT.result != result) begin
-			  
+			#5			
+			//test that each bit is correct
+			//tmp1 --> C_in[i-1], eventually cout[15]
+			//tmp2 --> cout[14] (for overflow)
+			tmp1 = 1'b0;
+			for(int i = 0; i < 16; i++) begin
+				if(i == 15) begin
+					tmp2 = tmp1;
+				end
+				case({stim1[i], stim2[i], tmp1}) begin
+		
+				3'b000: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b001: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b1) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b010: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b1) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b011: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b100: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b1) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b101: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b110: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b111: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b1) begin
+						  	passed = 1'b0;
+						end
+					end
+				
+				endcase
 			end
-			//test correct cout, result
+			//check cout bit
+			if(ALU_DUT.cout != tmp1) begin
+				passed = 1'b0;
+			end
 			//test flags
+			#5
+			//zero
+			if(ALU_DUT.result == 0) begin
+				if(flags[2] != 1'b1) begin
+					passed = 1'b0;
+				end
+			end
+			else begin
+				if(flags[2] != 1'b0) begin
+					passed = 1'b0;
+				end
+			end
+			//overflow
+			if((tmp1 ^ tmp2) == 1'b0) begin
+				if(flags[1] != 1'b0) begin
+					passed = 1'b0;
+				end
+			end
+			else begin
+				if(flags[1] != 1'b1) begin
+					passed = 1'b0;
+				end
+			end
+			//sign
+			if(tmp1 == 1'b0) begin
+				if(flags[0] != 1'b0) begin
+					passed = 1'b0;
+				end
+			end
+			else begin
+				if(flags[0] != 1'b1) begin
+					passed = 1'b0;
+				end
+			end
 			stim2 = stim2 + 1;
 		end
 		stim1 = stim1 + 1;
@@ -52,9 +146,137 @@ initial begin
 	end
 	else begin 
 		$display("ADD TEST FAILED.");
+		$display("ENDING TEST PREMATURELY...");
 		$stop;
 	end
 	/* End ADD */
+
+	#20;
+	
+	/* Begin SUB  */
+	stim1 = -32768;
+	stim2 = -32768;
+	shift = 4'b0000;
+	load_half_imm = 8'b00000000;
+	control = 4'b0000;
+	passed = 1'b1;
+	#5
+	for (stim1 <= 32767) begin
+		for(stim2 <= 32767) begin
+			#5			
+			//test that each bit is correct
+			//tmp1 --> C_in[i-1], eventually cout[15]
+			//tmp2 --> cout[14] (for overflow)
+			tmp1 = 1'b0;
+			for(int i = 0; i < 16; i++) begin
+				if(i == 15) begin
+					tmp2 = tmp1;
+				end
+				case({stim1[i], stim2[i], tmp1}) begin
+		
+				3'b000: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b001: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b1) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b010: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b1) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b011: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b100: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b1) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b101: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b110: begin
+						tmp1 = 1'b0;
+						if(ALU_DUT.result[i] != 1'b0) begin
+					 	 	passed = 1'b0;
+						end
+					end
+				3'b111: begin
+						tmp1 = 1'b1;
+						if(ALU_DUT.result[i] != 1'b1) begin
+						  	passed = 1'b0;
+						end
+					end
+				
+				endcase
+			end
+			//check cout bit
+			if(ALU_DUT.cout != tmp1) begin
+				passed = 1'b0;
+			end
+			//test flags
+			#5
+			//zero
+			if(ALU_DUT.result == 0) begin
+				if(flags[2] != 1'b1) begin
+					passed = 1'b0;
+				end
+			end
+			else begin
+				if(flags[2] != 1'b0) begin
+					passed = 1'b0;
+				end
+			end
+			//overflow
+			if((tmp1 ^ tmp2) == 1'b0) begin
+				if(flags[1] != 1'b0) begin
+					passed = 1'b0;
+				end
+			end
+			else begin
+				if(flags[1] != 1'b1) begin
+					passed = 1'b0;
+				end
+			end
+			//sign
+			if(tmp1 == 1'b0) begin
+				if(flags[0] != 1'b0) begin
+					passed = 1'b0;
+				end
+			end
+			else begin
+				if(flags[0] != 1'b1) begin
+					passed = 1'b0;
+				end
+			end
+			stim2 = stim2 + 1;
+		end
+		stim1 = stim1 + 1;
+	end
+	if (passed) begin 
+		$display("SUB TEST PASSED.");
+	end
+	else begin 
+		$display("SUB TEST FAILED.");
+		$display("ENDING TEST PREMATURELY...");
+		$stop;
+	end
+	/* End SUB */
 
 	#20;
 	
@@ -72,34 +294,36 @@ initial begin
 			//test that each bit is correct
 			for(int i = 0; i < 16; i++) begin
 				if(stim1[i] == 1'b0 && stim2[i] == 1'b0) begin
-					tmp = 1'b0;
+					tmp1 = 1'b0;
 				end
 				else if(stim1[i] == 1'b0 && stim2[i] == 1'b1) begin
-					tmp = 1'b1;
+					tmp1 = 1'b1;
 				end
 				else if(stim1[i] == 1'b1 && stim2[i] == 1'b0) begin
-					tmp = 1'b1;
+					tmp1 = 1'b1;
 				end
 				else if(stim1[i] == 1'b1 && stim2[i] == 1'b1) begin
-					tmp = 1'b0;
+					tmp1 = 1'b0;
 				end
 				//if bit is incorrect
-				if(ALU_DUT.result != tmp) begin
+				if(ALU_DUT.result != tmp1) begin
 				  	passed = 1'b0;
 				end
 			end
 			//test flags
 			#5
+			//zero
 			if(ALU_DUT.result == 0) begin
-				if(flags[2] != 1) begin
+				if(flags[2] != 1'b1) begin
 					passed = 1'b0;
 				end
 			end
 			else begin
-				if(flags[2] != 0) begin
+				if(flags[2] != 1'b0) begin
 					passed = 1'b0;
 				end
 			end
+			//overflow & sign
 			if(flags[1] != 1'b0 || flags[0] != 1'b0) begin
 				passed = 1'b0;
 			end
@@ -112,6 +336,7 @@ initial begin
 	end
 	else begin 
 		$display("XOR TEST FAILED.");
+		$display("ENDING TEST PREMATURELY...");
 		$stop;
 	end
 	/* End ADD */
