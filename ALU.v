@@ -36,13 +36,6 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
     result = 1'b0;
 
     case(control)
-           
-           /*
-            zero: indicates whether all bits of the result bus are logic zero
-            Arithmetic shift: the operand is treated as a two's complement integer, meaning that the most significant bit is a "sign" bit and is preserved.
-            Logical shift: a logic zero is shifted into the operand. This is used to shift unsigned integers.
-            Rotate: typically, carry-in is shifted into the operand.
-           */
               
            ADD : begin
 		 {cout, result} = data_one + data_two;
@@ -124,7 +117,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
 		 end
            
            NAND : begin
-		 result = data_one &~ data_two;
+		 result = ~(data_one & data_two);
 		 //FLAGS
                  if(!(|result))
                      flags |= 3'b100;   //set zero (Z)

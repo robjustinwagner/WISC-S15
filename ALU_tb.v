@@ -17,8 +17,17 @@ reg passed;
 reg tmp1;		//temporary variables
 reg tmp2;		//
 reg unsigned [4:0] i;	//
-reg [3:0] ctr;		//
+reg [4:0] ctr;		//
 reg [15:0] stim_cache;	//
+
+   localparam   ADD   =   3'b000;
+   localparam   SUB   =   3'b001;
+   localparam   NAND  =   3'b010;
+   localparam   XOR   =   3'b011;
+   localparam   INC   =   3'b100;
+   localparam   SRA   =   3'b101;
+   localparam   SRL   =   3'b110;
+   localparam   SLL   =   3'b111;  
 
 ALU ALU_DUT(.data_one(stim1), .data_two(stim2), .shift(shift), .control(control), 
 	.done(done), .result(result), .flags(flags));
@@ -29,23 +38,24 @@ initial begin
 	
 	#20;
 	
-	/* Begin ADD 
+	/* Begin ADD */
 	stim1 = -32768;
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = ADD;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
-		#5
+		#1
 		while(stim2 <= 32694) begin		
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
 			//tmp2 --> cout[14] (for overflow)
 			tmp1 = 1'b0;
 			i = 5'b00000;
+			#1
 			while(i < 16) begin
 				#1
 				if(i == 5'b01111) begin
@@ -152,27 +162,28 @@ initial begin
 		$display("ENDING TEST PREMATURELY...");
 		$stop;
 	end
-	End ADD */
+	/* End ADD */
 
 	#20;
 	
-	/* Begin SUB  */
+	/* Begin SUB */
 	stim1 = -32768;
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = SUB;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
-		#5
+		#1
 		while(stim2 <= 32694) begin		
 			//test that each bit is correct
 			//tmp1 --> C_in[i-1], eventually cout[15]
 			//tmp2 --> cout[14] (for overflow)
 			tmp1 = 1'b0;
 			i = 5'b00000;
+			#1
 			while(i < 16) begin
 				#1
 				if(i == 5'b01111) begin
@@ -310,20 +321,24 @@ initial begin
 
 	#20;
 	
-	/* Begin NAND  */
+	/* Begin NAND */
 	stim1 = -32768;
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = NAND;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
+		#1
 		while(stim2 <= 32694) begin
-			#5 
+			tmp1 = 1'b0;
+			i = 5'b00000;
 			//test that each bit is correct
-			for(int i = 0; i < 16; i++) begin
+			#1
+			while(i < 16) begin
+				#1
 				if(stim1[i] == 1'b0 && stim2[i] == 1'b0) begin
 					tmp1 = 1'b1;
 				end
@@ -337,9 +352,10 @@ initial begin
 					tmp1 = 1'b0;
 				end
 				//if bit is incorrect
-				if(ALU_DUT.result != tmp1) begin
+				if(ALU_DUT.result[i] != tmp1) begin
 				  	passed = 1'b0;
 				end
+			i = i + 1;
 			end
 			//test flags
 			#5
@@ -379,9 +395,9 @@ initial begin
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = INC;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
 		#1
@@ -391,6 +407,7 @@ initial begin
 			//tmp2 --> cout[14] (for overflow)
 			tmp1 = 1'b0;
 			i = 5'b00000;
+			#1
 			while(i < 16) begin
 				#1
 				if(i == 5'b01111) begin
@@ -501,20 +518,24 @@ initial begin
 
 	#20;
 	
-	/* Begin XOR  */
+	/* Begin XOR */
 	stim1 = -32768;
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = XOR;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		stim2 = -32768;
+		#1
 		while(stim2 <= 32694) begin
-			#5 
+			tmp1 = 1'b0;
+			i = 5'b00000;
 			//test that each bit is correct
-			for(int i = 0; i < 16; i++) begin
+			#1
+			while(i < 16) begin
+				#1
 				if(stim1[i] == 1'b0 && stim2[i] == 1'b0) begin
 					tmp1 = 1'b0;
 				end
@@ -528,9 +549,10 @@ initial begin
 					tmp1 = 1'b0;
 				end
 				//if bit is incorrect
-				if(ALU_DUT.result != tmp1) begin
+				if(ALU_DUT.result[i] != tmp1) begin
 				  	passed = 1'b0;
 				end
+			i = i + 1;
 			end
 			//test flags
 			#5
@@ -570,17 +592,21 @@ initial begin
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = SRA;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		ctr = 4'b0000;
 		shift = 4'b0000;
 		stim_cache = stim1;
+		#1
 		while(ctr <= 15) begin
-			#5 
+			tmp1 = 1'b0;
+			i = 5'b00000;
 			//test that each bit is correct
-			for(int i = 0; i <= 15; i++) begin
+			#1
+			while(i < 16) begin
+				#1
 				if((i+shift) > 15) begin	//if bit test is out-of-bounds, use 0
 					tmp1 = stim_cache[15];
 				end
@@ -590,6 +616,7 @@ initial begin
 				if(ALU_DUT.result[i] != tmp1) begin
 				  	passed = 1'b0;
 				end
+			i = i + 1;
 			end
 			//no flag test, leave flags alone
 			stim1 = stim_cache;
@@ -615,17 +642,21 @@ initial begin
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = SRL;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		ctr = 4'b0000;
 		shift = 4'b0000;
 		stim_cache = stim1;
+		#1
 		while(ctr <= 15) begin
-			#5 
+			tmp1 = 1'b0;
+			i = 5'b00000;
 			//test that each bit is correct
-			for(int i = 0; i <= 15; i++) begin
+			#1
+			while(i < 16) begin
+				#1
 				if((i+shift) > 15) begin	//if bit test is out-of-bounds, use 0
 					tmp1 = 1'b0;
 				end
@@ -635,6 +666,7 @@ initial begin
 				if(ALU_DUT.result[i] != tmp1) begin
 				  	passed = 1'b0;
 				end
+			i = i + 1;
 			end
 			//no flag test, leave flags alone
 			stim1 = stim_cache;
@@ -660,17 +692,21 @@ initial begin
 	stim2 = -32768;
 	shift = 4'b0000;
 	load_half_imm = 8'b00000000;
-	control = 4'b0000;
+	control = SLL;
 	passed = 1'b1;
-	#5
+	#1
 	while(stim1 <= 32694) begin
 		ctr = 4'b0000;
 		shift = 4'b0000;
 		stim_cache = stim1;
+		#1
 		while(ctr <= 15) begin
-			#5 
+			tmp1 = 1'b0;
+			i = 5'b00000;
 			//test that each bit is correct
-			for(int i = 0; i <= 15; i++) begin
+			#1
+			while(i < 16) begin
+				#1
 				if((i-shift) < 0) begin	//if bit test is out-of-bounds, use 0
 					tmp1 = 1'b0;
 				end
@@ -680,6 +716,7 @@ initial begin
 				if(ALU_DUT.result[i] != tmp1) begin
 				  	passed = 1'b0;
 				end
+			i = i + 1;
 			end
 			//no flag test, leave flags alone
 			stim1 = stim_cache;
@@ -698,6 +735,9 @@ initial begin
 	end
 	/* End SLL */
 
+	// TEST PASSED
+	$display("ALU TEST PASSED.");
+   
 	$stop;
    
 end
