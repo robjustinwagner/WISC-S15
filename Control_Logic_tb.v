@@ -1,3 +1,5 @@
+`include "Control_Logic.v"
+
 module Control_Logic_tb();
 	
 reg clk;

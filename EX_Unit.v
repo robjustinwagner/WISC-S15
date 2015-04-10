@@ -1,5 +1,9 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "ALU.v"
+`include "Flag_reg.v"
+`incldue "PC_Update.v"
+
 module EX_Unit(clk, 
 	RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, branch_cond, call_target,
 	   branch, call_in, PC_in, ret_future_in, ret_wb, PC_stack_pointer,

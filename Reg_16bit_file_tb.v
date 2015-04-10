@@ -1,5 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "Reg_16bit_file.v"
+
 module REg_16bit_file_tb();
 	
 reg clk, RegWrite;

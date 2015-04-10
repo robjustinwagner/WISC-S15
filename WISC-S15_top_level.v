@@ -1,5 +1,15 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "IF_Unit.v"
+`include "IFID_reg.v"
+`include "ID_Unit.v"
+`include "IDEX_reg.v"
+`include "EX_Unit.v"
+`include "EXMEM_reg.v"
+`include "MEM_Unit.v"
+`include "MEMWB_reg.v"
+`include "WB_Unit.v"
+
 module WISC_S15_top_level(clk, rst);
 
 //INPUTS

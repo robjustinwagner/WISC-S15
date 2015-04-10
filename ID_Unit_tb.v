@@ -1,5 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "ID_Unit.v"
+
 module ID_Unit_tb();
     
 //INPUTS 

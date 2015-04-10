@@ -1,5 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "Instruction_Memory.v"
+
+
 module IF_Unit(clk, rst,
 	hazard, PC_src, PC_branch, 
 	PC_out, instruction);

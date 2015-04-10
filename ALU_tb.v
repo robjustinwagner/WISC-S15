@@ -1,3 +1,5 @@
+`include "ALU.v"
+
 module ALU_tb();
 	
 reg clk;

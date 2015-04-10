@@ -1,5 +1,10 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "Reg_16bit_file.v"
+`include "Control_Logic.v"
+`include "HDT_Unit.v"
+`include "Reg_16bit_file.v"
+
 /* For a better understanding of these in/out parameters,
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register

@@ -1,0 +1,27 @@
+###################################################################
+
+# Created by write_script -format dctcl on Sat Oct 19 10:41:21 2013
+
+###################################################################
+
+analyze -library WORK -format verilog WISC-S15_top_level.v
+elaborate WISC_S15_top_level -architecture verilog -library WORK
+# Set the current_design #
+current_design WISC_S15_top_level 
+
+set_units -time ns -resistance kOhm -capacitance pF -voltage V -current mA
+set_operating_conditions NCCOM -library tcbn40lpbwptc
+set_wire_load_model -name TSMC512K_Lowk_Aggresive -library tcbn40lpbwptc
+set_max_area 0 
+set_local_link_library {tcbn40lpbwptc.db,tpfn45gsgv18tc.db,tcbn40lpbwptc.db}
+set_fix_multiple_port_nets -all
+create_clock -name my_clk  -period 10  -waveform {0 6}
+
+# Compile 
+ungroup -all
+uniquify
+compile -map_effort medium 
+change_names -rule verilog -hierarchy
+write -format verilog -hierarchy -output synth.v
+report_area > area.txt
+report_timing -path full -delay max -nworst 3 > timing.txt

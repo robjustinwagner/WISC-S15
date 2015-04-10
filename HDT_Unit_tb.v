@@ -1,5 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "HDT_Unit.v"
+
 module HDT_Unit_tb();
     
 reg clk, call, ret, PC_update;

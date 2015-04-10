@@ -1,5 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
+`include "Data_Memory.v"
+
 module MEM_Unit(clk, 
 	   call_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, 
 	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, 
