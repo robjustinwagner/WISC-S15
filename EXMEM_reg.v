@@ -43,7 +43,12 @@ output logic        ret_future_out; // Future ret_wb signal
 always @(posedge clk) begin
     
 	mem_to_reg_out     <= mem_to_reg_in;
-	reg_rd_out         <= reg_rd_in;
+	
+	if (reg_rd_in === 3'bxxx)
+      reg_rd_out <= reg_rd_out;
+   else
+      reg_rd_out <= reg_rd_in; 
+      
 	alu_result_out     <= alu_result_in;
 	save_word_data_out <= save_word_data_in;
 	ret_future_out     <= ret_future_in;

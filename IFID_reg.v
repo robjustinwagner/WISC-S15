@@ -61,9 +61,9 @@ always @(posedge clk) begin
     
 	   cntrl_input   <= cntrl_input;
 
-	   reg_rs        <= reg_rs;
-	   reg_rt        <= reg_rt;
-	   reg_rd        <= reg_rd;
+	   reg_rs        <= instruction[7:4];
+	   reg_rt        <= instruction[3:0];
+	   reg_rd        <= instruction[11:8];
 	
 	   arith_imm     <= arith_imm;
 	   load_save_imm <= load_save_imm;

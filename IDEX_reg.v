@@ -108,7 +108,10 @@ always @(posedge clk) begin
    rd_data_2_out <= rd_data_2_in;    
    sign_ext_out <= sign_ext_in;  
 
-   reg_rd_out <= reg_rd_in;       
+   if (reg_rd_in === 3'bxxx)
+      reg_rd_out <= reg_rd_out;
+   else
+      reg_rd_out <= reg_rd_in;       
 
    PC_out <= PC_in;  
 

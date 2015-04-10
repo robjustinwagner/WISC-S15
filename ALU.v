@@ -33,7 +33,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
     done = 1'b0;
     flags = 3'b000;
     cout = 1'b0;
-    result = 1'b0;
+    //result = 16'bzzzz;
 
     case(control)
               
@@ -188,7 +188,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
            
 	   default: result = result;
             
-       endcase
+      endcase
       
     done = 1'b1; //all ALU operations are done
 
