@@ -131,6 +131,8 @@ logic        c_branch;
 logic        c_call;               
 logic        c_ret;  
 
+assign PC_out = PC_in;
+
 //////////////////////////////////////////////////////////////////////
                                     
 //MODULE INSTANTIATIONS

@@ -23,7 +23,7 @@ always
   #1 clk = ~clk;
   
 initial begin
-  #100;
+  #200;
   $stop();
 end  
 
