@@ -68,10 +68,10 @@ output [15:0] read_data_2;       // Regfile Read_Bus_2
 output [3:0]  arith_imm_out;     // Imm of Arithmetic Inst
 output [7:0]  load_save_imm_out; // Imm of Load/Save Inst
 
-output [2:0]  branch_cond_out;   // Branch condition
-output [3:0]  load_save_reg_out; // Future Regfile dest
-output [11:0] call_target_out;   // Call target
-output [15:0] PC_out;            // Program counter
+output [2:0]        branch_cond_out;   // Branch condition
+output logic [3:0]  load_save_reg_out; // Future Regfile dest
+output [11:0]       call_target_out;   // Call target
+output [15:0]       PC_out;            // Program counter
 
 //SIGN-EXT UNIT OUTPUT
 output logic [15:0] sign_ext_out;      // Output of sign extension unit
@@ -130,7 +130,6 @@ assign arith_imm_out     = arith_imm_in;
 assign load_save_imm_out = load_save_imm_in; 
         
 assign branch_cond_out   = branch_cond_in;
-assign load_save_reg_out = load_save_reg_in;
 assign call_target_out   = call_target_in;
 assign PC_out            = PC_in;
 
@@ -184,7 +183,8 @@ end
 // Hazard Detection MUX
 always_comb begin
     
-    if (data_hazard | PC_hazard_in) begin
+    if (data_hazard | PC_hazard_in) begin //BAD STYLE, CHANGE FOR FINAL
+        load_save_reg_out = 4'bxxxx;
         mem_to_reg     = 1'b0;    
         RegWrite_out   = 1'b0; 
         MemWrite_out   = 1'b0;
@@ -197,6 +197,7 @@ always_comb begin
     end
     
     else begin
+        load_save_reg_out = load_save_reg_in;
         mem_to_reg     = c_mem_to_reg;    
         RegWrite_out   = c_RegWrite; 
         MemWrite_out   = c_MemWrite;

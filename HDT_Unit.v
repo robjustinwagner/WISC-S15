@@ -84,8 +84,6 @@ always_comb begin
         if (data_hazard === 1'bx)
            data_hazard = 1'b0;
         
-        hault = data_hazard;
-        
     end
 
 end
