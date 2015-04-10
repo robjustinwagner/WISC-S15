@@ -1,0 +1,18 @@
+Warning: Design 'WISC_S15_top_level' has '9' unresolved references. For more detailed information, use the "link" command. (UID-341)
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -nworst 3
+        -max_paths 3
+Design : WISC_S15_top_level
+Version: I-2013.12-SP5
+Date   : Thu Apr  9 23:53:45 2015
+****************************************
+
+Operating Conditions: NCCOM   Library: tcbn40lpbwptc
+Wire Load Model Mode: segmented
+No paths.
+
+1
