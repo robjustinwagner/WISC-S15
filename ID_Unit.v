@@ -61,17 +61,17 @@ output	logic	load_half;	    // Specifies the ALU result
 output	logic	half_spec;	    // (0 -> LHB, 1 -> LLB)
 
 //REGFILE OUTPUT PARAMS
-output [15:0] read_data_1;       // Regfile Read_Bus_1
-output [15:0] read_data_2;       // Regfile Read_Bus_2
+output logic [15:0] read_data_1;       // Regfile Read_Bus_1
+output logic [15:0] read_data_2;       // Regfile Read_Bus_2
 
 //PIPE TO PIPE
-output [3:0]  arith_imm_out;     // Imm of Arithmetic Inst
-output [7:0]  load_save_imm_out; // Imm of Load/Save Inst
+output logic [3:0]  arith_imm_out;     // Imm of Arithmetic Inst
+output logic [7:0]  load_save_imm_out; // Imm of Load/Save Inst
 
-output [2:0]        branch_cond_out;   // Branch condition
-output logic [3:0]  load_save_reg_out; // Future Regfile dest
-output [11:0]       call_target_out;   // Call target
-output [15:0]       PC_out;            // Program counter
+output logic [2:0]        branch_cond_out;   // Branch condition
+output logic [3:0]        load_save_reg_out; // Future Regfile dest
+output logic [11:0]       call_target_out;   // Call target
+output logic [15:0]       PC_out;            // Program counter
 
 //SIGN-EXT UNIT OUTPUT
 output logic [15:0] sign_ext_out;      // Output of sign extension unit
@@ -113,39 +113,37 @@ logic sign_ext_sel;              /* Control signal for selecting
                                     
 logic [3:0] reg_rt;              // Regfile source 2
 
-//CONTROL OUTPUTS FOR FUTURE PIPELINE
+//INTERNAL OUTPUTS
+
+logic        [15:0] mem_read_data_1;
+logic        [15:0] mem_read_data_2;
+
 logic        c_mem_to_reg;          
 logic        c_RegWrite;
 logic        c_MemWrite;
 logic        c_MemRead;        
 logic        c_alu_src;           
-logic [2:0]  c_alu_op;            
+logic [2:0]  c_alu_op; 
+
+logic        c_load_half;
 
 logic        c_branch;               
 logic        c_call;               
 logic        c_ret;  
-
-//PIPE TO PIPE   
-assign arith_imm_out     = arith_imm_in;  
-assign load_save_imm_out = load_save_imm_in; 
-        
-assign branch_cond_out   = branch_cond_in;
-assign call_target_out   = call_target_in;
-assign PC_out            = PC_in;
 
 //////////////////////////////////////////////////////////////////////
                                     
 //MODULE INSTANTIATIONS
 Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        .StackReg(StackReg), .Read_Reg_1(reg_rs), .Read_Reg_2(reg_rt),
-                       .Write_Reg(WriteReg), .Read_Bus_1(read_data_1),
-                       .Read_Bus_2(read_data_2), .Write_Bus(WriteData));
+                       .Write_Reg(WriteReg), .Read_Bus_1(mem_read_data_1),
+                       .Read_Bus_2(mem_read_data_2), .Write_Bus(WriteData));
 
 Control_Logic control(.opcode(cntrl_opcode),
 		               .data_reg(DataReg), .stack_reg(StackReg), .call(c_call), .rtrn(c_ret), .branch(c_branch), 
 				         .mem_to_reg(c_mem_to_reg), .alu_op(c_alu_op), .alu_src(c_alu_src),
 				         .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), .RegWrite(c_RegWrite),
-				         .MemWrite(c_MemWrite), .MemRead(c_MemRead), .load_half(load_half),
+				         .MemWrite(c_MemWrite), .MemRead(c_MemRead), .load_half(c_load_half),
 				         .half_spec(half_spec));
 
 HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith),
@@ -184,29 +182,60 @@ end
 always_comb begin
     
     if (data_hazard | PC_hazard_in) begin //BAD STYLE, CHANGE FOR FINAL
-        load_save_reg_out = 4'bxxxx;
-        mem_to_reg     = 1'b0;    
+        
+        load_save_reg_out = 4'bzzzz;
+            
         RegWrite_out   = 1'b0; 
         MemWrite_out   = 1'b0;
         MemRead_out    = 1'b0;
+        mem_to_reg     = 1'b0;
+        
         alu_src        = 1'b0;  
-        alu_op         = 3'b111; 
+        alu_op         = 3'b111;
+         
         branch         = 1'b0;    
         call           = 1'b0;   
         ret            = 1'b0; 
+        
+        load_half      = 1'b0;
+
+        read_data_1    = 16'hzzzz;
+        read_data_2    = 16'hzzzz;
+
+        arith_imm_out  = 4'hz;
+        load_save_imm_out = 8'hzz;
+
+        branch_cond_out = 3'bzzz;
+        load_save_reg_out = 4'bzzz;
+        call_target_out   = 12'hzzz;
+        sign_ext_out      = 16'hzzzz;
+        
     end
     
     else begin
+        
         load_save_reg_out = load_save_reg_in;
+        
         mem_to_reg     = c_mem_to_reg;    
         RegWrite_out   = c_RegWrite; 
         MemWrite_out   = c_MemWrite;
         MemRead_out    = c_MemRead;
+        
         alu_src        = c_alu_src;  
         alu_op         = c_alu_op; 
+        
         branch         = c_branch;    
         call           = c_call;   
-        ret            = c_ret;
+        ret            = c_ret; 
+        
+        load_half      = c_load_half;
+        
+        read_data_1    = mem_read_data_1;
+        read_data_2    = mem_read_data_2;
+
+        arith_imm_out  = arith_imm_in;
+        load_save_imm_out = load_save_imm_in;
+
     end
     
 end

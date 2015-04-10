@@ -59,18 +59,18 @@ always @(posedge clk) begin
 	   // Lock everything
       PC_out        <= PC_out;
     
-	   cntrl_input   <= NO_OP[15:12]; //cntrl_input;
+	   cntrl_input   <= cntrl_input;
 
 	   reg_rs        <= instruction[7:4];
 	   reg_rt        <= instruction[3:0];
 	   reg_rd        <= instruction[11:8];
 	
-	   arith_imm     <= 4'bxxxx; //arith_imm;
-	   load_save_imm <= 8'bxxxxxxxx; //load_save_imm;
+	   arith_imm     <= arith_imm;
+	   load_save_imm <= load_save_imm;
 	
-	   call_target   <= 12'bxxxxxxxxxxxx; //call_target;
+	   call_target   <= call_target;
 	   
-	   branch_cond   <= 3'bxxx; //branch_cond;
+	   branch_cond   <= branch_cond;
 	   
 	end
 	
