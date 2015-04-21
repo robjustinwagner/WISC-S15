@@ -1,6 +1,6 @@
 module WISC_S15_top_level_tb();
 
-`include "WISC_S15_top_level.v"
+`include "WISC-S15_top_level.v"
 
 reg clk,rst;
 
@@ -9,7 +9,7 @@ wire [15:0] pc;
 //////////////////////
 // Instantiate CPU //
 ////////////////////
-WISC_S15_top_level iCPU(.clk(clk), .rst(rst));
+WISC_S15_top_level iCPU(.clk(clk), .rst(rst), .hlt(hlt));
 
 initial begin
   clk = 0;
@@ -25,8 +25,7 @@ always
   #1 clk = ~clk;
   
 initial begin
-  #200;
-  $stop();
+  @(posedge hlt) $stop();
 end  
 
 endmodule

@@ -13,7 +13,7 @@ module ID_Unit(clk, rst, PC_update, PC_hazard_in,
 		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
 		read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, 
-		sign_ext_out, data_hazard, PC_hazard_out);
+		sign_ext_out, data_hazard, PC_hazard_out, HALT);
 
 /////////////////////////////INPUTS//////////////////////////////////
 
@@ -84,6 +84,8 @@ output logic [15:0] sign_ext_out;      // Output of sign extension unit
 output logic data_hazard;
 output logic PC_hazard_out;
 
+output logic HALT;
+
 /////////////////////////END OUTPUTS/////////////////////////////////
 
 
@@ -150,7 +152,7 @@ Control_Logic control(.opcode(cntrl_opcode),
 				         .mem_to_reg(c_mem_to_reg), .alu_op(c_alu_op), .alu_src(c_alu_src),
 				         .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), .RegWrite(c_RegWrite),
 				         .MemWrite(c_MemWrite), .MemRead(c_MemRead), .load_half(c_load_half),
-				         .half_spec(half_spec));
+				         .half_spec(half_spec), .HALT(HALT));
 
 HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith), .DataReg(DataReg),
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 

@@ -10,12 +10,13 @@
 `include "MEMWB_reg.v"
 `include "WB_Unit.v"
 
-module WISC_S15_top_level(clk, rst);
+module WISC_S15_top_level(clk, rst, hlt);
 
 //INPUTS
 input clk;
 input rst;
 //input [15:0] instr;
+output hlt;
 
 /* INTERNAL VARIABLES */
 logic rst_g;                     // Global reset for modules
@@ -202,7 +203,8 @@ end
 				.PC_out(PC_out_3), 
 				.sign_ext_out(sign_ext_out_3),
 				.data_hazard(data_hazard_3),
-				.PC_hazard_out(PC_hazard_3));
+				.PC_hazard_out(PC_hazard_3),
+				.HALT(hlt));
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 

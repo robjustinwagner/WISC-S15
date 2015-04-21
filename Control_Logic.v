@@ -2,7 +2,7 @@
 
 module Control_Logic(opcode,
 	data_reg, stack_reg, call, rtrn, branch, mem_to_reg, alu_op, alu_src, sign_ext_sel,
-	reg_rt_src, RegWrite, MemWrite, MemRead, load_half, half_spec);
+	reg_rt_src, RegWrite, MemWrite, MemRead, load_half, half_spec, HALT);
 
 //INPUTS
 input 	[3:0] 		opcode;   	//4-bit instruction opcode
@@ -29,6 +29,8 @@ output reg    MemWrite;     // Signal for writing to memory
 output reg    MemRead;      // Signal for reading from memory
 output	reg		  load_half;	   // Specifies the ALU result
 output reg		  half_spec;	   // (0 -> LHB, 1 -> LLB)
+
+output reg    HALT;      // STOP THE CPU
                
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -79,6 +81,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
            
            SUB : begin
@@ -97,6 +100,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
            NAND : begin
@@ -115,6 +119,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
            
            XOR : begin
@@ -133,6 +138,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
                              
            INC : begin
@@ -151,6 +157,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
            
           SRA : begin
@@ -169,6 +176,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
            
            SRL : begin
@@ -187,6 +195,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
            
            SLL : begin
@@ -205,6 +214,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
 	   LW :  begin
@@ -223,6 +233,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b1;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
 	   SW :  begin
@@ -241,6 +252,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
 	   LHB : begin
@@ -259,6 +271,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b1;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
 	   LLB : begin
@@ -277,6 +290,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b1;
 		 half_spec = 1'b1;
+		 HALT = 1'b0;
 		 end
 
 	   B :   begin
@@ -295,6 +309,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
 	   CALL : begin
@@ -313,6 +328,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b0;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
 	   RET : begin
@@ -331,6 +347,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'b1;
 		 load_half = 1'b0;
 		 half_spec = 1'b0;
+		 HALT = 1'b0;
 		 end
 
 	   ERR : begin 
@@ -349,7 +366,7 @@ localparam   TR    =   3'b111;
 		 MemRead  = 1'bz;
 		 load_half = 1'bz;
 		 half_spec = 1'bz;
-	   
+	    HALT = 1'b1;
 	   end
 
 	   default: begin end
