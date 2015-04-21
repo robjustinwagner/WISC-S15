@@ -25,7 +25,9 @@ always
   #1 clk = ~clk;
   
 initial begin
-  @(posedge hlt) $stop();
+//  @(posedge hlt) $stop();
+#100;
+$stop;
 end  
 
 endmodule
