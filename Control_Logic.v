@@ -333,7 +333,24 @@ localparam   TR    =   3'b111;
 		 half_spec = 1'b0;
 		 end
 
-	   ERR : begin end
+	   ERR : begin 
+	    data_reg = 1'bz;
+		 stack_reg = 1'bz;
+		 call = 1'bz;
+		 rtrn = 1'bz;
+		 branch = 1'bz;
+		 mem_to_reg = 1'bz;
+		 alu_op = 3'bzzz;
+		 alu_src = 1'bz;
+		 sign_ext_sel = 1'bz;
+		 reg_rt_src = 1'bz;
+		 RegWrite = 1'bz;
+		 MemWrite = 1'bz;
+		 MemRead  = 1'bz;
+		 load_half = 1'bz;
+		 half_spec = 1'bz;
+	   
+	   end
 
 	   default: begin end
 

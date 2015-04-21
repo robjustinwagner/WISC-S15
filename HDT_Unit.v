@@ -2,7 +2,7 @@
 
 module HDT_Unit(IF_ID_reg_rs, IF_ID_reg_rt, IF_ID_reg_rd,
                    ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
-                   ret, call, PC_update, rst, clk,
+                   ret, call, DataReg, PC_update, rst, clk,
                 data_hazard, PC_hazard);
     
 input [3:0] IF_ID_reg_rs;  // Incoming Regfile Read Registers
@@ -13,11 +13,13 @@ input [3:0] ID_EX_reg_rd;  // Corresponds to IDEX_reg's reg_rd_out
 input [3:0] EX_MEM_reg_rd; // Corresponds to EXMEM_reg's reg_rd_out
 input [3:0] MEM_WB_reg_rd; // Corresponds to MEMWB_reg's reg_rd_out
 
-input       clk, rst, ret, call, PC_update;
+input       clk, rst, ret, call, DataReg, PC_update;
 
 //OUTPUT TO HAULT PIPE
 output logic data_hazard;
 output logic PC_hazard;
+
+logic [15:0] read_reg_1; // This logic is used for determining a hazard when the data segment register isn't ready
 
 logic IDEX_hazard;
 logic EXMEM_hazard;
@@ -66,16 +68,21 @@ always_comb begin
     end
        
     else begin
+        
+        if (DataReg)
+           read_reg_1 = 4'b1110;
+        else
+           read_reg_1 = IF_ID_reg_rs;
 
-        IDEX_hazard  = ( (&(IF_ID_reg_rs ~^ ID_EX_reg_rd)) |
+        IDEX_hazard  = ( (&(read_reg_1 ~^ ID_EX_reg_rd)) |
                          (&(IF_ID_reg_rt ~^ ID_EX_reg_rd)) |
                          (&(IF_ID_reg_rd ~^ ID_EX_reg_rd)) );
                      
-        EXMEM_hazard = ( (&(IF_ID_reg_rs ~^ EX_MEM_reg_rd)) |
+        EXMEM_hazard = ( (&(read_reg_1 ~^ EX_MEM_reg_rd)) |
                          (&(IF_ID_reg_rt ~^ EX_MEM_reg_rd)) |
                          (&(IF_ID_reg_rd ~^ EX_MEM_reg_rd)) );
                      
-        MEMWB_hazard = ( (&(IF_ID_reg_rs ~^ MEM_WB_reg_rd)) |
+        MEMWB_hazard = ( (&(read_reg_1 ~^ MEM_WB_reg_rd)) |
                          (&(IF_ID_reg_rt ~^ MEM_WB_reg_rd)) |
                          (&(IF_ID_reg_rd ~^ MEM_WB_reg_rd)) );
                          
@@ -89,10 +96,3 @@ always_comb begin
 end
 
 endmodule
-             
-   
-
-           
-    
-    
-    

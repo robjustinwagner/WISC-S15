@@ -3,7 +3,6 @@
 `include "Reg_16bit_file.v"
 `include "Control_Logic.v"
 `include "HDT_Unit.v"
-`include "Reg_16bit_file.v"
 
 /* For a better understanding of these in/out parameters,
    reference the sketch of the ID unit. Inputs and outputs
@@ -153,7 +152,7 @@ Control_Logic control(.opcode(cntrl_opcode),
 				         .MemWrite(c_MemWrite), .MemRead(c_MemRead), .load_half(c_load_half),
 				         .half_spec(half_spec));
 
-HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith),
+HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith), .DataReg(DataReg),
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
                         .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd),
                         .ret(c_ret), .call(c_call), .PC_update(PC_update),
@@ -215,7 +214,7 @@ always_comb begin
         branch_cond_out = 3'bzzz;
         load_save_reg_out = 4'bzzz;
         call_target_out   = 12'hzzz;
-        sign_ext_out      = 16'hzzzz;
+        //sign_ext_out      = 16'hzzzz;
         
     end
     
