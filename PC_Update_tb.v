@@ -6,6 +6,8 @@ module PC_Update_tb();
     
 //////////////////////////INPUTS///////////////////////////////
 
+reg clk;
+
 // FROM ID/EX REG
 reg               branch;
 reg        [2:0]  branch_cond;
@@ -28,21 +30,16 @@ reg        [15:0] PC_stack_pointer;
 wire [15:0] PC_update;
 wire        PC_src;
 wire        update_done;
-    
-reg clk, call, ret, PC_update;
-    
-reg [3:0] IF_ID_reg_rs, IF_ID_reg_rt, IF_ID_reg_rd;
-reg [3:0] ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd;
-
-wire hazard;
 
 initial begin
   forever #5 clk = ~clk; 
 end
 
-PC_Update PCU (PC_in, PC_stack_pointer, alu_done, flags, call_imm,
-                 sign_ext, branch_cond, branch, call, ret, 
-                    PC_update, PC_src, update_done);
+PC_Update PCU (.PC_in(PC_in), .PC_stack_pointer(PC_stack_pointer), .alu_done(alu_done), .flags(flags),
+                  .call_imm(call_imm), .sign_ext(sign_ext), .branch_cond(branch_cond), .branch(branch),
+                  .call(call), .ret(ret), 
+               .PC_update(PC_update), .PC_src(PC_src), .update_done(update_done));
+
 
 initial begin
     

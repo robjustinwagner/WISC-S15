@@ -1,12 +1,13 @@
 // Author: Graham Nygard, Robert Wagner
 
-module IFID_reg(clk, hazard, instruction, PC_in, 
+module IFID_reg(clk, data_hazard, PC_hazard, instruction, PC_in, 
 	cntrl_input, branch_cond, reg_rs, reg_rt, 
 	reg_rd, arith_imm, load_save_imm, call_target, PC_out);
 
 //INPUTS
 input        clk;
-input        hazard;        // Stall the pipe for hazards
+input        data_hazard;        // Stall the pipe for hazards
+input        PC_hazard;
 input [15:0] instruction;   // Instruction to execute
 input [15:0] PC_in;         // Program counter
 
@@ -23,6 +24,14 @@ output logic [15:0] PC_out;        // Program counter
 
 //NO OPERATION FOR PIPE STALL
 logic [15:0] NO_OP = 16'hF000;
+logic hazard;
+
+// Pipeline stall on hazard
+always_comb begin
+    
+    hazard = (data_hazard | PC_hazard);
+    
+end
 
 // Pipeline register will be sensitive flopped clock
 always @(posedge clk) begin
@@ -61,9 +70,9 @@ always @(posedge clk) begin
     
 	   cntrl_input   <= cntrl_input;
 
-	   reg_rs        <= instruction[7:4];
-	   reg_rt        <= instruction[3:0];
-	   reg_rd        <= instruction[11:8];
+	   reg_rs        <= reg_rs;//instruction[7:4];
+	   reg_rt        <= reg_rt;//instruction[3:0];
+	   reg_rd        <= reg_rd;//instruction[11:8];
 	
 	   arith_imm     <= arith_imm;
 	   load_save_imm <= load_save_imm;

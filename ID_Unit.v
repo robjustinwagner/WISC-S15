@@ -201,9 +201,9 @@ always_comb begin
         alu_src        = 1'b0;  
         alu_op         = 3'b111;
          
-        branch         = 1'b0;    
-        call           = 1'b0;   
-        ret            = 1'b0; 
+        branch         = 1'b0;//c_branch;    
+        call           = 1'b0;//c_call;   
+        ret            = 1'b0;//c_ret;  
         
         load_half      = 1'b0;
 
@@ -213,9 +213,8 @@ always_comb begin
         arith_imm_out  = 4'hz;
         load_save_imm_out = 8'hzz;
 
-        branch_cond_out = 3'bzzz;
-        load_save_reg_out = 4'bzzz;
-        call_target_out   = 12'hzzz;
+        branch_cond_out = branch_cond_in;
+        call_target_out   = call_target_in;
         //sign_ext_out      = 16'hzzzz;
         
     end
@@ -235,7 +234,7 @@ always_comb begin
         branch         = c_branch;    
         call           = c_call;   
         ret            = c_ret; 
-        
+       
         load_half      = c_load_half;
         
         read_data_1    = mem_read_data_1;
@@ -243,6 +242,9 @@ always_comb begin
 
         arith_imm_out  = arith_imm_in;
         load_save_imm_out = load_save_imm_in;
+        
+        branch_cond_out = branch_cond_in;
+        call_target_out   = call_target_in;
 
     end
     

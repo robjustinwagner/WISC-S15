@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-module PC_Update(PC_in, PC_stack_pointer, alu_done, flags, call_imm,
+module PC_Update(PC_in, PC_stack_pointer, alu_done, flags, call_target,
                  sign_ext, branch_cond, branch, call, ret, 
                     PC_update, PC_src, update_done);
 
@@ -9,7 +9,7 @@ input               branch;
 input        [2:0]  branch_cond;
 
 input               call;
-input        [11:0] call_imm;
+input        [11:0] call_target;
 
 input        [15:0] PC_in;
 input signed [15:0] sign_ext;
@@ -38,9 +38,10 @@ localparam   GEQ  =   3'b101;
 localparam   LEQ  =   3'b110;
 localparam   T    =   3'b111;
 
-always @(posedge alu_done, posedge ret) begin
-    
-    update_done = 0;
+//always @(posedge alu_done, posedge ret, posedge call) begin
+always_comb begin
+  
+   //if (alu_done) begin
     
     if (branch) begin
         
@@ -120,17 +121,18 @@ always @(posedge alu_done, posedge ret) begin
         endcase // End of branch cases
         
     end // end branch
+//end
     
     else if (call) begin
     
        // Needs to be incremented by 1 <-- project spec
-       PC_update   = {PC_in[15:12], call_imm};
+       PC_update   = {PC_in[15:12], call_target};
        update_done = 1;   // Tell control unit to unhault pipe
        PC_src      = 1;
        
     end
     
-    else if (ret) begin
+   else if (ret) begin
         
        PC_update   = PC_stack_pointer;
        update_done = 1;   // Tell control unit to unhault pipe
@@ -139,6 +141,8 @@ always @(posedge alu_done, posedge ret) begin
     end
     
     else begin
+        PC_update = 16'hxxxx;
+        update_done = 0;
         PC_src = 0;
     end
     

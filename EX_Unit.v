@@ -158,8 +158,8 @@ ALU       alu(.data_one(rd_data_1), .data_two(alu_op_2),
 Flag_reg  flags(.clk(clk), .en(alu_done), .d(set_flags), .q(updated_flags));
 
 PC_Update pc_update(.PC_in(PC_in), .PC_stack_pointer(PC_stack_pointer), .alu_done(alu_done), 
-                    .flags(updated_flags), .call_imm(call_target), .sign_ext(sign_ext),
-                    .branch_cond(branch_cond), .branch(branch), .call(call_in), .ret(ret),
+                    .flags(updated_flags), .call_target(call_target), .sign_ext(sign_ext),
+                    .branch_cond(branch_cond), .branch(branch), .call(call_in), .ret(ret_wb),
                     .PC_update(PC_update), .PC_src(PC_src), .update_done(PC_update_done));
  
 //Forwarding_Unit FU(); //FIX THIS
