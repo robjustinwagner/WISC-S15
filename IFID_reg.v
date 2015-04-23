@@ -83,6 +83,8 @@ always @(posedge clk) begin
 	   
 	end
 	
+	//assign PC_out = PC_in;
+	
 end
 
 endmodule

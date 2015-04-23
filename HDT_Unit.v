@@ -69,24 +69,25 @@ end
 
 always_comb begin
     
-    if (hault) begin
+    //if (hault) begin
        if (PC_update) begin
-           hault  = 0;
+        //   hault  = 0;
            PC_hazard = 0;
        end
-       else begin
-           hault  = 1;
-           PC_hazard = 1;
-       end
-    end
+       //end
+       //else begin
+       //    hault  = 1;
+       //    PC_hazard = 1;
+       //end
+    //end
     
-    else if (branch) begin
+    //if (branch) begin
     //   hault = 1;
     //   PC_hazard = 1;
-       data_hazard = 1'b0; // Can't have a data hazard if the current inst is branch
-    end
+     //  data_hazard = 1'b0; // Can't have a data hazard if the current inst is branch
+    //end
     
-    else if (ret) begin
+    if (ret) begin
        hault = 1;
        PC_hazard = 1;
        data_hazard = 1'b0; // Can't have a data hazard if the current inst is return

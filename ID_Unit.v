@@ -138,8 +138,6 @@ logic        c_branch;
 logic        c_call;               
 logic        c_ret;  
 
-assign PC_out = PC_in;
-
 //////////////////////////////////////////////////////////////////////
                                     
 //MODULE INSTANTIATIONS
@@ -190,7 +188,7 @@ end
 // Hazard Detection MUX
 always_comb begin
     
-    if (data_hazard | PC_hazard_in | PC_update) begin //BAD STYLE, CHANGE FOR FINAL
+    if (data_hazard | PC_hazard_in /*| PC_update*/) begin //BAD STYLE, CHANGE FOR FINAL
         
         load_save_reg_out = 4'bzzzz;
             
@@ -272,5 +270,7 @@ always_comb begin
     end
     
 end
+
+assign PC_out = PC_in;
                 
 endmodule
