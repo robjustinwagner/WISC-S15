@@ -23,6 +23,7 @@ logic rst_g;                     // Global reset for modules
 //#1; IF_Unit --> IFID_reg
 logic [15:0] PC_out_1;
 logic [15:0] instruction_1;
+logic        PC_hazard_1;
 //#2; IFID_reg --> ID_Unit
 logic [3:0]  cntrl_input_2;   	  // Inst[15:12] - Opcode
 logic [2:0]  branch_cond_2;   	  // Inst[11:8]  - Branch condition
@@ -138,16 +139,19 @@ end
 	//#1; stage 1 -- Instruction Fetch Module Unit
 	IF_Unit IFU(		.clk(clk), 
 				.rst(rst_g),
-				.hazard(data_hazard_3),
+				.data_hazard(data_hazard_3),
+				.PC_hazard(PC_hazard_3),
 				.PC_src(PC_src_5), 
 				.PC_branch(PC_update_5), 
 				
 				.PC_out(PC_out_1), 
-				.instruction(instruction_1));	
+				.instruction(instruction_1),
+				.PC_hazard_ff(PC_hazard_1));	
 
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
-				.hazard(data_hazard_3), 
+				.data_hazard(data_hazard_3), 
+				.PC_hazard(PC_hazard_1),
 				.instruction(instruction_1),
 				.PC_in(PC_out_1), 
 

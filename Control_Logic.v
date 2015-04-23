@@ -389,12 +389,12 @@ end
        endcase
       
   end
-
+/*
 	logic [15:0] cache_state_in;
 	logic [15:0] cache_state_out;
 
 	//cache FF & control signal logic on both edges
-	Reg_16bit(.clk(clk), .en(en), .d(cache_state_in), .q(cache_state_out);
+	Reg_16bit(.clk(clk), .en(en), .d(cache_state_in), .q(cache_state_out));
 
 	//cache controller FSM - Moore (output only depends on current state)
 	//CAN IMPROVE PERFORMANCE BY ADDING MORE STATES TO IMPROVE 
@@ -449,5 +449,6 @@ end
 		endcase
 
 	end
+	*/
 
 endmodule

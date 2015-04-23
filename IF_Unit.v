@@ -3,16 +3,16 @@
 `include "Instruction_Memory.v"
 
 
-module IF_Unit(clk, rst,
-	hazard, PC_src, PC_branch, 
-	PC_out, instruction);
+module IF_Unit(clk, rst, data_hazard, PC_hazard, PC_hazard_ff, 
+	               PC_src, PC_branch, PC_out, instruction);
 
 //////////////////////////INPUTS/////////////////////////////
 
 input			    clk;
 input			    rst;
 
-input			    hazard;        // Disable PC update for hazards
+input			    data_hazard;        // Disable PC update for hazards
+input        PC_hazard;
 input			    PC_src;        // Mux select for choosing PC source
 input	[15:0]	PC_branch;
 
@@ -20,6 +20,7 @@ input	[15:0]	PC_branch;
 
 //////////////////////////OUTPUTS/////////////////////////////
 
+output logic PC_hazard_ff;
 output	logic	[15:0]	PC_out;
 output	logic	[15:0]	instruction;
 
@@ -29,6 +30,9 @@ output	logic	[15:0]	instruction;
 logic	[15:0]	PC_plus_2;
 logic	[15:0]	PC_update;
 logic	[15:0]	PC_address;
+
+logic hazard;
+
 //instruction cache
 logic [63:0] wr_garbage;
 logic wdirty_garbage;
@@ -45,23 +49,36 @@ end
 
 //MODULE INSTANTIATIONS
 
-// Program Counter
-always_ff @(posedge clk, posedge hazard) begin
+// Pipeline stall on hazard
+always_comb begin
     
-    if (!rst & !hazard)
-       PC_address <= PC_update;
+    hazard = (data_hazard | PC_hazard);
+    
+end
 
-    else if (rst)
+// Program Counter
+always_ff @(posedge clk) begin
+    
+    if (!rst & !hazard) begin
+       PC_address <= PC_update;
+       PC_hazard_ff <= PC_hazard;
+    end
+
+    else if (rst) begin
        PC_address <= 16'h0000;
+       PC_hazard_ff <= 1'b0;
+    end
        
-    else
+    else begin
        PC_address <= PC_address;
+       PC_hazard_ff <= PC_hazard;
+    end
        
 end
 
 // Instruction cache
 Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
-                             .instr(instruction), .rd_en(!hazard));
+                             .instr(instruction), .rd_en(!PC_hazard_ff));
 /* Replace Instruction_Memory module with this!
 
 //PER PROJECT SPECIFICATION, ASSUME NO WRITE INTO INSTRUCTION CACHE!

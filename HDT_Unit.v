@@ -27,9 +27,11 @@ logic MEMWB_hazard;
 
 logic hault;
 
+/*
 logic PC_update_ff_1;
 logic PC_update_ff_2;
 logic PC_update_ff_3;
+*/
 
 // Reset the hazards to unhault pipe
 always @(posedge clk) begin
@@ -37,21 +39,22 @@ always @(posedge clk) begin
     if (rst) begin
        hault <= 1'b0;
        PC_hazard <= 1'b0;
-       PC_update_ff_2 <= 1'b0;
-       PC_update_ff_3 <= 1'b0;
+       //PC_update_ff_2 <= 1'b0;
+       //PC_update_ff_3 <= 1'b0;
        data_hazard <= 1'b0;
     end
    
     else begin
        hault <= hault;
        PC_hazard <= PC_hazard;
-       PC_update_ff_2 <= PC_update_ff_1;
-       PC_update_ff_3 <= PC_update_ff_2;
+       //PC_update_ff_2 <= PC_update_ff_1;
+       //PC_update_ff_3 <= PC_update_ff_2;
        data_hazard <= data_hazard; 
     end
     
 end
 
+/*
 always @(negedge clk) begin
     if (rst) begin
        PC_update_ff_1 <= 1'b0;
@@ -62,11 +65,12 @@ always @(negedge clk) begin
        
     end
 end
+*/
 
 always_comb begin
     
     if (hault) begin
-       if (PC_update_ff_3) begin
+       if (PC_update) begin
            hault  = 0;
            PC_hazard = 0;
        end

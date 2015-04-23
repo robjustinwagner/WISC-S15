@@ -2,7 +2,7 @@
 
 `include "Data_Memory.v"
 
-module MEM_Unit(clk, rst
+module MEM_Unit(clk, rst,
 	   call_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, 
 	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, 
 	   RegWrite_out, ret_future_out, mem_to_reg_out, reg_rd_out,
@@ -64,6 +64,7 @@ end
 Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
                      .we(MemWrite_in), .wrt_data(mem_write_data),
                      .rd_data(mem_read_data));
+                     
 /* Replace Data_Memory module with this! 
 
 Establishes project-specified size of memory system with 4 cycle delay
