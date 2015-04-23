@@ -170,6 +170,7 @@ end
 				.rst(rst_g), 
 				.PC_update(PC_update_done_5),
 				.PC_hazard_in(PC_hazard_4),
+				.branch_in(branch_out_4),
 				.RegWrite_in(RegWrite_out_8), 
 				.reg_rs(reg_rs_2), 
 				.reg_rt_arith(reg_rt_2), 

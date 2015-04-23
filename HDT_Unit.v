@@ -2,7 +2,7 @@
 
 module HDT_Unit(IF_ID_reg_rs, IF_ID_reg_rt, IF_ID_reg_rd,
                    ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
-                   ret, call, DataReg, PC_update, rst, clk,
+                   ret, call, branch, DataReg, PC_update, rst, clk,
                 data_hazard, PC_hazard);
     
 input [3:0] IF_ID_reg_rs;  // Incoming Regfile Read Registers
@@ -13,7 +13,7 @@ input [3:0] ID_EX_reg_rd;  // Corresponds to IDEX_reg's reg_rd_out
 input [3:0] EX_MEM_reg_rd; // Corresponds to EXMEM_reg's reg_rd_out
 input [3:0] MEM_WB_reg_rd; // Corresponds to MEMWB_reg's reg_rd_out
 
-input       clk, rst, ret, call, DataReg, PC_update;
+input       clk, rst, ret, call, branch, DataReg, PC_update;
 
 //OUTPUT TO HAULT PIPE
 output logic data_hazard;
@@ -78,6 +78,12 @@ always_comb begin
            hault  = 1;
            PC_hazard = 1;
        end
+    end
+    
+    else if (branch) begin
+    //   hault = 1;
+    //   PC_hazard = 1;
+       data_hazard = 1'b0; // Can't have a data hazard if the current inst is branch
     end
     
     else if (ret) begin

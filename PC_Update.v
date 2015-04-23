@@ -69,7 +69,7 @@ always_comb begin
             
             GT : begin
              
-                math = !flags[0] & !flags[1] & !flags[2];
+                math = (!flags[0]) & (!flags[1]) & (!flags[2]);
                 
                 if (math)
                    PC_src = 1;
@@ -95,7 +95,7 @@ always_comb begin
             
             GEQ : begin
                 
-                math = flags[1] | !flags[0];
+                math = flags[1] | (!flags[0]);
                 
                 if (math)
                    PC_src = 1;
@@ -119,6 +119,8 @@ always_comb begin
             end
             
         endcase // End of branch cases
+        
+        update_done = 1;
         
     end // end branch
 //end

@@ -8,7 +8,7 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, rst, PC_update, PC_hazard_in,
+module ID_Unit(clk, rst, PC_update, PC_hazard_in, branch_in,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
 		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
@@ -21,6 +21,7 @@ input        clk;              // The global clock input
 input        rst;              // The reset signal from PC
 input        PC_update;        // Signal for unhaulting pipe
 input        PC_hazard_in;
+input        branch_in;        // For delayed branching
 
 //REGFILE INPUT PARAMS
 input        RegWrite_in;      // Regfile RegWrite when not reset
@@ -157,7 +158,7 @@ Control_Logic control(.opcode(cntrl_opcode),
 HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith), .DataReg(DataReg),
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
                         .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd),
-                        .ret(c_ret), .call(c_call), .PC_update(PC_update),
+                        .ret(c_ret), .call(c_call), .branch(branch_in), .PC_update(PC_update),
                      .data_hazard(data_hazard), .PC_hazard(PC_hazard_out), .rst(rst), .clk(clk));
 
 // Register rt selection

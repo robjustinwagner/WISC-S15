@@ -33,6 +33,10 @@ logic	[15:0]	PC_address;
 
 logic hazard;
 
+logic instr_hazard;
+
+logic [15:0] read_instr; // The instruction read form memory
+
 //instruction cache
 logic [63:0] wr_garbage;
 logic wdirty_garbage;
@@ -78,7 +82,7 @@ end
 
 // Instruction cache
 Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
-                             .instr(instruction), .rd_en(!PC_hazard_ff));
+                             .instr(read_instr), .rd_en(!instr_hazard));
 /* Replace Instruction_Memory module with this!
 
 //PER PROJECT SPECIFICATION, ASSUME NO WRITE INTO INSTRUCTION CACHE!
@@ -92,21 +96,39 @@ TODO: instruction parsing logic from rd_data
 
 */
 
+always_comb begin
+    
+    instr_hazard = (PC_hazard_ff);// | (PC_src);
+    
+end
+    
+
 //PC update logic (branch target or next instr)
 always_comb begin
     
-    PC_plus_2 = PC_address + 2;
+    //PC_plus_2 = PC_address + 2;
     
     if (PC_src) begin
         PC_update = PC_branch;
+        PC_plus_2 = PC_address;
     end
     
     else begin
-        PC_update = PC_plus_2;
+        PC_plus_2 = PC_address + 2;
+        PC_update =  PC_plus_2;
     end
     
 end
 
-assign PC_out = PC_plus_2;
+always_comb begin
+   if (PC_src) begin
+      PC_out = 16'hxxxx;
+      instruction = 16'hxxxx;
+   end
+   else begin
+      PC_out = PC_address;
+       instruction = read_instr;
+   end
+end
 
 endmodule
