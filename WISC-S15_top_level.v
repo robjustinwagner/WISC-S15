@@ -10,13 +10,13 @@
 `include "MEMWB_reg.v"
 `include "WB_Unit.v"
 
-module WISC_S15_top_level(clk, rst, hlt);
+module WISC_S15_top_level(clk, rst, HALT);
 
 //INPUTS
 input clk;
 input rst;
 //input [15:0] instr;
-output hlt;
+output reg HALT;
 
 /* INTERNAL VARIABLES */
 logic rst_g;                     // Global reset for modules
@@ -57,6 +57,7 @@ logic [15:0] PC_out_3;            // Program counter
 logic [15:0] sign_ext_out_3;      // Output of sign extension unit
 logic	     data_hazard_3;		  // Hazard signaling for pipe stall
 logic      PC_hazard_3;
+logic      HALT_3;
 //#4; IDEX_reg --> EX_Unit
 logic        RegWrite_out_4;
 logic        MemWrite_out_4;      // SW signal to Memory unit
@@ -79,6 +80,7 @@ logic [15:0] PC_out_4;            // PC for branch/call/ret
 logic	     load_half_out_4;	  // Specifies the ALU result
 logic	     half_spec_out_4;	  // (0 -> LHB, 1 -> LLB)
 logic      PC_hazard_4;
+logic      HALT_4;
 //#5; EX_Unit --> EXMEM_reg
 logic	     call_out_5;
 logic	     RegWrite_out_5;
@@ -92,6 +94,7 @@ logic [3:0]  reg_rd_out_5;     	  // Future Regfile dest
 logic [15:0] alu_result_5;     	  // Results of ALU operation
 logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 logic [15:0] sw_data_5;        	  // Save Word data
+logic      HALT_5;
 //#6; EXMEM_reg --> MEM_Unit
 logic	     RegWrite_out_6;
 logic        MemWrite_out_6;      // SW signal to Memory unit
@@ -102,6 +105,7 @@ logic [3:0]  reg_rd_out_6;         // Destination of Memory Read
 logic [15:0] alu_result_out_6;     // Results of ALU operation
 logic [15:0] save_word_data_out_6; // Data for Memory Write
 logic        ret_future_out_6;	   // Future ret_wb signal
+logic      HALT_6;
 //#7; MEM_Unit --> MEMWB_reg
 logic	     RegWrite_out_7; 
 logic        mem_to_reg_out_7;
@@ -109,6 +113,7 @@ logic 	     ret_future_out_7;
 logic 	     [3:0] reg_rd_out_7;
 logic 	     [15:0] mem_read_data_out_7;
 logic 	     [15:0] alu_result_out_7;
+logic      HALT_7;
 //#8; MEMWB_reg --> WB_Unit
 logic	     RegWrite_out_8;
 logic	     ret_out_8;
@@ -116,6 +121,7 @@ logic	     mem_to_reg_out_8;
 logic 	     [15:0] mem_read_data_out_8;
 logic        [3:0] reg_rd_out_8;
 logic        [15:0] alu_result_out_8;
+logic      HALT_8;
 //#9; WB_Unit --> IF_Unit
 logic        RegWrite_9;        // Regfile signal to write reg_rd_out
 logic [3:0]  reg_rd_out_9;      // Register to write return_data
@@ -209,7 +215,7 @@ end
 				.sign_ext_out(sign_ext_out_3),
 				.data_hazard(data_hazard_3),
 				.PC_hazard_out(PC_hazard_3),
-				.HALT(hlt));
+				.HALT(HALT_3));
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 
@@ -234,6 +240,7 @@ end
 				.load_half_in(load_half_out_3), 
 				.half_spec_in(half_spec_out_3), 
 				.PC_hazard_in(PC_hazard_3),
+				.HALT_in(HALT_3),
 
             .PC_hazard_out(PC_hazard_4),
 				.RegWrite_out(RegWrite_out_4),
@@ -255,7 +262,8 @@ end
 				.reg_rd_out(reg_rd_out_4), 
 				.PC_out(PC_out_4), 
 				.load_half_out(load_half_out_4), 
-				.half_spec_out(half_spec_out_4));
+				.half_spec_out(half_spec_out_4),
+				.HALT_out(HALT_4));
 
 	//#5; stage 3 -- Execution Module Unit	
 	EX_Unit EXU(		.clk(clk), 
@@ -280,7 +288,8 @@ end
 				.reg_rd_in(reg_rd_out_4), 
 				.load_half(load_half_out_4), 
 				.half_spec(half_spec_out_4), 
-				.load_half_imm(load_half_imm_out_4), 
+				.load_half_imm(load_half_imm_out_4),
+				.HALT_in(HALT_4), 
 
 				.call_out(call_out_5), 
 				.RegWrite_out(RegWrite_out_5), 
@@ -293,7 +302,8 @@ end
 				.PC_src(PC_src_5),
 				.alu_result(alu_result_5), 
 				.PC_update(PC_update_5), 
-				.sw_data(sw_data_5));	
+				.sw_data(sw_data_5),
+				.HALT_out(HALT_5));	
 
 	//#6; Execution/Memory intermediate register	
 	EXMEM_reg EXMEM_r(	.clk(clk), 
@@ -306,6 +316,7 @@ end
 				.alu_result_in(alu_result_5), 
           		.save_word_data_in(sw_data_5), 
 				.ret_future_in(ret_future_out_5),
+				.HALT_in(HALT_5),
 				
 				.RegWrite_out(RegWrite_out_6),
 				.MemWrite_out(MemWrite_out_6),
@@ -315,7 +326,8 @@ end
           		.reg_rd_out(reg_rd_out_6), 
 				.alu_result_out(alu_result_out_6), 
           		.save_word_data_out(save_word_data_out_6), 
-				.ret_future_out(ret_future_out_6));
+				.ret_future_out(ret_future_out_6),
+				.HALT_out(HALT_6));
 	
 	//#7; stage 4 -- Memory Module Unit	
 	MEM_Unit MEMU(		.clk(clk), 
@@ -328,14 +340,16 @@ end
 				.reg_rd_in(reg_rd_out_6), 
    	 		   .alu_result_in(alu_result_out_6), 
 				.mem_write_data(save_word_data_out_6), 
-				.ret_future_in(ret_future_out_6), 
+				.ret_future_in(ret_future_out_6),
+				.HALT_in(HALT_6),
 
 				.RegWrite_out(RegWrite_out_7), 
 				.ret_future_out(ret_future_out_7), 
 				.mem_to_reg_out(mem_to_reg_out_7), 
 				.reg_rd_out(reg_rd_out_7), 
           		.mem_read_data(mem_read_data_out_7), 
-          		.alu_result_out(alu_result_out_7));
+          		.alu_result_out(alu_result_out_7),
+          		.HALT_out(HALT_7));
 
 	//#8; Memory/WriteBack intermediate register
 	MEMWB_reg MEMWB_r(	.clk(clk), 
@@ -344,23 +358,27 @@ end
 				.mem_to_reg_in(mem_to_reg_out_7), 
 				.reg_rd_in(reg_rd_out_7), 
 				.mem_read_data_in(mem_read_data_out_7), 
-				.alu_result_in(alu_result_out_7), 
+				.alu_result_in(alu_result_out_7),
+				.HALT_in(HALT_7), 
 				
 				.RegWrite_out(RegWrite_out_8), 
 				.ret_out(ret_out_8), 
 				.mem_to_reg_out(mem_to_reg_out_8), 
 				.reg_rd_out(reg_rd_out_8), 
 				.mem_read_data_out(mem_read_data_out_8), 
-				.alu_result_out(alu_result_out_8));
+				.alu_result_out(alu_result_out_8),
+				.HALT_out(HALT_8));
 	
 	//#9; stage 5 -- WriteBack Module Unit
 	WB_Unit WBU(
 				.mem_read_data(mem_read_data_out_8),
 				.alu_result(alu_result_out_8),  
 				.mem_to_reg(mem_to_reg_out_8), 
-				.reg_rd_in(reg_rd_out_8),  
+				.reg_rd_in(reg_rd_out_8), 
+				.HALT_in(HALT_8), 
 
 				.write_back_data(write_back_data_9), 
-				.reg_rd_out(reg_rd_out_9));	
+				.reg_rd_out(reg_rd_out_9),
+				.HALT_out(HALT));	
 
 endmodule

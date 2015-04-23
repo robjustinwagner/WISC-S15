@@ -122,8 +122,8 @@ end
 
 always_comb begin
    if (PC_src) begin
-      PC_out = 16'hxxxx;
-      instruction = 16'hxxxx;
+      PC_out = 16'hzzzz;
+      instruction = 16'hzzzz;
    end
    else begin
       PC_out = PC_address;

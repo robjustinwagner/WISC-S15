@@ -3,10 +3,10 @@
 module IDEX_reg(clk, 
 	PC_hazard_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, branch_cond_in, call_target_in, branch_in, call_in, ret_in, 
 		alu_src_in, alu_op_in, shift_in, load_half_imm_in, rd_data_1_in, rd_data_2_in, 
-		sign_ext_in, reg_rd_in, PC_in, load_half_in, half_spec_in, 
+		sign_ext_in, reg_rd_in, PC_in, load_half_in, half_spec_in, HALT_in,
 	PC_hazard_out, RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg_out, branch_cond_out, call_target_out, branch_out, call_out, ret_out, 
 		alu_src_out, alu_op_out, shift_out, load_half_imm_out, rd_data_1_out, rd_data_2_out, 
-		sign_ext_out, reg_rd_out, PC_out, load_half_out, half_spec_out);
+		sign_ext_out, reg_rd_out, PC_out, load_half_out, half_spec_out, HALT_out);
 
 //////////////////////////INPUTS/////////////////////////////
 
@@ -44,6 +44,8 @@ input	[15:0]	PC_in;           // PC for branch/call/ret
 input			    load_half_in;	  // Specifies the ALU result
 input			    half_spec_in;	  // (0 -> LHB, 1 -> LLB)
 
+input    HALT_in;
+
 /////////////////////////END INPUTS///////////////////////////
 
 //////////////////////////OUTPUTS/////////////////////////////
@@ -79,10 +81,13 @@ output	logic	[15:0]	PC_out;            // PC for branch/call/ret
 output	logic		    load_half_out;	// Specifies the ALU result
 output	logic		    half_spec_out;	// (0 -> LHB, 1 -> LLB)
 
+output logic        HALT_out;
+
 ////////////////////////END OUTPUTS///////////////////////////
 
 always @(posedge clk) begin
 	
+	HALT_out <= HALT_in;
 	
 	PC_hazard_out <= PC_hazard_in;
 

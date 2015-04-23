@@ -1,8 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
 module EXMEM_reg(clk, 
-	RegWrite_in, MemWrite_in, MemRead_in, call_in, mem_to_reg_in, reg_rd_in, alu_result_in, save_word_data_in, ret_future_in,
-	RegWrite_out, MemWrite_out, MemRead_out, call_out, mem_to_reg_out, reg_rd_out, alu_result_out, save_word_data_out, ret_future_out);
+	RegWrite_in, MemWrite_in, MemRead_in, call_in, mem_to_reg_in, reg_rd_in, alu_result_in, save_word_data_in, ret_future_in, HALT_in,
+	RegWrite_out, MemWrite_out, MemRead_out, call_out, mem_to_reg_out, reg_rd_out, alu_result_out, save_word_data_out, ret_future_out, HALT_out);
 
 ////////////////////////////INPUTS///////////////////////////////
 
@@ -19,6 +19,8 @@ input [15:0] alu_result_in;     // Results of ALU operation
 input [15:0] save_word_data_in; // Data for Memory Write
 
 input        ret_future_in;     // Future ret_wb signal
+
+input        HALT_in;
 
 /////////////////////////////////////////////////////////////////
 
@@ -38,9 +40,13 @@ output logic [15:0] save_word_data_out; // Data for Memory Write
 //PIPE TO PIPE
 output logic        ret_future_out; // Future ret_wb signal
 
+output logic        HALT_out;
+
 //////////////////////////////////////////////////////////////////
 
 always @(posedge clk) begin
+    
+   HALT_out <= HALT_in;
     
 	mem_to_reg_out     <= mem_to_reg_in;
 	

@@ -4,11 +4,11 @@
 
 module MEM_Unit(clk, rst,
 	   call_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, 
-	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, 
+	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, HALT_in,
 	   RegWrite_out, ret_future_out, mem_to_reg_out, reg_rd_out,
-	      mem_read_data, alu_result_out);
+	      mem_read_data, alu_result_out, HALT_out);
 
-//INPUTS
+///////////////////////INPUTS////////////////////////
 input clk;
 input rst;
 
@@ -24,13 +24,20 @@ input [15:0] mem_write_data; // Data for Memory Write      <-- PC during call
 
 input        ret_future_in; // Future ret_wb signal
 
-//OUTPUTS
+input        HALT_in;
+/////////////////////////////////////////////////////
+
+//////////////////////OUTPUTS////////////////////////
 output logic        RegWrite_out;
 output logic        ret_future_out;
 output logic        mem_to_reg_out;
 output logic [3:0]  reg_rd_out;
 output logic [15:0] mem_read_data;
 output logic [15:0] alu_result_out;
+
+output logic        HALT_out;
+
+/////////////////////////////////////////////////////
 
 logic [15:0] alu_addr;
 
@@ -75,5 +82,6 @@ unified_mem data_mem(.clk(clk), .rst_n(!rst), .addr(aly_addr), .re(MemRead_in),
 TODO: add rdy input
 */
 
+assign HALT_out = HALT_in;
 
 endmodule

@@ -116,11 +116,12 @@ always_comb begin
             default : begin //TRUE is defaulted
            
                 PC_src = 1;
+                
             end
             
         endcase // End of branch cases
         
-        update_done = 1;
+        update_done = PC_src; // Trust me...
         
     end // end branch
 //end

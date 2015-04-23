@@ -6,10 +6,12 @@ reg clk,rst;
 
 wire [15:0] pc;
 
+wire hlt;
+
 //////////////////////
 // Instantiate CPU //
 ////////////////////
-WISC_S15_top_level iCPU(.clk(clk), .rst(rst), .hlt(hlt));
+WISC_S15_top_level iCPU(.clk(clk), .rst(rst), .HALT(hlt));
 
 initial begin
   clk = 0;
@@ -25,8 +27,7 @@ always
   #1 clk = ~clk;
   
 initial begin
-//  @(posedge hlt) $stop();
-#100;
+@(posedge hlt);
 $stop;
 end  
 

@@ -190,7 +190,7 @@ end
 // Hazard Detection MUX
 always_comb begin
     
-    if (data_hazard | PC_hazard_in) begin //BAD STYLE, CHANGE FOR FINAL
+    if (data_hazard | PC_hazard_in | PC_update) begin //BAD STYLE, CHANGE FOR FINAL
         
         load_save_reg_out = 4'bzzzz;
             

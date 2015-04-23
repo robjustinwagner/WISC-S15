@@ -8,9 +8,9 @@ module EX_Unit(clk,
 	RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, branch_cond, call_target,
 	   branch, call_in, PC_in, ret_future_in, ret_wb, PC_stack_pointer,
 	   alu_src, alu_op, shift, rd_data_1, rd_data_2, sign_ext, reg_rd_in,
-	   load_half, half_spec, load_half_imm, 
+	   load_half, half_spec, load_half_imm, HALT_in,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg_out, call_out, ret_future_out,
-	   reg_rd_out, PC_update_done, PC_src, alu_result, PC_update, sw_data);
+	   reg_rd_out, PC_update_done, PC_src, alu_result, PC_update, sw_data, HALT_out);
 
 ////////////////////////////INPUTS/////////////////////////////////
 
@@ -51,6 +51,8 @@ input        load_half;        // Specifies the ALU result
 input        half_spec;        // (0 -> LHB, 1 -> LLB)
 input	[7:0]	 load_half_imm;    // ALU imm load input
 
+input    HALT_in;
+
 ///////////////////////////////////////////////////////////////////
 
 ///////////////////////////OUTPUTS/////////////////////////////////
@@ -73,6 +75,8 @@ output logic [15:0] alu_result;     // Results of ALU operation
 output logic [15:0] PC_update;      // Updated PC for branch/call/ret
 
 output logic [15:0] sw_data;        // Save Word data
+
+output logic        HALT_out;
 
 ///////////////////////////////////////////////////////////////////
 
@@ -166,5 +170,6 @@ PC_Update pc_update(.PC_in(PC_in), .PC_stack_pointer(PC_stack_pointer), .alu_don
 
 ///////////////////////////////////////////////////////////////////
 
+assign HALT_out = HALT_in;
 
 endmodule

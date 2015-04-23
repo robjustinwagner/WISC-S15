@@ -365,26 +365,25 @@ end
 		 HALT = 1'b0;
 		 end
 
-	   ERR : begin 
-	    data_reg = 1'bz;
-		 stack_reg = 1'bz;
-		 call = 1'bz;
-		 rtrn = 1'bz;
-		 branch = 1'bz;
-		 mem_to_reg = 1'bz;
+	   default : begin    //ERR is now defaulted
+	    data_reg = 1'b0;
+		 stack_reg = 1'b0;
+		 call = 1'b0;
+		 rtrn = 1'b0;
+		 branch = 1'b0;
+		 mem_to_reg = 1'b0;
 		 alu_op = 3'bzzz;
 		 alu_src = 1'bz;
 		 sign_ext_sel = 1'bz;
 		 reg_rt_src = 1'bz;
-		 RegWrite = 1'bz;
-		 MemWrite = 1'bz;
-		 MemRead  = 1'bz;
+		 RegWrite = 1'b0;
+		 MemWrite = 1'b0;
+		 MemRead  = 1'b0;
 		 load_half = 1'bz;
 		 half_spec = 1'bz;
-	    	 HALT = 1'b1;
+	    if (opcode == 4'b1111) HALT = 1'b1;
+	    else HALT = 1'b0;
 	   end
-
-	   default: begin end
 
        endcase
       
