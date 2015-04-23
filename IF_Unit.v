@@ -29,6 +29,19 @@ output	logic	[15:0]	instruction;
 logic	[15:0]	PC_plus_2;
 logic	[15:0]	PC_update;
 logic	[15:0]	PC_address;
+//instruction cache
+logic [63:0] wr_garbage;
+logic wdirty_garbage;
+logic we;
+logic [63:0] rd_data;	// 64-bit/4word cache line read out
+logic [10:0] tag_out;	// 8-bit tag.  This is needed during evictions
+logic hit;
+logic dirty;
+
+initial begin
+	//set write enable to low permanently (as we will not need to write to IC)
+	we = 1'b0;
+end
 
 //MODULE INSTANTIATIONS
 
@@ -49,6 +62,18 @@ end
 // Instruction cache
 Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
                              .instr(instruction), .rd_en(!hazard));
+/* Replace Instruction_Memory module with this!
+
+//PER PROJECT SPECIFICATION, ASSUME NO WRITE INTO INSTRUCTION CACHE!
+//so wr_data & wdirty don't matter, and tie we to low.
+Instruction_Cache instr_cache(.clk(clk), .rst_n(!rst), .addr(PC_address), 
+				.wr_data(wr_garbage), .wdirty(wdirty_garbage),
+				.we(we), .re(!hazard), .rd_data(rd_data), 
+				.tag_out(tag_out), .hit(hit), .dirty(dirty));
+
+TODO: instruction parsing logic from rd_data
+
+*/
 
 //PC update logic (branch target or next instr)
 always_comb begin

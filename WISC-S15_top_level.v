@@ -314,6 +314,7 @@ end
 	
 	//#7; stage 4 -- Memory Module Unit	
 	MEM_Unit MEMU(		.clk(clk), 
+				.rst(rst_g), 
 				.call_in(call_out_6), 
 				.RegWrite_in(RegWrite_out_6), 
 				.MemWrite_in(MemWrite_out_6),

@@ -1,5 +1,3 @@
-// Author: Graham Nygard, Robert Wagner
-
 /* The instruction cache is direct mapped. It is organized
 			into 8 equal blocks. The width of the data bus between
 			the instruction cache and the main memory is 2 words (4 bytes).
@@ -9,7 +7,7 @@
 /* 64Kword (1 byte = 16 bits) main memory,
 			32 word instruction cache,
 			simplified data cache */
-module cache(clk,rst_n,addr,wr_data,wdirty,we,re,rd_data,tag_out,hit,dirty);
+module Instruction_Cache(clk,rst_n,addr,wr_data,wdirty,we,re,rd_data,tag_out,hit,dirty);
 
 input clk,rst_n;
 input [13:0] addr;		// address to be read or written, 2-LSB's are dropped
