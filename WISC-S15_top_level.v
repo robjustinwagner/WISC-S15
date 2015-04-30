@@ -19,11 +19,15 @@ input rst;
 output reg HALT;
 
 /* INTERNAL VARIABLES */
-logic rst_g;                     // Global reset for modules
+logic rst_g;                      // Global reset for modules
 //#1; IF_Unit --> IFID_reg
 logic [15:0] PC_out_1;
 logic [15:0] instruction_out_1;
 logic        PC_hazard_1;
+logic 	     hit_1;
+logic 	     dirty_1;
+logic [10:0] tag_out_1;		  // 8-bit tag.  This is needed during evictions
+logic [63:0] rd_data_1;		  // 64-bit/4word cache line read out
 //#2; IFID_reg --> ID_Unit
 logic [3:0]  cntrl_input_2;   	  // Inst[15:12] - Opcode
 logic [2:0]  branch_cond_2;   	  // Inst[11:8]  - Branch condition
@@ -177,7 +181,11 @@ end
 				.load_save_imm(load_save_imm_2), 
           		.call_target(call_target_2), 
 				.PC_out(PC_out_2),
-				.instruction_out(instruction_out_2));
+				.instruction_out(instruction_out_2),
+				.hit(hit_1),
+				.dirty(dirty_1),
+				.tag_out(tag_out_1),
+				.rd_data(rd_data_1));
 
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
@@ -190,8 +198,12 @@ end
 				.reg_rs(reg_rs_2), 
 				.reg_rt_arith(reg_rt_2), 
 				.reg_rd_wb(reg_rd_out_9), 
-         			.reg_rd_data(write_back_data_9), 
+         			.reg_rd_data(write_back_data_9),
+				.hit(hit_1),
+				.dirty(dirty_1), 
 				.cntrl_opcode(cntrl_input_2), 
+				.tag_out(tag_out_1),
+				.rd_data(rd_data_1),
 				.branch_cond_in(branch_cond_2), 
 				.arith_imm_in(arith_imm_2), 
 				.load_save_reg_in(reg_rd_2), 

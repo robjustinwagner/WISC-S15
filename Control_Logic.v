@@ -2,13 +2,15 @@
 
 `include "Reg_16bit.v"
 
-module Control_Logic(instruction, /*opcode,*/
+module Control_Logic(clk, rst, instruction, /*opcode,*/
 	data_reg, stack_reg, call, rtrn, branch, mem_to_reg, alu_op, alu_src, sign_ext_sel,
 	reg_rt_src, RegWrite, MemWrite, MemRead, load_half, half_spec, HALT
 
 	);
 
 //INPUTS
+input 	clk;
+input	rst;		//used to reset the fsm for I-cache
 input  [15:0]  instruction; // Used for differentiating between NO_OP and HALT
 
 
@@ -394,23 +396,38 @@ end
       
   end
 /*
-	logic [15:0] cache_state_in;
-	logic [15:0] cache_state_out;
+	reg [1:0] state;
+	wire [1:0] next_state;
 
 	//cache FF & control signal logic on both edges
-	Reg_16bit(.clk(clk), .en(en), .d(cache_state_in), .q(cache_state_out));
+	//Reg_16bit(.clk(clk), .en(!clk), .d(cache_state_in), .q(cache_state_out));
+
+	assign next_state = icache_fsm_fn(state, req_0, req_1);
+
+	always @(posedge clk) begin
+
+		if(rst == 1'b1) begin	//reset if global reset
+			state <= IDLE;
+		end
+		else begin	//otherwise, next state
+			state <= next_state;
+		end
+	
+	end
 
 	//cache controller FSM - Moore (output only depends on current state)
 	//CAN IMPROVE PERFORMANCE BY ADDING MORE STATES TO IMPROVE 
 	//	(e.g. do compare and read cache in seperate states)
-	always_comb begin
+	function [1:0] icache_fsm_fn(state);
 
+	input [1:0] state;
+	
 		case(state)
 
 			//wait for a valid read requst only, assume no writes to instr cache
 			IDLE: begin
-				if(valid_cpu_request) begin
-					state = COMPARE_TAG;
+				if(!clk) begin
+					icache_fsm_fn = COMPARE_TAG;
 				end
 			end
 	
@@ -428,10 +445,10 @@ end
 
 				//if(hit && valid) begin
 					//cache_ready = 1'b1;
-					//state = IDLE;
+					//icache_fsm_fn = IDLE;
 				//end
 				if(miss & clean) begin
-					state = ALLOCATE;
+					icache_fsm_fn = ALLOCATE;
 				end
 			end
 	
@@ -439,20 +456,22 @@ end
 			ALLOCATE: begin
 				//when memory read is complete, go back to COMPARE_TAG
 				if(mem_rdy) begin
-					state = COMPARE_TAG;
+					icache_fsm_fn = COMPARE_TAG;
 				end
 			end
 	
 			//assume no writes, should never enter this state
 			WRITE_BACK: begin
-				
+				//nothing to do here
 			end
 	
-			default: begin end
+			default: begin
+				icache_fsm_fn = IDLE; //should never get here
+			end
 	
 		endcase
 
-	end
+	endfunction
 	*/
 
 endmodule
