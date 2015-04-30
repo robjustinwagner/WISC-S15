@@ -1,11 +1,14 @@
 // Author: Graham Nygard, Robert Wagner
 
 `include "Instruction_Memory.v"
+`include "Instruction_Cache.v"
+`include "Cache_Controller.v"
+`include "icache_def.v"
 
+import icache_def::*;
 
 module IF_Unit(clk, rst, data_hazard, PC_hazard, PC_hazard_ff, 
-	               PC_src, PC_branch, PC_out, instruction,
-			hit, dirty, tag_out, rd_data);
+	               PC_src, PC_branch, PC_out, instruction);
 
 //////////////////////////INPUTS/////////////////////////////
 
@@ -21,14 +24,9 @@ input	[15:0]	PC_branch;
 
 //////////////////////////OUTPUTS/////////////////////////////
 
-output logic PC_hazard_ff;
+output  logic	PC_hazard_ff;
 output	logic	[15:0]	PC_out;
 output	logic	[15:0]	instruction;
-//i-cache
-output hit;
-output dirty;
-output [10:0] tag_out;	// 8-bit tag.  This is needed during evictions
-output [63:0] rd_data;	// 64-bit/4word cache line read out
 
 ////////////////////////END OUTPUTS///////////////////////////
 
@@ -42,18 +40,6 @@ logic hazard;
 logic instr_hazard;
 
 logic [15:0] read_instr; // The instruction read form memory
-
-//instruction cache
-logic [63:0] wr_garbage;
-logic wdirty_garbage;
-logic we;
-
-initial begin
-	//set write enable to low permanently (as we will not need to write to IC)
-	we = 1'b0;
-end
-
-//MODULE INSTANTIATIONS
 
 // Pipeline stall on hazard
 always_comb begin
@@ -92,20 +78,32 @@ always_ff @(posedge clk) begin
        
 end
 
-// Instruction cache
-Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
-                             .instr(read_instr), .rd_en(!clk));
-/* Replace Instruction_Memory module with this!
 
-//PER PROJECT SPECIFICATION, ASSUME NO WRITE INTO INSTRUCTION CACHE!
-//so wr_data & wdirty don't matter, and tie we to low.
+/*-----------------------------MODULE INSTANTIATIONS */
+// Instruction cache
+Instruction_Memory instr_mem(.clk(clk), .addr(PC_address), .instr(read_instr), .rd_en(!clk));
+
+/* Replace Instruction_Memory module with this:
+
+//instruction cache locals
+cpu_req_type cpu_req;			//CPU request input (CPU->cache)
+mem_data_type mem_data;			//memory response (memory->cache)
+mem_req_type mem_req;			//memory request (cache->memory)
+cpu_result_type cpu_result;		//cache result (cache->CPU)
+
+//initialization of locals
+initial begin
+	//set write enable to low permanently (as we will not need to write to IC)
+	we = 1'b0;
+
+	//TODO: PROPERLY INITIALIZE VARIABLES HERE
+end
+
+Cache_Controller cc(.*);
 Instruction_Cache instr_cache(.clk(clk), .rst_n(!rst), .addr(PC_address), 
-				.wr_data(wr_garbage), .wdirty(wdirty_garbage),
+				.wr_data(), .wdirty(),
 				.we(we), .re(!clk), .rd_data(rd_data), 
 				.tag_out(tag_out), .hit(hit), .dirty(dirty));
-
-TODO: instruction parsing logic from rd_data
-
 */
 
 always_comb begin

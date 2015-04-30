@@ -196,19 +196,19 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
 		    end
            
           SRA : begin
-             result = data_one >>> shift;
+             result = data_one >>> shift;		//TODO: MANUALLY IMPLEMENT THIS FOR BETTER AREA
              done = 1'bx; //all ALU operations are done
           //leave flags unchanged
           end
            
           SRL : begin
-             result = data_one >> shift;
+             result = data_one >> shift;		//TODO: MANUALLY IMPLEMENT THIS FOR BETTER AREA
              done = 1'bx; //all ALU operations are done
           //leave flags unchanged
           end
            
           SLL : begin
-            result = data_one << shift;
+            result = data_one << shift;			//TODO: MANUALLY IMPLEMENT THIS FOR BETTER AREA
             done = 1'bx; //all ALU operations are done
           //leave flags unchanged
           end

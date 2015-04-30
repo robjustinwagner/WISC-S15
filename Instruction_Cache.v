@@ -1,12 +1,11 @@
-/* The instruction cache is direct mapped. It is organized
-			into 8 equal blocks. The width of the data bus between
-			the instruction cache and the main memory is 2 words (4 bytes).
-			The instruction cache has an access time of one clock cycle.
-			The main memory has an access time of four clock cycles. */
+/* 64Kword (1 byte = 16 bits) main memory, 32 word instruction cache,
+	simplified data cache */
 
-/* 64Kword (1 byte = 16 bits) main memory,
-			32 word instruction cache,
-			simplified data cache */
+/* The instruction cache is direct mapped. It is organized into 8 equal blocks. 
+	The width of the data bus between the instruction cache and the main 
+	memory is 2 words (4 bytes). The instruction cache has an access time 
+	of one clock cycle. The main memory has an access time of four clock cycles. */
+
 module Instruction_Cache(clk,rst_n,addr,wr_data,wdirty,we,re,rd_data,tag_out,hit,dirty);
 
 input clk,rst_n;
@@ -42,7 +41,7 @@ assign we_filt = we & we_del;
 always @(clk or we_filt or negedge rst_n)
   if (!rst_n)
     for (x=0; x<8;  x = x + 1)
-	  mem[x] = {2'b00,{75{1\u2019bx}}};		// only valid & dirty bit are cleared, all others are x
+	  mem[x] = {2'b00,{75{1'bx}}};		// only valid & dirty bit are cleared, all others are x
   else if (~clk && we_filt)
     mem[addr[2:0]] = {1'b1,wdirty,addr[13:3],wr_data};
 

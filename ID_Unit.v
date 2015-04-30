@@ -9,9 +9,8 @@
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
 module ID_Unit(clk, rst, PC_update, PC_hazard_in, branch_in, instruction,
-	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, hit, dirty, cntrl_opcode, tag_in, rd_data
-		branch_cond_in, arith_imm_in, load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, 
-		EX_MEM_reg_rd, MEM_WB_reg_rd,
+	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
+		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
 		read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, 
 		sign_ext_out, data_hazard, PC_hazard_out, HALT);
@@ -33,11 +32,7 @@ input [3:0]  reg_rd_wb;        // Regfile write back register
 input [15:0] reg_rd_data;      // Regfile write back data
 
 //CONTROL PARAMS
-input 	     hit;
-input 	     dirty;
 input [3:0]  cntrl_opcode;      // Inst[15:12] - Instruction opcode
-input [10:0] tag_in;		// 8-bit tag.  This is needed during evictions
-input [63:0] rd_data;		// 64-bit/4word cache line read out
 
 //PIPELINE TO PIPELINE
 input [2:0]  branch_cond_in;   // Inst[10:8]  - Branch condition

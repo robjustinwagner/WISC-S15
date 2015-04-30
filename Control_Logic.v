@@ -1,16 +1,12 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "Reg_16bit.v"
-
-module Control_Logic(clk, rst, instruction, /*opcode,*/
+module Control_Logic(instruction, /*opcode,*/
 	data_reg, stack_reg, call, rtrn, branch, mem_to_reg, alu_op, alu_src, sign_ext_sel,
 	reg_rt_src, RegWrite, MemWrite, MemRead, load_half, half_spec, HALT
 
 	);
 
 //INPUTS
-input 	clk;
-input	rst;		//used to reset the fsm for I-cache
 input  [15:0]  instruction; // Used for differentiating between NO_OP and HALT
 
 
@@ -38,8 +34,6 @@ output	reg		  load_half;	   // Specifies the ALU result
 output reg		  half_spec;	   // (0 -> LHB, 1 -> LLB)
 
 output reg    HALT;      // STOP THE CPU
-
-logic [2:0] cache_state;	//state of the cache FSM
 
 reg 	[3:0] 		opcode;   	//4-bit instruction opcode
                
@@ -76,10 +70,6 @@ localparam   IDLE	 = 2'b00;
 localparam   COMPARE_TAG = 2'b01;
 localparam   ALLOCATE	 = 2'b10;
 localparam   WRITE_BACK	 = 2'b11;
-
-initial begin
-	cache_state = IDLE;	//initially set cache state to IDLE
-end
 
   always_comb begin
       
@@ -395,83 +385,5 @@ end
        endcase
       
   end
-/*
-	reg [1:0] state;
-	wire [1:0] next_state;
-
-	//cache FF & control signal logic on both edges
-	//Reg_16bit(.clk(clk), .en(!clk), .d(cache_state_in), .q(cache_state_out));
-
-	assign next_state = icache_fsm_fn(state, req_0, req_1);
-
-	always @(posedge clk) begin
-
-		if(rst == 1'b1) begin	//reset if global reset
-			state <= IDLE;
-		end
-		else begin	//otherwise, next state
-			state <= next_state;
-		end
-	
-	end
-
-	//cache controller FSM - Moore (output only depends on current state)
-	//CAN IMPROVE PERFORMANCE BY ADDING MORE STATES TO IMPROVE 
-	//	(e.g. do compare and read cache in seperate states)
-	function [1:0] icache_fsm_fn(state);
-
-	input [1:0] state;
-	
-		case(state)
-
-			//wait for a valid read requst only, assume no writes to instr cache
-			IDLE: begin
-				if(!clk) begin
-					icache_fsm_fn = COMPARE_TAG;
-				end
-			end
-	
-			//tests to see if requested read is a hit/miss
-			COMPARE_TAG: begin
-				//if data in cache block referred to by index portion
-				//of the address is valid, and the tag portion of the
-				//address matches the tag, then the requested read is
-				//a hit.
-				if(valid && hit) begin
-					valid = 1'b1;
-					SetTag = 1'b1; //TODO: fix this?
-				end
-				//TODO: read data from select word
-
-				//if(hit && valid) begin
-					//cache_ready = 1'b1;
-					//icache_fsm_fn = IDLE;
-				//end
-				if(miss & clean) begin
-					icache_fsm_fn = ALLOCATE;
-				end
-			end
-	
-			//fetch new block from memory
-			ALLOCATE: begin
-				//when memory read is complete, go back to COMPARE_TAG
-				if(mem_rdy) begin
-					icache_fsm_fn = COMPARE_TAG;
-				end
-			end
-	
-			//assume no writes, should never enter this state
-			WRITE_BACK: begin
-				//nothing to do here
-			end
-	
-			default: begin
-				icache_fsm_fn = IDLE; //should never get here
-			end
-	
-		endcase
-
-	endfunction
-	*/
 
 endmodule
