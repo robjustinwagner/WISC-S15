@@ -1,7 +1,5 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "Reg_16bit.v"
-
 /* This module defines the regeister interface
    for accessing the 16-bit registers used by
    our processor. */

@@ -40,6 +40,7 @@ output logic        HALT_out;
 /////////////////////////////////////////////////////
 
 logic [15:0] alu_addr;
+logic [15:0] write_data;
 
 //PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
@@ -50,10 +51,14 @@ assign ret_future_out = ret_future_in;
 //MUX for updating stack pointer with Call
 always_comb begin
     
-    if (call_in)
+    if (call_in) begin
        alu_result_out = alu_result_in - 2;
-    else
+       write_data = mem_write_data + 2;
+    end
+    else begin
        alu_result_out = alu_result_in;
+       write_data = mem_write_data;
+    end
        
 end
 
@@ -69,7 +74,7 @@ end
 
 //MODULE INSTANTIATIONS
 Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
-                     .we(MemWrite_in), .wrt_data(mem_write_data),
+                     .we(MemWrite_in), .wrt_data(write_data),
                      .rd_data(mem_read_data));
                      
 /* Replace Data_Memory module with this! 

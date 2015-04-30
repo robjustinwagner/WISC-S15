@@ -72,6 +72,16 @@ always_ff @(posedge clk) begin
        PC_address <= 16'h0000;
        PC_hazard_ff <= 1'b0;
     end
+    
+    else if (data_hazard & PC_src) begin
+        PC_address <= PC_update;
+        PC_hazard_ff <= PC_hazard;
+    end
+    
+    else if (PC_hazard & PC_src) begin
+        PC_address <= PC_update;
+        PC_hazard_ff <= PC_hazard;
+    end
        
     else begin
        PC_address <= PC_address;
@@ -82,7 +92,7 @@ end
 
 // Instruction cache
 Instruction_Memory instr_mem(.clk(clk), .addr(PC_address),
-                             .instr(read_instr), .rd_en(!instr_hazard));
+                             .instr(read_instr), .rd_en(!clk));
 /* Replace Instruction_Memory module with this!
 
 //PER PROJECT SPECIFICATION, ASSUME NO WRITE INTO INSTRUCTION CACHE!
@@ -98,7 +108,7 @@ TODO: instruction parsing logic from rd_data
 
 always_comb begin
     
-    instr_hazard = (PC_hazard_ff);// | (PC_src);
+    instr_hazard = (PC_hazard);
     
 end
     
@@ -121,14 +131,15 @@ always_comb begin
 end
 
 always_comb begin
-   if (PC_src) begin
-      PC_out = 16'hzzzz;
-      instruction = 16'hzzzz;
+   if (PC_hazard | PC_hazard_ff) begin
+      instruction = 16'hxxxx;;
    end
    else begin
-      PC_out = PC_address;
-       instruction = read_instr;
+      instruction = read_instr;
    end
 end
+
+
+assign PC_out = PC_address;
 
 endmodule

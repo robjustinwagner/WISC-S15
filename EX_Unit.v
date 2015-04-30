@@ -1,8 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
 `include "ALU.v"
-`include "Flag_reg.v"
-`include "PC_Update.v"
+//`include "Flag_reg.v"
+//`include "PC_Update.v"
 
 module EX_Unit(clk, 
 	RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, branch_cond, call_target,
@@ -10,7 +10,7 @@ module EX_Unit(clk,
 	   alu_src, alu_op, shift, rd_data_1, rd_data_2, sign_ext, reg_rd_in,
 	   load_half, half_spec, load_half_imm, HALT_in,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg_out, call_out, ret_future_out,
-	   reg_rd_out, PC_update_done, PC_src, alu_result, PC_update, sw_data, HALT_out);
+	   reg_rd_out, PC_update_done, PC_src, alu_result, PC_update, sw_data, HALT_out, alu_done, set_flags);
 
 ////////////////////////////INPUTS/////////////////////////////////
 
@@ -78,16 +78,20 @@ output logic [15:0] sw_data;        // Save Word data
 
 output logic        HALT_out;
 
+output logic        alu_done;
+
+output logic        [2:0] set_flags;
+
 ///////////////////////////////////////////////////////////////////
 
 ////////////////////////INTERCONNECTS//////////////////////////////
 
-logic        alu_done;
+//logic        alu_done;
 logic [15:0] alu_out;
 
 logic [15:0] load_half_result;
 
-logic [2:0] set_flags;
+//logic [2:0] set_flags;
 logic [2:0] updated_flags;
 
 logic [15:0] alu_op_2;
@@ -158,18 +162,13 @@ end
 ALU       alu(.data_one(rd_data_1), .data_two(alu_op_2),
               .shift(shift), .control(alu_op), .result(alu_out),
               .flags(set_flags), .done(alu_done));		                           
-
-Flag_reg  flags(.clk(clk), .en(alu_done), .d(set_flags), .q(updated_flags));
-
-PC_Update pc_update(.PC_in(PC_in), .PC_stack_pointer(PC_stack_pointer), .alu_done(alu_done), 
-                    .flags(updated_flags), .call_target(call_target), .sign_ext(sign_ext),
-                    .branch_cond(branch_cond), .branch(branch), .call(call_in), .ret(ret_wb),
-                    .PC_update(PC_update), .PC_src(PC_src), .update_done(PC_update_done));
  
 //Forwarding_Unit FU(); //FIX THIS
 
 ///////////////////////////////////////////////////////////////////
 
 assign HALT_out = HALT_in;
+
+assign call_out = call_in;
 
 endmodule

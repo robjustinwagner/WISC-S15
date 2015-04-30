@@ -22,7 +22,7 @@ output reg HALT;
 logic rst_g;                     // Global reset for modules
 //#1; IF_Unit --> IFID_reg
 logic [15:0] PC_out_1;
-logic [15:0] instruction_1;
+logic [15:0] instruction_out_1;
 logic        PC_hazard_1;
 //#2; IFID_reg --> ID_Unit
 logic [3:0]  cntrl_input_2;   	  // Inst[15:12] - Opcode
@@ -34,6 +34,7 @@ logic [3:0]  arith_imm_2;     	  // Inst[3:0]   - Imm of Arithmetic Inst
 logic [7:0]  load_save_imm_2; 	  // Inst[7:0]   - Imm of Load/Save Inst
 logic [11:0] call_target_2;      // Inst[11:0]  - Call target
 logic [15:0] PC_out_2;        	  // Program counter
+logic [15:0] instruction_out_2;  
 //#3; ID_Unit --> IDEX_reg 
 logic        RegWrite_out_3;      // Regfile RegWrite when not reset
 logic        MemWrite_out_3;      // SW signal to Memory unit
@@ -81,6 +82,9 @@ logic	     load_half_out_4;	  // Specifies the ALU result
 logic	     half_spec_out_4;	  // (0 -> LHB, 1 -> LLB)
 logic      PC_hazard_4;
 logic      HALT_4;
+//PC_update and Flag_reg
+logic     [2:0] updated_flags; 
+
 //#5; EX_Unit --> EXMEM_reg
 logic	     call_out_5;
 logic	     RegWrite_out_5;
@@ -95,6 +99,8 @@ logic [15:0] alu_result_5;     	  // Results of ALU operation
 logic [15:0] PC_update_5;      	  // Updated PC for branch/call/ret
 logic [15:0] sw_data_5;        	  // Save Word data
 logic      HALT_5;
+logic      alu_done;
+logic [2:0] set_flags;
 //#6; EXMEM_reg --> MEM_Unit
 logic	     RegWrite_out_6;
 logic        MemWrite_out_6;      // SW signal to Memory unit
@@ -151,14 +157,15 @@ end
 				.PC_branch(PC_update_5), 
 				
 				.PC_out(PC_out_1), 
-				.instruction(instruction_1),
+				.instruction(instruction_out_1),
 				.PC_hazard_ff(PC_hazard_1));	
 
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
+	         .call(call_3),
 				.data_hazard(data_hazard_3), 
-				.PC_hazard(PC_hazard_1),
-				.instruction(instruction_1),
+				.PC_hazard(PC_hazard_3),
+				.instruction_in(instruction_out_1),
 				.PC_in(PC_out_1), 
 
           		.cntrl_input(cntrl_input_2), 
@@ -169,7 +176,8 @@ end
 				.arith_imm(arith_imm_2), 
 				.load_save_imm(load_save_imm_2), 
           		.call_target(call_target_2), 
-				.PC_out(PC_out_2));
+				.PC_out(PC_out_2),
+				.instruction_out(instruction_out_2));
 
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
@@ -177,6 +185,7 @@ end
 				.PC_update(PC_update_done_5),
 				.PC_hazard_in(PC_hazard_4),
 				.branch_in(branch_out_4),
+				.instruction(instruction_out_2),
 				.RegWrite_in(RegWrite_out_8), 
 				.reg_rs(reg_rs_2), 
 				.reg_rt_arith(reg_rt_2), 
@@ -265,6 +274,28 @@ end
 				.half_spec_out(half_spec_out_4),
 				.HALT_out(HALT_4));
 
+   // Intermediate module PC_update -- used for updating the PC on branch, call, and return
+   PC_Update PCU(.PC_in(PC_out_1), 
+                 .PC_stack_pointer(mem_read_data_out_8), 
+                 .alu_done(alu_done), 
+                 .flags(updated_flags), 
+                 .call_target(call_target_out_3), 
+                 .sign_ext(sign_ext_out_3),
+                 .branch_cond(branch_cond_out_3),
+                 .branch(branch_3), 
+                 .call(call_3), 
+                 .ret(ret_out_8),
+                 
+                 .PC_update(PC_update_5), 
+                 .PC_src(PC_src_5), 
+                 .update_done(PC_update_done_5));
+   
+   // Flags reg set by the ALU           
+   Flag_reg  flags(.clk(clk), 
+                   .en(alu_done), 
+                   .d(set_flags), 
+                   .q(updated_flags));
+
 	//#5; stage 3 -- Execution Module Unit	
 	EX_Unit EXU(		.clk(clk), 
 				.RegWrite_in(RegWrite_out_4),
@@ -290,6 +321,8 @@ end
 				.half_spec(half_spec_out_4), 
 				.load_half_imm(load_half_imm_out_4),
 				.HALT_in(HALT_4), 
+				.alu_done(alu_done),
+				.set_flags(set_flags),
 
 				.call_out(call_out_5), 
 				.RegWrite_out(RegWrite_out_5), 
@@ -298,10 +331,10 @@ end
           		.mem_to_reg_out(mem_to_reg_out_5), 
           		.ret_future_out(ret_future_out_5), 
 				.reg_rd_out(reg_rd_out_5), 
-				.PC_update_done(PC_update_done_5), 
-				.PC_src(PC_src_5),
+				//.PC_update_done(PC_update_done_5), 
+				//.PC_src(PC_src_5),
 				.alu_result(alu_result_5), 
-				.PC_update(PC_update_5), 
+				//.PC_update(PC_update_5), 
 				.sw_data(sw_data_5),
 				.HALT_out(HALT_5));	
 

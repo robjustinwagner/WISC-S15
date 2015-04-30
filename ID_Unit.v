@@ -8,7 +8,7 @@
    reference the sketch of the ID unit. Inputs and outputs
    are labeled in descending order down the IF/ID register
    and the ID/EX register respectively */
-module ID_Unit(clk, rst, PC_update, PC_hazard_in, branch_in,
+module ID_Unit(clk, rst, PC_update, PC_hazard_in, branch_in, instruction,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
 		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
@@ -22,6 +22,7 @@ input        rst;              // The reset signal from PC
 input        PC_update;        // Signal for unhaulting pipe
 input        PC_hazard_in;
 input        branch_in;        // For delayed branching
+input [15:0] instruction;      // For differentiating between NO_OP and HALT
 
 //REGFILE INPUT PARAMS
 input        RegWrite_in;      // Regfile RegWrite when not reset
@@ -146,7 +147,7 @@ Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        .Write_Reg(WriteReg), .Read_Bus_1(mem_read_data_1),
                        .Read_Bus_2(mem_read_data_2), .Write_Bus(WriteData));
 
-Control_Logic control(.opcode(cntrl_opcode),
+Control_Logic control(/*.opcode(cntrl_opcode),*/ .instruction(instruction),
 		               .data_reg(DataReg), .stack_reg(StackReg), .call(c_call), .rtrn(c_ret), .branch(c_branch), 
 				         .mem_to_reg(c_mem_to_reg), .alu_op(c_alu_op), .alu_src(c_alu_src),
 				         .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), .RegWrite(c_RegWrite),
@@ -157,7 +158,9 @@ HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith), .DataRe
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
                         .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd),
                         .ret(c_ret), .call(c_call), .branch(branch_in), .PC_update(PC_update),
+                        .opcode(cntrl_opcode),
                      .data_hazard(data_hazard), .PC_hazard(PC_hazard_out), .rst(rst), .clk(clk));
+                    
 
 // Register rt selection
 always_comb begin

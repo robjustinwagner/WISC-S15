@@ -2,14 +2,15 @@
 
 `include "Reg_16bit.v"
 
-module Control_Logic(opcode,
+module Control_Logic(instruction, /*opcode,*/
 	data_reg, stack_reg, call, rtrn, branch, mem_to_reg, alu_op, alu_src, sign_ext_sel,
 	reg_rt_src, RegWrite, MemWrite, MemRead, load_half, half_spec, HALT
 
 	);
 
 //INPUTS
-input 	[3:0] 		opcode;   	//4-bit instruction opcode
+input  [15:0]  instruction; // Used for differentiating between NO_OP and HALT
+
 
 //OUTPUTS
 output 	reg    		data_reg;	/* Control signal to Regfile to
@@ -37,6 +38,8 @@ output reg		  half_spec;	   // (0 -> LHB, 1 -> LLB)
 output reg    HALT;      // STOP THE CPU
 
 logic [2:0] cache_state;	//state of the cache FSM
+
+reg 	[3:0] 		opcode;   	//4-bit instruction opcode
                
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -77,6 +80,8 @@ initial begin
 end
 
   always_comb begin
+      
+   opcode = instruction[15:12];
        
 	case(opcode)
               
@@ -381,7 +386,7 @@ end
 		 MemRead  = 1'b0;
 		 load_half = 1'bz;
 		 half_spec = 1'bz;
-	    if (opcode == 4'b1111) HALT = 1'b1;
+	    if (&instruction) HALT = 1'b1;
 	    else HALT = 1'b0;
 	   end
 

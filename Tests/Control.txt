@@ -3,26 +3,19 @@
 ##################################################
 		LHB R15, 0x00
 		LLB R15, 0x0F		# R15=0x000F
-
-		
 		LHB R1, 0x00
-		LLB R1, 0x05		# R1=0x00AA
+		LLB R1, 0x05		# R1=0x0005
 		B UNCOND, CONT		# branch to CONT1
 		SUB R0, R1, R1		# R0=0
 
 CONT: 		CALL FUNC		# call to function
 		LHB R4, 0x00
-		
 		LLB R4, 0x57
 		SUB R0, R3, R4
 		B EQ, PASS
-		
 		ADD R0, R0, R0
 
-
-
 FUNC:		LHB	R3, 0x00
-		
 		LLB	R3, 0x57
 		RET			# return
 	
@@ -32,4 +25,26 @@ FAIL:		LHB R2, 0xFF		# R2 will contain 0xFFxx
 PASS:		LHB R1, 0xAA		# R1 will contain 0xAAAA (indicated pass)
 
 		
+@0000 AF00
+@0002 BF0F
+@0004 A100
+@0006 B105
+@0008 C700
+@000A 1011
 
+@000C D018
+@000E A400
+@0010 B457
+@0012 1034
+@0014 C00A
+@0016 0000
+
+@0018 A300
+@001A B357
+@001C E000
+
+@001E A2FF
+@0020 B2FF
+
+@0022 A1AA
+@0024 FFFF

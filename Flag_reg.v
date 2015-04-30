@@ -9,7 +9,7 @@ module Flag_reg(clk, en, d, q);
     
     output reg [2:0] q;
     
-    always @(posedge clk) begin  
+    always @(negedge clk) begin  
         if (en)
            q <= d;    
         else
