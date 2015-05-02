@@ -2,8 +2,8 @@
 
  	/* data structures for cache tag & data */
  	
-	parameter int TAGMSB = 31; 	//tag msb
- 	parameter int TAGLSB = 14; 	//tag lsb
+	parameter int TAGMSB = 15; 	//tag msb
+ 	parameter int TAGLSB = 5; 	//tag lsb
  
 	//data structure for cache tag
  	typedef struct packed {
@@ -14,27 +14,27 @@
  
 	//data structure for cache memory request
  	typedef struct {
- 	  bit [9:0] index; 	//10-bit index
+ 	  bit [2:0] index; 	//3-bit index
  	  bit we; 		//write enable
  	}cache_req_type;
  	
-	//128-bit cache line data
- 	typedef bit [127:0] cache_data_type;
+	//64-bit cache line data
+ 	typedef bit [63:0] cache_data_type;
 
 
  	/* data structures for CPU<->Cache controller interface */
 
  	// CPU request (CPU->cache controller)
  	typedef struct {
- 	  bit [31:0] addr; 	//32-bit request addr
- 	  bit [31:0] data; 	//32-bit request data (used when write)
+ 	  bit [15:0] addr; 	//16-bit request addr
+ 	  bit [15:0] data; 	//16-bit request data (used when write)
  	  bit rw; 		//request type : 0 = read, 1 = write
  	  bit valid; 		//request is valid
  	}cpu_req_type;
  
 	// Cache result (cache controller->cpu)
  	typedef struct {
- 	  bit [31:0] data; 	//32-bit data
+ 	  bit [15:0] data; 	//16-bit data
  	  bit ready; 		//result is ready
  	}cpu_result_type;
  
@@ -43,15 +43,15 @@
  	
 	// memory request (cache controller->memory)
  	typedef struct {
- 	  bit [31:0] addr; 	//request byte addr
- 	  bit [127:0] data; 	//128-bit request data (used when write)
+ 	  bit [15:0] addr; 	//request byte addr
+ 	  bit [63:0] data; 	//64-bit request data (used when write)
  	  bit rw; 		//request type : 0 = read, 1 = write
    	  bit valid; 		//request is valid
  	}mem_req_type;
 
  	// memory controller response (memory -> cache controller)
  	typedef struct {
- 	  cache_data_type data; //128-bit read back data
+ 	  cache_data_type data; //64-bit read back data
  	  bit ready; 		//data is ready
  	}mem_data_type;
 

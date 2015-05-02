@@ -48,28 +48,28 @@ module Cache_Controller(input bit clk, input bit rst,
  	/*read tag by default*/
  	tag_req.we = '0;
  	/*direct map index for tag*/
- 	tag_req.index = cpu_req.addr[13:4];
+ 	tag_req.index = cpu_req.addr[4:2];
 	
  	/*read current cache line by default*/
  	data_req.we = '0;
  	/*direct map index for cache data*/
- 	data_req.index = cpu_req.addr[13:4];
+ 	data_req.index = cpu_req.addr[4:2];
  	
- 	/*modify correct word (32-bit) based on address*/
+ 	/*modify correct word (16-bit) based on address*/
  	data_write = data_read;
- 	case(cpu_req.addr[3:2])
- 	2'b00:data_write[31:0] = cpu_req.data;
- 	2'b01:data_write[63:32] = cpu_req.data;
- 	2'b10:data_write[95:64] = cpu_req.data;
- 	2'b11:data_write[127:96] = cpu_req.data;
+ 	case(cpu_req.addr[1:0])
+ 	2'b00:data_write[15:0] = cpu_req.data;
+ 	2'b01:data_write[31:16] = cpu_req.data;
+ 	2'b10:data_write[47:32] = cpu_req.data;
+ 	2'b11:data_write[63:48] = cpu_req.data;
  	endcase
 	
- 	/*read out correct word(32-bit) from cache (to CPU)*/
- 	case(cpu_req.addr[3:2])
- 	2'b00:v_cpu_res.data = data_read[31:0];
- 	2'b01:v_cpu_res.data = data_read[63:32];
- 	2'b10:v_cpu_res.data = data_read[95:64];
- 	2'b11:v_cpu_res.data = data_read[127:96];
+ 	/*read out correct word(16-bit) from cache (to CPU)*/
+ 	case(cpu_req.addr[1:0])
+ 	2'b00:v_cpu_res.data = data_read[15:0];
+ 	2'b01:v_cpu_res.data = data_read[31:16];
+ 	2'b10:v_cpu_res.data = data_read[47:32];
+ 	2'b11:v_cpu_res.data = data_read[63:48];
  	endcase
 	
  	/*memory request address (sampled from CPU request)*/
