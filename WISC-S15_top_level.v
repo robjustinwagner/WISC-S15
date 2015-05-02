@@ -177,11 +177,11 @@ end
 				.load_save_imm(load_save_imm_2), 
           		.call_target(call_target_2), 
 				.PC_out(PC_out_2),
-				.instruction_out(instruction_out_2),
-				.hit(hit_1),
-				.dirty(dirty_1),
-				.tag_out(tag_out_1),
-				.rd_data(rd_data_1));
+				.instruction_out(instruction_out_2));
+				//.hit(hit_1),
+				//.dirty(dirty_1),
+				//.tag_out(tag_out_1),
+				//.rd_data(rd_data_1));
 
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
@@ -205,6 +205,7 @@ end
 				.ID_EX_reg_rd(reg_rd_out_4), 
 				.EX_MEM_reg_rd(reg_rd_out_6), 
 				.MEM_WB_reg_rd(reg_rd_out_8), 
+				.HALT_in(HALT),
 				
 				.RegWrite_out(RegWrite_out_3),
 				.MemWrite_out(MemWrite_out_3),
@@ -228,7 +229,7 @@ end
 				.sign_ext_out(sign_ext_out_3),
 				.data_hazard(data_hazard_3),
 				.PC_hazard_out(PC_hazard_3),
-				.HALT(HALT_3));
+				.HALT_out(HALT_3));
 
 	//#4; Instruction Decode/Execution intermediate register	
 	IDEX_reg IDEX_r(	.clk(clk), 

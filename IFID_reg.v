@@ -83,8 +83,6 @@ always @(posedge clk) begin
 	   
 	   branch_cond   <= branch_cond;
 	   
-	   instruction_out <= instruction_in;
-	   
 	end
 	
 end

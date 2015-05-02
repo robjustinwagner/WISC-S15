@@ -72,9 +72,8 @@ module Reg_16bit_file(clk, RegWrite, DataReg, StackReg,
   Reg_16bit Stack_Pointer(.clk(clk), .en(RegWriteSel[15]), .d(Write_Bus), .q(out16));
   
   /* Read data from the specified registers locations */
-  always @(negedge clk, posedge DataReg, StackReg /*, Read_Reg_1, Read_Reg_2*/) begin
+  always @(negedge clk) begin
     
-       
        // The instruction requires the use of the Stack_Pointer reg
        if (StackReg) begin
            Read_Bus_1 = out16;
@@ -90,7 +89,7 @@ module Reg_16bit_file(clk, RegWrite, DataReg, StackReg,
        
           // The instruction does not require the use of special registers       
           else begin
-           
+          
              case(Read_Reg_1)
            
                  REG_0 : Read_Bus_1 = out1;
@@ -140,7 +139,7 @@ module Reg_16bit_file(clk, RegWrite, DataReg, StackReg,
   end
   
   /* Write data to the specified location */
-  always @(posedge clk, Write_Reg) begin
+  always @(posedge clk) begin
       
       if (RegWrite) begin
       

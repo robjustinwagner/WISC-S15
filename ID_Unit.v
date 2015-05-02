@@ -1,6 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "Reg_16bit_file.v"
+//`include "Reg_16bit_file.v"
+`include "rf_pipelined.v"
 `include "Control_Logic.v"
 `include "HDT_Unit.v"
 
@@ -10,10 +11,10 @@
    and the ID/EX register respectively */
 module ID_Unit(clk, rst, PC_update, PC_hazard_in, branch_in, instruction,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, cntrl_opcode, branch_cond_in, arith_imm_in, 
-		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd,
+		load_save_reg_in, load_save_imm_in, call_target_in, PC_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd, HALT_in,
 	RegWrite_out, MemWrite_out, MemRead_out, mem_to_reg, alu_src, alu_op, branch, call, ret, load_half, half_spec, read_data_1, 
 		read_data_2, branch_cond_out, load_save_reg_out, arith_imm_out, load_save_imm_out, call_target_out, PC_out, 
-		sign_ext_out, data_hazard, PC_hazard_out, HALT);
+		sign_ext_out, data_hazard, PC_hazard_out, HALT_out);
 
 /////////////////////////////INPUTS//////////////////////////////////
 
@@ -46,6 +47,8 @@ input [15:0] PC_in;            // Program counter
 input [3:0] ID_EX_reg_rd;      // Corresponds to IDEX_reg's reg_rd_out
 input [3:0] EX_MEM_reg_rd;     // Corresponds to EXMEM_reg's reg_rd_out
 input [3:0] MEM_WB_reg_rd;     // Corresponds to MEMWB_reg's reg_rd_out
+
+input HALT_in;
 
 ////////////////////////////END INPUTS///////////////////////////////
 
@@ -86,7 +89,7 @@ output logic [15:0] sign_ext_out;      // Output of sign extension unit
 output logic data_hazard;
 output logic PC_hazard_out;
 
-output logic HALT;
+output logic HALT_out;
 
 /////////////////////////END OUTPUTS/////////////////////////////////
 
@@ -121,8 +124,7 @@ logic sign_ext_sel;              /* Control signal for selecting
                                     
 logic [3:0] reg_rt;              // Regfile source 2
 
-//INTERNAL OUTPUTS
-
+//Control OUTPUTS
 logic        [15:0] mem_read_data_1;
 logic        [15:0] mem_read_data_2;
 
@@ -139,20 +141,61 @@ logic        c_branch;
 logic        c_call;               
 logic        c_ret;  
 
+//Regfile inputs
+logic        [3:0]Read_Reg_1;
+logic        [3:0]Read_Reg_2;
+logic        [15:0]Read_Bus_1;
+logic        [15:0]Read_Bus_2;
+logic        [3:0]Write_Reg;
+
 //////////////////////////////////////////////////////////////////////
                                     
 //MODULE INSTANTIATIONS
+
+always_comb begin
+    
+    if (StackReg) begin
+        Read_Reg_1 = 4'b1111;
+        Read_Reg_2 = reg_rt;
+        Read_Bus_1 = mem_read_data_1;
+        Read_Bus_2 = 16'h0000;
+    end
+    else if (DataReg) begin
+        Read_Reg_1 = 4'b1110;
+        Read_Reg_2 = reg_rt;
+        Read_Bus_1 = mem_read_data_1;
+        Read_Bus_2 = mem_read_data_2;
+    end
+    else begin
+        Read_Reg_1 = reg_rs;
+        Read_Reg_2 = reg_rt;
+        Read_Bus_1 = mem_read_data_1;
+        Read_Bus_2 = mem_read_data_2;
+    end
+    
+end
+
+/*
 Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
-                       .StackReg(StackReg), .Read_Reg_1(reg_rs), .Read_Reg_2(reg_rt),
+                       .StackReg(StackReg), .Read_Reg_1(Read_Reg_1), 
+                       .Read_Reg_2(Read_Reg_2),
                        .Write_Reg(WriteReg), .Read_Bus_1(mem_read_data_1),
                        .Read_Bus_2(mem_read_data_2), .Write_Bus(WriteData));
+*/
+                       
+                       
+rf reg_mem(.clk(clk), .p0_addr(Read_Reg_1), .p1_addr(Read_Reg_2),
+                     .p0(mem_read_data_1), .p1(mem_read_data_2), .re0(1),
+                     .re1(1), .dst_addr(WriteReg), .dst(WriteData),
+                     .we(RegWrite), .hlt(HALT_in)); 
+                     
 
-Control_Logic control(.clk(clk), .rst(rst),/*.opcode(cntrl_opcode),*/ .instruction(instruction),
+Control_Logic control(/*.opcode(cntrl_opcode),*/ .instruction(instruction),
 		               .data_reg(DataReg), .stack_reg(StackReg), .call(c_call), .rtrn(c_ret), .branch(c_branch), 
 				         .mem_to_reg(c_mem_to_reg), .alu_op(c_alu_op), .alu_src(c_alu_src),
 				         .sign_ext_sel(sign_ext_sel), .reg_rt_src(reg_rt_src), .RegWrite(c_RegWrite),
 				         .MemWrite(c_MemWrite), .MemRead(c_MemRead), .load_half(c_load_half),
-				         .half_spec(half_spec), .HALT(HALT));
+				         .half_spec(half_spec), .HALT(HALT_out));
 
 HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith), .DataReg(DataReg),
                         .IF_ID_reg_rd(load_save_reg_in), .ID_EX_reg_rd(ID_EX_reg_rd), 
@@ -165,11 +208,12 @@ HDT_Unit hazard_unit(.IF_ID_reg_rs(reg_rs), .IF_ID_reg_rt(reg_rt_arith), .DataRe
 // Register rt selection
 always_comb begin
     
-    if (reg_rt_src)
+    if (reg_rt_src) begin
         reg_rt = load_save_reg_in;
-
-    else
+    end
+    else begin
         reg_rt = reg_rt_arith;
+    end
         
 end
 
@@ -191,7 +235,7 @@ end
 // Hazard Detection MUX
 always_comb begin
     
-    if (data_hazard | PC_hazard_in /*| PC_update*/) begin //BAD STYLE, CHANGE FOR FINAL
+    if (data_hazard | PC_hazard_in) begin //BAD STYLE, CHANGE FOR FINAL
         
         load_save_reg_out = 4'bzzzz;
             
@@ -223,7 +267,10 @@ always_comb begin
     
     else begin
         
-        load_save_reg_out = load_save_reg_in;
+        if (c_branch)
+           load_save_reg_out = 4'bxxxx;
+        else
+           load_save_reg_out = load_save_reg_in;
         
         mem_to_reg     = c_mem_to_reg;    
         RegWrite_out   = c_RegWrite; 
@@ -239,8 +286,8 @@ always_comb begin
        
         load_half      = c_load_half;
         
-        read_data_1    = mem_read_data_1;
-        read_data_2    = mem_read_data_2;
+        read_data_1    = Read_Bus_1;
+        read_data_2    = Read_Bus_2;
 
         arith_imm_out  = arith_imm_in;
         load_save_imm_out = load_save_imm_in;
@@ -258,14 +305,14 @@ always_comb begin
     // Reset stack pointer
     if (rst) begin
         
-        RegWrite  = 1;        // Write to SP
+        RegWrite  = 1'b1;        // Write to SP
         WriteReg  = 4'b1111;  // SP register
         WriteData = 16'hFFFF; // Reset SP
         
     end
     
     else begin
-    
+        
         RegWrite  = RegWrite_in;
         WriteReg  = reg_rd_wb;
         WriteData = reg_rd_data;
