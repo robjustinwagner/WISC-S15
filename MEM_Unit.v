@@ -45,7 +45,6 @@ logic [15:0] write_data;
 //PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
 assign mem_to_reg_out = mem_to_reg_in;
-assign reg_rd_out     = reg_rd_in;
 assign ret_future_out = ret_future_in;
 
 //MUX for updating stack pointer with Call
@@ -65,11 +64,26 @@ end
 //MUX for updating stack pointer with Ret
 always_comb begin
     
-    if (ret_future_in)
+    if (ret_future_in) begin
+       alu_result_out = alu_result_in + 2;
        alu_addr = alu_result_in + 2;
-    else
+    end
+    else begin
+       alu_result_out = alu_result_in;
        alu_addr = alu_result_in;
+    end
        
+end
+
+always_comb begin
+    
+    if (RegWrite_in) begin
+        reg_rd_out = reg_rd_in;
+    end
+    else begin
+        reg_rd_out = 4'bzzzz;
+    end
+        
 end
 
 //MODULE INSTANTIATIONS

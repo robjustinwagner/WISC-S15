@@ -27,77 +27,25 @@ logic IDEX_hazard;
 logic EXMEM_hazard;
 logic MEMWB_hazard;
 
-logic hault;
-
-/*
-logic PC_update_ff_1;
-logic PC_update_ff_2;
-logic PC_update_ff_3;
-*/
-
-// Reset the hazards to unhault pipe
-always @(posedge clk) begin
-    
-    if (rst) begin
-       hault <= 1'b0;
-       PC_hazard <= 1'b0;
-       //PC_update_ff_2 <= 1'b0;
-       //PC_update_ff_3 <= 1'b0;
-       data_hazard <= 1'b0;
-    end
-   
-    else begin
-       hault <= hault;
-       PC_hazard <= PC_hazard;
-       //PC_update_ff_2 <= PC_update_ff_1;
-       //PC_update_ff_3 <= PC_update_ff_2;
-       data_hazard <= data_hazard; 
-    end
-    
-end
-
-/*
-always @(negedge clk) begin
-    if (rst) begin
-       PC_update_ff_1 <= 1'b0;
-      
-    end
-    else begin
-       PC_update_ff_1 <= PC_update;
-       
-    end
-end
-*/
-
 always_comb begin
     
-    //if (hault) begin
-       if (PC_update) begin
-        //   hault  = 0;
-           PC_hazard = 0;
-       end
-       //end
-       //else begin
-       //    hault  = 1;
-       //    PC_hazard = 1;
-       //end
-    //end
+    if (rst) begin
+        PC_hazard = 1'b0;
+        data_hazard = 1'b0;
+    end
     
-    //if (branch) begin
-    //   hault = 1;
-    //   PC_hazard = 1;
-     //  data_hazard = 1'b0; // Can't have a data hazard if the current inst is branch
-    //end
+    else if (PC_update) begin
+        PC_hazard = 1'b0;
+        data_hazard = data_hazard;
+    end
     
-    if (ret) begin
-       //hault = 1;
-       PC_hazard = 1;
+    else if (ret) begin
+       PC_hazard = 1'b1;
        data_hazard = 1'b0; // Can't have a data hazard if the current inst is return
     end
     
     else if (call) begin
-        //hault = 1;
-        //PC_hazard = 1;
+        PC_hazard = 1'b0;
         data_hazard = 1'b0; // Can't have a data hazard if the current inst is call
     end
        

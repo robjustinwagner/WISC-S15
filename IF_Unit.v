@@ -1,11 +1,11 @@
 // Author: Graham Nygard, Robert Wagner
 
 `include "Instruction_Memory.v"
-`include "Instruction_Cache.v"
-`include "Cache_Controller.v"
-`include "icache_def.v"
+//`include "Instruction_Cache.v"
+//`include "Cache_Controller.v"
+//`include "icache_def.v"
 
-import icache_def::*;
+//import icache_def::*;
 
 module IF_Unit(clk, rst, data_hazard, PC_hazard, PC_hazard_ff, 
 	               PC_src, PC_branch, PC_out, instruction);
@@ -104,14 +104,7 @@ Instruction_Cache instr_cache(.clk(clk), .rst_n(!rst), .addr(PC_address),
 				.wr_data(), .wdirty(),
 				.we(we), .re(!clk), .rd_data(rd_data), 
 				.tag_out(tag_out), .hit(hit), .dirty(dirty));
-*/
-
-always_comb begin
-    
-    instr_hazard = (PC_hazard);
-    
-end
-    
+*/    
 
 //PC update logic (branch target or next instr)
 always_comb begin

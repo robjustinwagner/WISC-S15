@@ -28,6 +28,7 @@ always
   
 initial begin
 @(posedge hlt);
+#1;
 $stop;
 end  
 
