@@ -1,4 +1,4 @@
-`include "icache_def.v"
+//`include "icache_def.v"
 //`include "Instruction_Cache.v"
 import icache_def::*;
 
@@ -95,7 +95,7 @@ module Cache_Controller(input bit clk, input bit rst,
  	compare_tag: begin
 
  		/*cache hit (tag match and cache entry is valid)*/
-		if (cpu_req.addr[TAGMSB:TAGLSB] == tag_read.tag && tag_read.valid) begin
+		if ( (cpu_req.addr[TAGMSB:TAGLSB] == tag_read.tag) && tag_read.valid) begin
 
  			v_cpu_res.ready = '1;
 
@@ -153,7 +153,7 @@ module Cache_Controller(input bit clk, input bit rst,
  		if (mem_data.ready) begin
  			/*re-compare tag for write miss (need modify correct word)*/
  			vstate = compare_tag;
- 			data_write = mem_data.data;
+ 			data_write = {16'h0000, mem_data.data[31:16], 16'h0000, mem_data.data[15:0]};
  			/*update cache line data*/
  			data_req.we = '1;
  		end

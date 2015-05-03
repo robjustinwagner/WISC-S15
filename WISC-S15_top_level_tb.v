@@ -1,6 +1,8 @@
-module WISC_S15_top_level_tb();
-
 `include "WISC-S15_top_level.v"
+`include "icache_def.v"
+//import icache_def::*;
+
+module WISC_S15_top_level_tb();
 
 reg clk,rst;
 

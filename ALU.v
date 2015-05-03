@@ -31,7 +31,7 @@ module ALU(data_one, data_two, shift, control, done, result, flags);
     
     //Initalize all variables
     done = 1'b0;
-    //flags = 3'b000;
+    flags = flags;
     cout = 1'b0;
     //result = 16'bzzzz;
 

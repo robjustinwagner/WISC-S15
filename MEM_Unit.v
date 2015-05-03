@@ -1,14 +1,14 @@
 // Author: Graham Nygard, Robert Wagner
 
-//`include "Data_Memory.v"
+`include "Data_Memory.v"
 `include "unified_mem.v"
-
+import icache_def::*;
 
 module MEM_Unit(clk, rst,
 	   call_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, 
 	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, mem_req, HALT_in,
 	   RegWrite_out, ret_future_out, mem_to_reg_out, reg_rd_out,
-	      mem_read_data, alu_result_out, rdy, HALT_out);
+	      mem_read_data, alu_result_out, mem_data_res, HALT_out);
 
 ///////////////////////INPUTS////////////////////////
 input clk;
@@ -38,8 +38,7 @@ output logic        mem_to_reg_out;
 output logic [3:0]  reg_rd_out;
 output logic [15:0] mem_read_data;
 output logic [15:0] alu_result_out;
-
-output logic        rdy;         //memory is ready
+output mem_data_type mem_data_res;
 
 output logic        HALT_out;
 
@@ -57,25 +56,18 @@ assign ret_future_out = ret_future_in;
 always_comb begin
     
     if (call_in) begin
-       alu_result_out = alu_result_in - 2;
+       alu_result_out = alu_result_in - 1;
        write_data = mem_write_data + 2;
+       alu_addr = alu_result_in + 1;
+    end
+    else if (ret_future_in) begin
+       alu_result_out = alu_result_in + 2;
+       write_data = mem_write_data;
+       alu_addr = alu_result_in + 1;
     end
     else begin
        alu_result_out = alu_result_in;
        write_data = mem_write_data;
-    end
-       
-end
-
-//MUX for updating stack pointer with Ret
-always_comb begin
-    
-    if (ret_future_in) begin
-       alu_result_out = alu_result_in + 2;
-       alu_addr = alu_result_in + 2;
-    end
-    else begin
-       alu_result_out = alu_result_in;
        alu_addr = alu_result_in;
     end
        
@@ -93,16 +85,16 @@ always_comb begin
 end
 
 //MODULE INSTANTIATIONS
-/*
+
 Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
                      .we(MemWrite_in), .wrt_data(write_data),
                      .rd_data(mem_read_data));
-*/
-                     
+                  
 //Establishes project-specified size of memory system with 4 cycle delay
-unified_mem data_mem(.clk(clk), .rst_n(!rst), .addr({alu_addr[13:0], 1'b0}), .re(MemRead_in), 
-			.we(MemWrite_in), .wdata(write_data), 
-			.rd_data(mem_read_data), .rdy(rdy));
+unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr({mem_req.addr[13:0], 1'b0}), .re(mem_req.rw), 
+			.we(1'b0), .wdata(mem_req.data), 
+			.rd_data(mem_data_res.data), .rdy(mem_data_res.ready));
+			
 //TODO CHOOSE mem_req or normal input
 
 assign HALT_out = HALT_in;

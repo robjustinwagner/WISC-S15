@@ -10,7 +10,7 @@
 `include "MEMWB_reg.v"
 `include "WB_Unit.v"
 
-`include "icache_def.v"
+//`include "icache_def.v"
 import icache_def::*;
 
 module WISC_S15_top_level(clk, rst, HALT);
@@ -24,7 +24,7 @@ output reg HALT;
 /* INTERNAL VARIABLES */
 logic rst_g;                      // Global reset for modules
 //#1; IF_Unit --> IFID_reg
-logic mem_req_type mem_req_1;
+       mem_req_type mem_req_1;
 logic [15:0] PC_out_1;
 logic [15:0] instruction_out_1;
 logic        PC_hazard_1;
@@ -123,7 +123,7 @@ logic 	     ret_future_out_7;
 logic 	     [3:0] reg_rd_out_7;
 logic 	     [15:0] mem_read_data_out_7;
 logic 	     [15:0] alu_result_out_7;
-logic      rdy_7;
+         mem_data_type mem_data_res_7;
 logic      HALT_7;
 //#8; MEMWB_reg --> WB_Unit
 logic	     RegWrite_out_8;
@@ -160,10 +160,9 @@ end
 				.PC_hazard(PC_hazard_3),
 				.PC_src(PC_src_5), 
 				.PC_branch(PC_update_5), 
-				.mem_data_res(mem_read_data_out_7), 
-				.rdy(rdy_7), 
+				.mem_data_res(mem_data_res_7), 
 				
-				.mem_request(mem_req_1), 
+				.mem_req(mem_req_1), 
 				.PC_out(PC_out_1), 
 				.instruction(instruction_out_1),
 				.PC_hazard_ff(PC_hazard_1));	
@@ -392,7 +391,7 @@ end
 				.reg_rd_out(reg_rd_out_7), 
           		.mem_read_data(mem_read_data_out_7), 
           		.alu_result_out(alu_result_out_7), 
-          		.rdy(rdy_7), 
+          		.mem_data_res(mem_data_res_7), 
           		.HALT_out(HALT_7));
 
 	//#8; Memory/WriteBack intermediate register
