@@ -1,12 +1,14 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "Data_Memory.v"
+//`include "Data_Memory.v"
+`include "unified_mem.v"
+
 
 module MEM_Unit(clk, rst,
 	   call_in, RegWrite_in, MemWrite_in, MemRead_in, mem_to_reg_in, 
-	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, HALT_in,
+	      reg_rd_in, alu_result_in, mem_write_data, ret_future_in, mem_req, HALT_in,
 	   RegWrite_out, ret_future_out, mem_to_reg_out, reg_rd_out,
-	      mem_read_data, alu_result_out, HALT_out);
+	      mem_read_data, alu_result_out, rdy, HALT_out);
 
 ///////////////////////INPUTS////////////////////////
 input clk;
@@ -24,6 +26,8 @@ input [15:0] mem_write_data; // Data for Memory Write      <-- PC during call
 
 input        ret_future_in; // Future ret_wb signal
 
+input mem_req_type mem_req;   //requests to memory from the i-cache
+
 input        HALT_in;
 /////////////////////////////////////////////////////
 
@@ -34,6 +38,8 @@ output logic        mem_to_reg_out;
 output logic [3:0]  reg_rd_out;
 output logic [15:0] mem_read_data;
 output logic [15:0] alu_result_out;
+
+output logic        rdy;         //memory is ready
 
 output logic        HALT_out;
 
@@ -87,19 +93,17 @@ always_comb begin
 end
 
 //MODULE INSTANTIATIONS
+/*
 Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
                      .we(MemWrite_in), .wrt_data(write_data),
                      .rd_data(mem_read_data));
-                     
-/* Replace Data_Memory module with this! 
-
-Establishes project-specified size of memory system with 4 cycle delay
-unified_mem data_mem(.clk(clk), .rst_n(!rst), .addr(aly_addr), .re(MemRead_in), 
-			.we(MemWrite_in), .wdata(mem_write_data), 
-			.rd_data(mem_read_data), .rdy(rdy));
-
-TODO: add rdy input
 */
+                     
+//Establishes project-specified size of memory system with 4 cycle delay
+unified_mem data_mem(.clk(clk), .rst_n(!rst), .addr({alu_addr[13:0], 1'b0}), .re(MemRead_in), 
+			.we(MemWrite_in), .wdata(write_data), 
+			.rd_data(mem_read_data), .rdy(rdy));
+//TODO CHOOSE mem_req or normal input
 
 assign HALT_out = HALT_in;
 

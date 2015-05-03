@@ -1,4 +1,5 @@
 `include "icache_def.v"
+//`include "Instruction_Cache.v"
 import icache_def::*;
 
 /*cache finite state machine*/
@@ -82,7 +83,7 @@ module Cache_Controller(input bit clk, input bit rst,
  	case(rstate)
  	
 	/*idle state*/
- 	idle : begin
+ 	idle: begin
  		
 		/*If there is a CPU request, then compare cache tag*/
  		if (cpu_req.valid) begin
@@ -91,7 +92,7 @@ module Cache_Controller(input bit clk, input bit rst,
 	end
 
 	/*compare_tag state*/
- 	compare_tag : begin
+ 	compare_tag: begin
 
  		/*cache hit (tag match and cache entry is valid)*/
 		if (cpu_req.addr[TAGMSB:TAGLSB] == tag_read.tag && tag_read.valid) begin
@@ -160,7 +161,7 @@ module Cache_Controller(input bit clk, input bit rst,
 	end
  
 	/*wait for writing back dirty cache line*/
- 	write_back : begin
+ 	write_back: begin
  
 		/*write back is completed*/
  		if (mem_data.ready) begin
@@ -188,5 +189,17 @@ module Cache_Controller(input bit clk, input bit rst,
   /*connect cache tag/data memory*/
   dm_cache_tag ctag(.*);
   dm_cache_data cdata(.*);
+/*
+  Instruction_Cache(.clk(clk), .rst_n(!rst), 
+     .addr(cpu_req.addr[TAGMSB:TAGLSB]), 
+     .wr_data(data_write), 
+     .wdirty(tag_write.dirty), 
+     .we(data_req.we), 
+     .re(), 
+     .rd_data(data_read), 
+     .tag_out(), 
+     .hit(), 
+     .dirty());
+*/
 
 endmodule

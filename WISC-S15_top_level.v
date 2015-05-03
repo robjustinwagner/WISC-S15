@@ -10,6 +10,9 @@
 `include "MEMWB_reg.v"
 `include "WB_Unit.v"
 
+`include "icache_def.v"
+import icache_def::*;
+
 module WISC_S15_top_level(clk, rst, HALT);
 
 //INPUTS
@@ -21,6 +24,7 @@ output reg HALT;
 /* INTERNAL VARIABLES */
 logic rst_g;                      // Global reset for modules
 //#1; IF_Unit --> IFID_reg
+logic mem_req_type mem_req_1;
 logic [15:0] PC_out_1;
 logic [15:0] instruction_out_1;
 logic        PC_hazard_1;
@@ -119,6 +123,7 @@ logic 	     ret_future_out_7;
 logic 	     [3:0] reg_rd_out_7;
 logic 	     [15:0] mem_read_data_out_7;
 logic 	     [15:0] alu_result_out_7;
+logic      rdy_7;
 logic      HALT_7;
 //#8; MEMWB_reg --> WB_Unit
 logic	     RegWrite_out_8;
@@ -155,7 +160,10 @@ end
 				.PC_hazard(PC_hazard_3),
 				.PC_src(PC_src_5), 
 				.PC_branch(PC_update_5), 
+				.mem_data_res(mem_read_data_out_7), 
+				.rdy(rdy_7), 
 				
+				.mem_request(mem_req_1), 
 				.PC_out(PC_out_1), 
 				.instruction(instruction_out_1),
 				.PC_hazard_ff(PC_hazard_1));	
@@ -178,10 +186,6 @@ end
           		.call_target(call_target_2), 
 				.PC_out(PC_out_2),
 				.instruction_out(instruction_out_2));
-				//.hit(hit_1),
-				//.dirty(dirty_1),
-				//.tag_out(tag_out_1),
-				//.rd_data(rd_data_1));
 
 	//#3; stage 2 -- Instruction Decode Module Unit	
 	ID_Unit IDU(		.clk(clk), 
@@ -368,7 +372,7 @@ end
 				.HALT_out(HALT_6));
 	
 	//#7; stage 4 -- Memory Module Unit	
-	MEM_Unit MEMU(		.clk(clk), 
+	MEM_Unit MEMU(.clk(clk), 
 				.rst(rst_g), 
 				.call_in(call_out_6), 
 				.RegWrite_in(RegWrite_out_6), 
@@ -378,7 +382,8 @@ end
 				.reg_rd_in(reg_rd_out_6), 
    	 		   .alu_result_in(alu_result_out_6), 
 				.mem_write_data(save_word_data_out_6), 
-				.ret_future_in(ret_future_out_6),
+				.ret_future_in(ret_future_out_6), 
+				.mem_req(mem_req_1), 
 				.HALT_in(HALT_6),
 
 				.RegWrite_out(RegWrite_out_7), 
@@ -386,7 +391,8 @@ end
 				.mem_to_reg_out(mem_to_reg_out_7), 
 				.reg_rd_out(reg_rd_out_7), 
           		.mem_read_data(mem_read_data_out_7), 
-          		.alu_result_out(alu_result_out_7),
+          		.alu_result_out(alu_result_out_7), 
+          		.rdy(rdy_7), 
           		.HALT_out(HALT_7));
 
 	//#8; Memory/WriteBack intermediate register
