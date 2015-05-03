@@ -1,4 +1,4 @@
-`include "icache_def.v"
+//`include "icache_def.v"
 import icache_def::*;
 
 /*cache: data memory, single port, 8 blocks*/
@@ -6,7 +6,7 @@ module dm_cache_data(input bit clk,
  input cache_req_type data_req,		//data request/command, e.g. RW, valid
  input cache_data_type data_write, 	//write port (64-bit line)
  output cache_data_type data_read);	//read port
- timeunit 1ns; timeprecision 1ps;
+ //timeunit 1ns; timeprecision 1ps;
 
  cache_data_type data_mem[0:7];
 

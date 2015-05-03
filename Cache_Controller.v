@@ -10,8 +10,8 @@ module Cache_Controller(input bit clk, input bit rst,
  	output cpu_result_type cpu_res 	//cache result (cache->CPU)
  );
  
- timeunit 1ns;
- timeprecision 1ps;
+ //timeunit 1ns;
+ //timeprecision 1ps;
  
  /*write clock*/
  typedef enum {idle, compare_tag, allocate, write_back} cache_state_type;
@@ -99,7 +99,7 @@ module Cache_Controller(input bit clk, input bit rst,
 
  			v_cpu_res.ready = '1;
 
- 			/*write hit*/
+ 			/*hit*/
  			if (cpu_req.rw) begin
  				/*read/modify cache line*/
  				tag_req.we = '1; 

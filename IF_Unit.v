@@ -48,18 +48,28 @@ logic instr_hazard;
 cpu_req_type cpu_req;			//CPU request input (CPU->cache);  request from the CPU to the cache
 cpu_result_type cpu_res;		//cache result (cache->CPU);  responses to the CPU from the cache
 
+/*
 initial begin
-cpu_req.data = '0;         //TODO FIX THIS
-cpu_req.rw = '0;         //TODO FIX THIS
-cpu_req.valid = '1;      //TODO FIX THIS
+cpu_req.data = mem_req.data;       //TODO FIX THIS
+cpu_req.rw = mem_req.rw;       //TODO FIX THIS
+cpu_req.valid = mem_req.valid;      //TODO FIX THIS
 end
+*/
 
 assign cpu_req.addr = PC_address;
+//assign cpu_req.data = mem_data_res.data;       //TODO FIX THIS
+assign cpu_req.rw = 1'b0;       //TODO FIX THIS
 
+always_comb begin
+	if (PC_address === 16'hxxxx)
+		cpu_req.valid = 1'b0;      //TODO FIX THIS
+	else 
+		cpu_req.valid = 1'b1;
+end 
 // Pipeline stall on hazard
 always_comb begin
     
-    hazard = (data_hazard | PC_hazard);
+    hazard = (data_hazard | PC_hazard | !cpu_res.ready);
     
 end
 
@@ -104,8 +114,6 @@ Cache_Controller cc(.clk(clk), .rst(rst),
 
 //PC update logic (branch target or next instr)
 always_comb begin
-    
-    //PC_plus_2 = PC_address + 2;
     
     if (PC_src) begin
         PC_update = PC_branch;

@@ -2,8 +2,8 @@
 
  	/* data structures for cache tag & data */
  	
-	parameter int TAGMSB = 13; 	//tag msb
- 	parameter int TAGLSB = 3; 	//tag lsb
+	parameter int TAGMSB = 15; 	//tag msb
+ 	parameter int TAGLSB = 5; 	//tag lsb
  
 	//data structure for cache tag
  	typedef struct packed {
@@ -44,14 +44,14 @@
 	// memory request (cache controller->memory)
  	typedef struct {
  	  bit [15:0] addr; 	//request byte addr
- 	  bit [63:0] data; 	//64-bit request data (used when write)
+ 	  bit [31:0] data; 	//32-bit request data (used when write)
  	  bit rw; 		//request type : 0 = read, 1 = write
    	 bit valid; 		//request is valid
  	}mem_req_type;
 
  	// memory controller response (memory -> cache controller)
  	typedef struct {
- 	  cache_data_type data; //64-bit read back data
+ 	  bit [31:0] data; //32-bit read back data
  	  bit ready; 		//data is ready
  	}mem_data_type;
 

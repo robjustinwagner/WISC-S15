@@ -56,7 +56,7 @@ always @(clk,int_we)
 ///////////////////////
 always @(clk,int_re)
   if (clk & int_re)				// reads occur on clock high during 4th clock cycle
-    rd_data = {mem[{addr_capture,1'b1}],mem[{addr_capture,1'b0}]};
+    rd_data = {mem[{addr_capture + 1,1'b0}],mem[{addr_capture,1'b0}]};
 	 
 	
 ////////////////////////
@@ -77,7 +77,7 @@ always @(posedge clk, negedge rst_n)
   else
     if (clr_cnt)
       wait_state_cnt <= 2'b00;
-	else
+	 else
       wait_state_cnt <= wait_state_cnt + 1;
 	
 always @(state,re,we,wait_state_cnt)

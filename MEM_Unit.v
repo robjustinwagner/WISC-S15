@@ -46,6 +46,7 @@ output logic        HALT_out;
 
 logic [15:0] alu_addr;
 logic [15:0] write_data;
+logic unified_mem_re;
 
 //PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
@@ -84,6 +85,14 @@ always_comb begin
         
 end
 
+always_comb begin
+
+	if(!mem_req.rw)
+		unified_mem_re = 1'b1;
+	else
+		unified_mem_re = 1'b0;
+end
+
 //MODULE INSTANTIATIONS
 
 Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
@@ -91,7 +100,7 @@ Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
                      .rd_data(mem_read_data));
                   
 //Establishes project-specified size of memory system with 4 cycle delay
-unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr({mem_req.addr[13:0], 1'b0}), .re(mem_req.rw), 
+unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr({mem_req.addr[13:0], 1'b0}), .re(unified_mem_re), 
 			.we(1'b0), .wdata(mem_req.data), 
 			.rd_data(mem_data_res.data), .rdy(mem_data_res.ready));
 			
