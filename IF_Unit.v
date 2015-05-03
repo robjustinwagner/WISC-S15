@@ -117,7 +117,7 @@ end
 
 always_comb begin
    //if (PC_hazard | PC_hazard_ff) begin
-   if (PC_hazard | PC_hazard_ff | cpu_res.rdy) begin
+   if (PC_hazard | PC_hazard_ff | !cpu_res.rdy) begin
       instruction = 16'hxxxx;
    end
    else begin
