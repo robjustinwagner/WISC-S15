@@ -56,7 +56,7 @@ always @(clk,int_we)
 ///////////////////////
 always @(clk,int_re)
   if (clk & int_re)				// reads occur on clock high during 4th clock cycle
-    rd_data = {mem[{addr_capture + 1,1'b0}],mem[{addr_capture,1'b0}]};
+    rd_data = {mem[{addr_capture,1'b1}],mem[{addr_capture,1'b0}]};
 	 
 	
 ////////////////////////
