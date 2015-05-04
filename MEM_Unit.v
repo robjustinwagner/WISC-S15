@@ -58,7 +58,7 @@ always_comb begin
     
     if (call_in) begin
        alu_result_out = alu_result_in - 1;
-       write_data = mem_write_data + 2;
+       write_data = mem_write_data + 1;
        alu_addr = alu_result_in;
     end
     else if (ret_future_in) begin

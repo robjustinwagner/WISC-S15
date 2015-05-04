@@ -42,6 +42,8 @@ module Cache_Controller(input bit clk, input bit rst,
 
  /*------------------------------default values for all signals*/
 
+	v_mem_req.valid = '0;
+
  	/*no state change by default*/
  	vstate = rstate;
  	v_cpu_res = '{0, 0}; tag_write = '{0, 0, 0};
@@ -49,12 +51,12 @@ module Cache_Controller(input bit clk, input bit rst,
  	/*read tag by default*/
  	tag_req.we = '0;
  	/*direct map index for tag*/
- 	tag_req.index = cpu_req.addr[5:3];
+ 	tag_req.index = cpu_req.addr[4:2];
 	
  	/*read current cache line by default*/
  	data_req.we = '0;
  	/*direct map index for cache data*/
- 	data_req.index = cpu_req.addr[5:3];
+ 	data_req.index = cpu_req.addr[4:2];
  	
  	/*modify correct word (16-bit) based on address*/
  	//data_write = data_read;
@@ -69,7 +71,7 @@ module Cache_Controller(input bit clk, input bit rst,
 */
 	
  	/*read out correct word(16-bit) from cache (to CPU)*/
- 	case(cpu_req.addr[2:1])
+ 	case(cpu_req.addr[1:0])
  	2'b00:v_cpu_res.data = data_read[15:0];
  	2'b01:v_cpu_res.data = data_read[31:16];
  	2'b10:v_cpu_res.data = data_read[47:32];
@@ -77,10 +79,10 @@ module Cache_Controller(input bit clk, input bit rst,
  	endcase
 	
  	/*memory request address (sampled from CPU request)*/
- 	if(rstate == allocate_1)
-		v_mem_req.addr = cpu_req.addr;
+ 	if(rstate == allocate_2)
+		v_mem_req.addr = cpu_req.addr + 2;
 	else
-		v_mem_req.addr = cpu_req.addr + 4;
+		v_mem_req.addr = cpu_req.addr;
 
  	/*memory request data (used in write)*/
  	v_mem_req.data = data_read;
