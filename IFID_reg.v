@@ -1,12 +1,14 @@
 // Author: Graham Nygard, Robert Wagner
 
 module IFID_reg(clk, data_hazard, PC_hazard, instruction_in, PC_in, 
-	cntrl_input, branch_cond, reg_rs, reg_rt, call, PC_src_hazard,
+	cntrl_input, branch_cond, reg_rs, reg_rt, call, ret_control, ret_PC, PC_src_hazard,
 	reg_rd, arith_imm, load_save_imm, call_target, PC_out, instruction_out);
 
 //INPUTS
 input        clk;
 input        call;
+input	     ret_control;
+input	     ret_PC;
 input        data_hazard;        // Stall the pipe for hazards
 input        PC_hazard;
 input	     PC_src_hazard;
@@ -27,12 +29,13 @@ output logic [15:0] instruction_out;   // Used for halting
 
 //NO OPERATION FOR PIPE STALL
 logic [15:0] NO_OP = 16'hF000;
+logic ret_hault;
 logic hazard;
 
 // Pipeline stall on hazard
 always_comb begin
     
-    hazard = (data_hazard | PC_hazard /*| PC_src_hazard*/);
+    hazard = (data_hazard | PC_hazard);
     
 end
 
@@ -40,10 +43,10 @@ end
 always @(posedge clk) begin
     
    // Don't stall the pipe
-   if (!data_hazard & !call) begin
+   if (!data_hazard & !call & !ret_control) begin
    
       // Pass on the PC
-      PC_out        <= PC_in;
+      	   PC_out        <= PC_in;
     
       // Set the input to the control unit
 	   cntrl_input   <= instruction_in[15:12];
@@ -69,7 +72,7 @@ always @(posedge clk) begin
 	else begin
 	    
 	   // Lock everything
-      PC_out        <= PC_out;
+      	   PC_out        <= PC_out;
     
 	   cntrl_input   <= cntrl_input;
 
@@ -90,7 +93,7 @@ end
 
 always @(posedge clk) begin
 	    
-	    if (PC_hazard | call /*| PC_src_hazard*/) begin
+	    if (PC_hazard | call | ret_hault) begin
 	        instruction_out <= NO_OP;
 	    end
 	    else if (data_hazard) begin
@@ -99,6 +102,19 @@ always @(posedge clk) begin
 	    else begin
 	        instruction_out <= instruction_in;
 	    end
+end
+
+always @(posedge clk) begin
+	    
+	if (ret_PC) begin
+		ret_hault <= 1'b0;
+     	end
+	else if (ret_control) begin
+	        ret_hault <= 1'b1;
 	end
+	else begin
+	        ret_hault <= ret_hault;
+	end
+end
 
 endmodule

@@ -7,17 +7,19 @@
 import icache_def::*;
 
 module IF_Unit(clk, rst, data_hazard, PC_hazard, PC_hazard_ff, 
-	               PC_src, PC_branch, mem_data_res, 
+	               PC_src, PC_ret, PC_branch, mem_data_res, 
 	               mem_req, PC_out, instruction, PC_src_hazard);
 
 //////////////////////////INPUTS/////////////////////////////
 
-input			    clk;
-input			    rst;
+input		clk;
+input		rst;
 
-input			    data_hazard;        // Disable PC update for hazards
-input        PC_hazard;
-input			    PC_src;        // Mux select for choosing PC source
+input		data_hazard;        // Disable PC update for hazards
+input        	PC_hazard;
+input		PC_src;        // Mux select for choosing PC source
+input		PC_ret;
+
 input	[15:0]	PC_branch;
 input mem_data_type mem_data_res;
 
@@ -25,9 +27,9 @@ input mem_data_type mem_data_res;
 
 //////////////////////////OUTPUTS/////////////////////////////
 
-output logic	PC_hazard_ff;
-output	logic	[15:0]	PC_out;
-output	logic	[15:0]	instruction;
+output logic	  PC_hazard_ff;
+output logic [15:0]	PC_out;
+output logic [15:0]	instruction;
 output logic	PC_src_hazard;
 
 output mem_req_type mem_req;			//memory request (cache->memory); requests to memory from the cache
@@ -43,10 +45,14 @@ logic hazard;
 
 logic PC_src_ff;
 logic PC_src_ff_2;
+
+logic PC_ret_ff;
+logic PC_ret_ff_2;
+
 logic [15:0] PC_branch_ff;
 logic [15:0] PC_branch_ff_2;
 
-logic rst_PC_src;
+logic rst_PC;
 
 //logic [15:0] read_instr; // The instruction read form memory
 
@@ -83,28 +89,33 @@ end
 
 always @(posedge clk) begin
 
-    if (rst_PC_src) begin
+    if (rst_PC) begin
 	PC_src_ff <= 1'b0;
+	PC_ret_ff <= 1'b0;
 	PC_branch_ff <= 16'hxxxx;
     end
     else if (PC_src) begin
 	PC_src_ff <= PC_src;
+	PC_ret_ff <= PC_ret;
 	PC_branch_ff <= PC_branch;
     end
     else begin
 	PC_src_ff <= PC_src_ff;
+	PC_ret_ff <= PC_ret_ff;
 	PC_branch_ff <= PC_branch_ff;
     end
 end
 
 always @(posedge clk) begin
 
-    if (rst_PC_src) begin
+    if (rst_PC) begin
 	PC_src_ff_2 <= 1'b0;
+	PC_ret_ff_2 <= 1'b0;
 	PC_branch_ff_2 <= 16'hxxxx;
     end
     else if (cpu_res.ready) begin
 	PC_src_ff_2 <= PC_src_ff;
+	PC_ret_ff_2 <= PC_ret_ff;
 	PC_branch_ff_2 <= PC_branch_ff;
     end
     else begin
@@ -150,16 +161,21 @@ Cache_Controller cc(.clk(clk), .rst(rst),
 //PC update logic (branch target or next instr)
 always_comb begin
     
-    if (PC_src_ff_2) begin
+    if (PC_ret) begin
+	PC_update = PC_branch;
+        PC_plus_2 = PC_branch + 2;
+	rst_PC = 1'b1;
+    end
+    else if (PC_src_ff_2 & !PC_ret_ff_2) begin
         PC_update = PC_branch_ff_2;
         PC_plus_2 = PC_branch_ff_2 + 2;
-	rst_PC_src = 1'b1;
+	rst_PC = 1'b1;
     end
     
     else begin
         PC_plus_2 = PC_address + 2;
         PC_update =  PC_plus_2;
-	rst_PC_src = 1'b0;
+	rst_PC = 1'b0;
     end
     
 end

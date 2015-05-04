@@ -1,8 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
 module PC_Update(PC_in, PC_stack_pointer, alu_done, flags, call_target,
-                 sign_ext, branch_cond, branch, call, ret, 
-                    PC_update, PC_src, update_done);
+                 sign_ext, branch_cond, branch, call, ret_in, 
+                    PC_update, PC_src, update_done, ret_out);
 
 // FROM ID/EX REG
 input               branch;
@@ -19,13 +19,14 @@ input               alu_done;
 input        [2:0]  flags;          // [Z, V, N]
 
 // FROM MEM/WB REG
-input               ret;              
+input               ret_in;              
 input        [15:0] PC_stack_pointer;
 
 //OUTPUTS
 output logic [15:0] PC_update;
 output logic        PC_src;
 output logic        update_done;
+output logic	    ret_out;
 
 logic math;
 
@@ -41,7 +42,7 @@ localparam   T    =   3'b111;
 //always @(posedge alu_done, posedge ret, posedge call) begin
 always_comb begin
   
-   //if (alu_done) begin
+    ret_out = ret_in;
     
     if (branch) begin
         
@@ -135,7 +136,7 @@ always_comb begin
        
     end
     
-   else if (ret) begin
+    else if (ret_in) begin
         
        PC_update   = PC_stack_pointer;
        update_done = 1;   // Tell control unit to unhault pipe

@@ -89,6 +89,7 @@ logic      PC_hazard_4;
 logic      HALT_4;
 //PC_update and Flag_reg
 logic     [2:0] updated_flags; 
+logic		ret_PC;
 
 //#5; EX_Unit --> EXMEM_reg
 logic	     call_out_5;
@@ -160,6 +161,7 @@ end
 				.data_hazard(data_hazard_3),
 				.PC_hazard(PC_hazard_3),
 				.PC_src(PC_src_5), 
+				.PC_ret(ret_PC),
 				.PC_branch(PC_update_5), 
 				.mem_data_res(mem_data_res_7), 
 				
@@ -172,6 +174,8 @@ end
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
 	         		.call(call_3),
+				.ret_control(ret_3),
+				.ret_PC(ret_PC),
 				.data_hazard(data_hazard_3), 
 				.PC_hazard(PC_hazard_3),
 				.instruction_in(instruction_out_1),
@@ -215,7 +219,7 @@ end
 				
 				.RegWrite_out(RegWrite_out_3),
 				.MemWrite_out(MemWrite_out_3),
-            .MemRead_out(MemRead_out_3),     
+            			.MemRead_out(MemRead_out_3),     
 				.mem_to_reg(mem_to_reg_3), 
 				.alu_src(alu_src_3), 
 				.alu_op(alu_op_3), 
@@ -295,11 +299,12 @@ end
                  .branch_cond(branch_cond_out_3),
                  .branch(branch_3), 
                  .call(call_3), 
-                 .ret(ret_out_8),
+                 .ret_in(ret_out_8),
                  
                  .PC_update(PC_update_5), 
                  .PC_src(PC_src_5), 
-                 .update_done(PC_update_done_5));
+                 .update_done(PC_update_done_5),
+		 .ret_out(ret_PC));
    
    // Flags reg set by the ALU           
    Flag_reg  flags(.clk(clk), 
