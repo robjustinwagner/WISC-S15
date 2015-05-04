@@ -161,12 +161,20 @@ module Cache_Controller(input bit clk, input bit rst,
 		/*memory controller has responded*/
  		if (mem_data.ready) begin
 			v_mem_req.valid = '0;
-			if (cpu_req.addr[1:0] == 2'b00) begin
+			if (mem_req.addr[1:0] == 2'b00) begin
+				data_write[15:0] = mem_data.data[15:0];
  		      		data_write[31:16] = mem_data.data[31:16];
-            			data_write[15:0] = mem_data.data[15:0];
+			end
+			else if (mem_req.addr[1:0] == 2'b01) begin
+            			data_write[31:16] = mem_data.data[15:0];
+				data_write[47:32] = mem_data.data[31:16];
+			end
+			else if (mem_req.addr[1:0] == 2'b10) begin
+            			data_write[47:32] = mem_data.data[15:0];
+				data_write[63:48] = mem_data.data[31:16];
 			end
 			else begin
-			   	data_write[31:16] = mem_data.data[15:0];
+			   	data_write[63:48] = mem_data.data[15:0];
             			data_write[15:0] = mem_data.data[31:16];
 		   	end
 		   	//v_mem_req.addr = {cpu_req.addr[15:2], !cpu_req.addr[1], cpu_req.addr[0]};
@@ -183,13 +191,21 @@ module Cache_Controller(input bit clk, input bit rst,
  		if(mem_data.ready) begin
  			/*re-compare tag for write miss (need modify correct word)*/
  			vstate = compare_tag;
- 			if (cpu_req.addr[1:0] == 2'b00) begin
-            			data_write[63:48] = mem_data.data[31:16];
+ 			if (mem_req.addr[1:0] == 2'b00) begin
+				data_write[15:0] = mem_data.data[15:0];
+ 		      		data_write[31:16] = mem_data.data[31:16];
+			end
+			else if (mem_req.addr[1:0] == 2'b01) begin
+            			data_write[31:16] = mem_data.data[15:0];
+				data_write[47:32] = mem_data.data[31:16];
+			end
+			else if (mem_req.addr[1:0] == 2'b10) begin
             			data_write[47:32] = mem_data.data[15:0];
+				data_write[63:48] = mem_data.data[31:16];
 			end
 			else begin
 			   	data_write[63:48] = mem_data.data[15:0];
-            			data_write[47:32] = mem_data.data[31:16];
+            			data_write[15:0] = mem_data.data[31:16];
 		   	end
      			/*update cache line data*/
  		   	data_req.we = '1;

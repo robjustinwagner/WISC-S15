@@ -100,7 +100,7 @@ Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
                      .rd_data(mem_read_data));
                   
 //Establishes project-specified size of memory system with 4 cycle delay
-unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr({mem_req.addr[15:1]}), .re(unified_mem_re), 
+unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr(mem_req.addr), .re(unified_mem_re), 
 			.we(1'b0), .wdata(mem_req.data), 
 			.rd_data(mem_data_res.data), .rdy(mem_data_res.ready));
 			

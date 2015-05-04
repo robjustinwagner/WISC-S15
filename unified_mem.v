@@ -6,7 +6,7 @@ module unified_mem(clk,rst_n,addr,re,we,wdata,rd_data,rdy);
 //////////////////////////////////////////////////////////////////
 input clk,rst_n;
 input re,we;
-input [14:0] addr;			// 2 LSB's are dropped since accessing as four 16-bit words
+input [15:0] addr;			
 input [31:0] wdata;
 
 output reg [31:0] rd_data;
@@ -21,7 +21,7 @@ localparam IDLE 	= 2'b00;
 localparam WRITE 	= 2'b01;
 localparam READ    	= 2'b10;
 
-reg [14:0] addr_capture;								// capture the address at start of read
+reg [15:0] addr_capture;								// capture the address at start of read
 reg [1:0] state,nxt_state;								// state register
 reg [1:0] wait_state_cnt;								// counter for 4-clock access time
 reg clr_cnt,int_we,int_re;								// state machine outputs
@@ -47,8 +47,8 @@ always @(posedge clk)
 always @(clk,int_we)
   if (clk & int_we)				// write occurs on clock high during 4th clock cycle
     begin
-          mem[{addr_capture,1'b0}] <= wdata[15:0];
-	  mem[{addr_capture,1'b1}] <= wdata[31:16];
+          mem[{addr_capture}] <= wdata[15:0];
+	  mem[{addr_capture}] <= wdata[31:16];
 	end
 	
 /////////////////////////
@@ -56,7 +56,7 @@ always @(clk,int_we)
 ///////////////////////
 always @(clk,int_re)
   if (clk & int_re)				// reads occur on clock high during 4th clock cycle
-    rd_data = {mem[{addr_capture,1'b1}],mem[{addr_capture,1'b0}]};
+    rd_data = {mem[{addr_capture + 1}],mem[{addr_capture}]};
 	 
 	
 ////////////////////////

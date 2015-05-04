@@ -46,7 +46,7 @@ always_comb begin
     
     if (branch) begin
         
-        PC_update = (PC_in + 1) + sign_ext; // ASSSUMING that PC + 2 is used
+        PC_update = (PC_in + 1) + sign_ext; // ASSSUMING that instruction + 2 is used
         
         case(branch_cond)
             

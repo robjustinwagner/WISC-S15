@@ -12,3 +12,13 @@ add  R15, R1, R3		#R15 <= 0x0006				//load-use 1 cycle stall - Forwarding R3 fro
 
 inc R10, R15, 0x04		#R10 <= 0x000a				//Forwarding R15 from add in EX_MEM stage
 
+@0000 AE00
+@0001 BE06
+@0002 A100
+@0003 B106
+@0004 1211
+@0005 9205
+@0006 8305
+@0007 0F13
+@0008 4AF4
+@0009 FFFF
