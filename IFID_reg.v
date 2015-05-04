@@ -1,7 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
 module IFID_reg(clk, data_hazard, PC_hazard, instruction_in, PC_in, 
-	cntrl_input, branch_cond, reg_rs, reg_rt, call,
+	cntrl_input, branch_cond, reg_rs, reg_rt, call, PC_src_hazard,
 	reg_rd, arith_imm, load_save_imm, call_target, PC_out, instruction_out);
 
 //INPUTS
@@ -9,6 +9,7 @@ input        clk;
 input        call;
 input        data_hazard;        // Stall the pipe for hazards
 input        PC_hazard;
+input	     PC_src_hazard;
 input [15:0] instruction_in;   // Instruction to execute
 input [15:0] PC_in;         // Program counter
 
@@ -31,7 +32,7 @@ logic hazard;
 // Pipeline stall on hazard
 always_comb begin
     
-    hazard = (data_hazard | PC_hazard);
+    hazard = (data_hazard | PC_hazard /*| PC_src_hazard*/);
     
 end
 
@@ -89,7 +90,7 @@ end
 
 always @(posedge clk) begin
 	    
-	    if (PC_hazard | call) begin
+	    if (PC_hazard | call /*| PC_src_hazard*/) begin
 	        instruction_out <= NO_OP;
 	    end
 	    else if (data_hazard) begin

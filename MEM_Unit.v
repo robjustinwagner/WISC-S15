@@ -59,10 +59,10 @@ always_comb begin
     if (call_in) begin
        alu_result_out = alu_result_in - 1;
        write_data = mem_write_data + 2;
-       alu_addr = alu_result_in + 1;
+       alu_addr = alu_result_in;
     end
     else if (ret_future_in) begin
-       alu_result_out = alu_result_in + 2;
+       alu_result_out = alu_result_in + 1;
        write_data = mem_write_data;
        alu_addr = alu_result_in + 1;
     end
@@ -100,7 +100,7 @@ Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
                      .rd_data(mem_read_data));
                   
 //Establishes project-specified size of memory system with 4 cycle delay
-unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr({1'b0, mem_req.addr[15:2]}), .re(unified_mem_re), 
+unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr({mem_req.addr[15:1]}), .re(unified_mem_re), 
 			.we(1'b0), .wdata(mem_req.data), 
 			.rd_data(mem_data_res.data), .rdy(mem_data_res.ready));
 			

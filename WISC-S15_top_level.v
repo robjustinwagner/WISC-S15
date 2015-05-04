@@ -28,6 +28,7 @@ logic rst_g;                      // Global reset for modules
 logic [15:0] PC_out_1;
 logic [15:0] instruction_out_1;
 logic        PC_hazard_1;
+logic	     PC_src_hazard;
 //#2; IFID_reg --> ID_Unit
 logic [3:0]  cntrl_input_2;   	  // Inst[15:12] - Opcode
 logic [2:0]  branch_cond_2;   	  // Inst[11:8]  - Branch condition
@@ -165,24 +166,26 @@ end
 				.mem_req(mem_req_1), 
 				.PC_out(PC_out_1), 
 				.instruction(instruction_out_1),
-				.PC_hazard_ff(PC_hazard_1));	
+				.PC_hazard_ff(PC_hazard_1),
+				.PC_src_hazard(PC_src_hazard));	
 
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
-	         .call(call_3),
+	         		.call(call_3),
 				.data_hazard(data_hazard_3), 
 				.PC_hazard(PC_hazard_3),
 				.instruction_in(instruction_out_1),
-				.PC_in(PC_out_1), 
+				.PC_in(PC_out_1),
+				.PC_src_hazard(PC_src_hazard), 
 
-          		.cntrl_input(cntrl_input_2), 
-          		.branch_cond(branch_cond_2), 
+          			.cntrl_input(cntrl_input_2), 
+          			.branch_cond(branch_cond_2), 
 				.reg_rs(reg_rs_2), 
 				.reg_rt(reg_rt_2), 
 				.reg_rd(reg_rd_2),
 				.arith_imm(arith_imm_2), 
 				.load_save_imm(load_save_imm_2), 
-          		.call_target(call_target_2), 
+          			.call_target(call_target_2), 
 				.PC_out(PC_out_2),
 				.instruction_out(instruction_out_2));
 
@@ -308,7 +311,7 @@ end
 	EX_Unit EXU(		.clk(clk), 
 				.RegWrite_in(RegWrite_out_4),
 				.MemWrite_in(MemWrite_out_4),
-            .MemRead_in(MemRead_out_4),      
+            			.MemRead_in(MemRead_out_4),      
 				.mem_to_reg_in(mem_to_reg_out_4), 
 				.branch_cond(branch_cond_out_4), 
 				.call_target(call_target_out_4), 
@@ -316,8 +319,6 @@ end
 				.call_in(call_out_4),
 				.PC_in(PC_out_4), 
 				.ret_future_in(ret_out_4), 
-				.ret_wb(ret_out_8), 
-         			.PC_stack_pointer(mem_read_data_out_8), 
 				.alu_src(alu_src_out_4), 
 				.alu_op(alu_op_out_4), 
 				.shift(shift_out_4), 
@@ -339,10 +340,7 @@ end
           		.mem_to_reg_out(mem_to_reg_out_5), 
           		.ret_future_out(ret_future_out_5), 
 				.reg_rd_out(reg_rd_out_5), 
-				//.PC_update_done(PC_update_done_5), 
-				//.PC_src(PC_src_5),
 				.alu_result(alu_result_5), 
-				//.PC_update(PC_update_5), 
 				.sw_data(sw_data_5),
 				.HALT_out(HALT_5));	
 

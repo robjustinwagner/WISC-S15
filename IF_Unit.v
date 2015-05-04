@@ -8,7 +8,7 @@ import icache_def::*;
 
 module IF_Unit(clk, rst, data_hazard, PC_hazard, PC_hazard_ff, 
 	               PC_src, PC_branch, mem_data_res, 
-	               mem_req, PC_out, instruction);
+	               mem_req, PC_out, instruction, PC_src_hazard);
 
 //////////////////////////INPUTS/////////////////////////////
 
@@ -28,6 +28,7 @@ input mem_data_type mem_data_res;
 output logic	PC_hazard_ff;
 output	logic	[15:0]	PC_out;
 output	logic	[15:0]	instruction;
+output logic	PC_src_hazard;
 
 output mem_req_type mem_req;			//memory request (cache->memory); requests to memory from the cache
 
@@ -40,7 +41,12 @@ logic	[15:0]	PC_address;
 
 logic hazard;
 
-logic instr_hazard;
+logic PC_src_ff;
+logic PC_src_ff_2;
+logic [15:0] PC_branch_ff;
+logic [15:0] PC_branch_ff_2;
+
+logic rst_PC_src;
 
 //logic [15:0] read_instr; // The instruction read form memory
 
@@ -60,6 +66,8 @@ assign cpu_req.addr = PC_address;
 //assign cpu_req.data = mem_data_res.data;       //TODO FIX THIS
 assign cpu_req.rw = 1'b0;       //TODO FIX THIS
 
+assign PC_src_hazard = PC_src_ff;
+
 always_comb begin
 	if (PC_address === 16'hxxxx)
 		cpu_req.valid = 1'b0;      //TODO FIX THIS
@@ -71,6 +79,38 @@ always_comb begin
     
     hazard = (data_hazard | PC_hazard | !cpu_res.ready);
     
+end
+
+always @(posedge clk) begin
+
+    if (rst_PC_src) begin
+	PC_src_ff <= 1'b0;
+	PC_branch_ff <= 16'hxxxx;
+    end
+    else if (PC_src) begin
+	PC_src_ff <= PC_src;
+	PC_branch_ff <= PC_branch;
+    end
+    else begin
+	PC_src_ff <= PC_src_ff;
+	PC_branch_ff <= PC_branch_ff;
+    end
+end
+
+always @(posedge clk) begin
+
+    if (rst_PC_src) begin
+	PC_src_ff_2 <= 1'b0;
+	PC_branch_ff_2 <= 16'hxxxx;
+    end
+    else if (cpu_res.ready) begin
+	PC_src_ff_2 <= PC_src_ff;
+	PC_branch_ff_2 <= PC_branch_ff;
+    end
+    else begin
+	PC_src_ff_2 <= PC_src_ff_2;
+	PC_branch_ff_2 <= PC_branch_ff_2;
+    end
 end
 
 // Program Counter
@@ -86,13 +126,8 @@ always_ff @(posedge clk) begin
        PC_hazard_ff <= 1'b0;
     end
     
-    else if (data_hazard & PC_src) begin
-        PC_address <= PC_update;
-        PC_hazard_ff <= PC_hazard;
-    end
-    
-    else if (PC_hazard & PC_src) begin
-        PC_address <= PC_update;
+    else if (PC_src_ff_2) begin
+	PC_address <= PC_update;
         PC_hazard_ff <= PC_hazard;
     end
        
@@ -115,14 +150,16 @@ Cache_Controller cc(.clk(clk), .rst(rst),
 //PC update logic (branch target or next instr)
 always_comb begin
     
-    if (PC_src) begin
-        PC_update = PC_branch;
-        PC_plus_2 = PC_address;
+    if (PC_src_ff_2) begin
+        PC_update = PC_branch_ff_2;
+        PC_plus_2 = PC_branch_ff_2 + 2;
+	rst_PC_src = 1'b1;
     end
     
     else begin
         PC_plus_2 = PC_address + 2;
         PC_update =  PC_plus_2;
+	rst_PC_src = 1'b0;
     end
     
 end

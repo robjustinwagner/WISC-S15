@@ -147,8 +147,11 @@ logic        [3:0]Read_Reg_2;
 logic        [15:0]Read_Bus_1;
 logic        [15:0]Read_Bus_2;
 logic        [3:0]Write_Reg;
+logic	     Read_enable;
 
 //////////////////////////////////////////////////////////////////////
+
+assign Read_Enable = 1'b1;
                                     
 //MODULE INSTANTIATIONS
 
@@ -185,8 +188,8 @@ Reg_16bit_file reg_mem(.clk(clk), .RegWrite(RegWrite), .DataReg(DataReg),
                        
                        
 rf reg_mem(.clk(clk), .p0_addr(Read_Reg_1), .p1_addr(Read_Reg_2),
-                     .p0(mem_read_data_1), .p1(mem_read_data_2), .re0(1),
-                     .re1(1), .dst_addr(WriteReg), .dst(WriteData),
+                     .p0(mem_read_data_1), .p1(mem_read_data_2), .re0(Read_Enable),
+                     .re1(Read_Enable), .dst_addr(WriteReg), .dst(WriteData),
                      .we(RegWrite), .hlt(HALT_in)); 
                      
 
