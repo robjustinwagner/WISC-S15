@@ -34,6 +34,13 @@ module Cache_Controller(input bit clk, input bit rst,
 
  /*temporary variable for memory controller request*/
  mem_req_type v_mem_req;
+ 
+ /*temporary variable for read cycle num*/
+ logic cycleNum;
+
+ initial begin
+     	cycleNum = 1'b0;
+ end
 
  assign mem_req = v_mem_req; 		//connect to output ports
  assign cpu_res = v_cpu_res; 
@@ -149,15 +156,24 @@ module Cache_Controller(input bit clk, input bit rst,
 	/*wait for allocating a new cache line*/
  	allocate: begin
  
+  		//leave allocate only when we have completed the second read
+ 		if(mem_data.ready & cycleNum) begin
+ 			   /*re-compare tag for write miss (need modify correct word)*/
+ 			   vstate = compare_tag;
+ 			   cycleNum = 0;
+            data_write[63:48] = mem_data.data[31:16];
+            data_write[31:16] = mem_data.data[15:0];
+         			/*update cache line data*/
+ 			   data_req.we = '1;
+       end
 		/*memory controller has responded*/
- 		if (mem_data.ready) begin
- 			/*re-compare tag for write miss (need modify correct word)*/
- 			vstate = compare_tag;
- 			data_write = {16'h0000, mem_data.data[31:16], 16'h0000, mem_data.data[15:0]};
- 			/*update cache line data*/
- 			data_req.we = '1;
+ 		if (mem_data.ready & !cycleNum) begin
+ 			   cycleNum = 1;
+            data_write[47:32] = mem_data.data[31:16];
+            data_write[15:0] = mem_data.data[15:0];
+        				v_mem_req.addr = {cpu_req.addr[15:2], !cpu_req.addr[1], cpu_req.addr[0]};
+            v_mem_req.rw = '1;
  		end
- 
 	end
  
 	/*wait for writing back dirty cache line*/
@@ -189,17 +205,5 @@ module Cache_Controller(input bit clk, input bit rst,
   /*connect cache tag/data memory*/
   dm_cache_tag ctag(.*);
   dm_cache_data cdata(.*);
-/*
-  Instruction_Cache(.clk(clk), .rst_n(!rst), 
-     .addr(cpu_req.addr[TAGMSB:TAGLSB]), 
-     .wr_data(data_write), 
-     .wdirty(tag_write.dirty), 
-     .we(data_req.we), 
-     .re(), 
-     .rd_data(data_read), 
-     .tag_out(), 
-     .hit(), 
-     .dirty());
-*/
 
 endmodule
