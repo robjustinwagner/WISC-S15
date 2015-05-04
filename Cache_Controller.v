@@ -158,37 +158,36 @@ module Cache_Controller(input bit clk, input bit rst,
  
   		//leave allocate only when we have completed the second read
  		if(mem_data.ready & cycleNum) begin
- 			   /*re-compare tag for write miss (need modify correct word)*/
- 			   vstate = compare_tag;
- 			   cycleNum = 0;
-            data_write[63:48] = mem_data.data[31:16];
-            data_write[31:16] = mem_data.data[15:0];
-         			/*update cache line data*/
- 			   data_req.we = '1;
-       end
-		/*memory controller has responded*/
-<<<<<<< HEAD
- 		if (mem_data.ready & !cycleNum) begin
- 			   cycleNum = 1;
-            data_write[47:32] = mem_data.data[31:16];
-            data_write[15:0] = mem_data.data[15:0];
-        				v_mem_req.addr = {cpu_req.addr[15:2], !cpu_req.addr[1], cpu_req.addr[0]};
-            v_mem_req.rw = '1;
-=======
- 		if (mem_data.ready) begin
  			/*re-compare tag for write miss (need modify correct word)*/
  			vstate = compare_tag;
-			if (cpu_req.addr[1:0] == 2'b00) begin
- 				data_write = {16'h0000, mem_data.data[31:16], 16'h0000, mem_data.data[15:0]};
+ 			cycleNum = 0;
+ 			if (cpu_req.addr[1:0] == 2'b00) begin
+            data_write[63:48] = mem_data.data[31:16];
+            data_write[31:16] = mem_data.data[15:0];
 			end
 			else begin
-				data_write = {16'h0000, mem_data.data[15:0], 16'h0000, mem_data.data[31:16]};
+			   data_write[63:48] = mem_data.data[15:0];
+            data_write[31:16] = mem_data.data[31:16];
+		   end
+     			/*update cache line data*/
+ 		   data_req.we = '1;
+ 	   end
+		/*memory controller has responded*/
+ 		if (mem_data.ready & !cycleNum) begin
+ 			cycleNum = 1;
+			if (cpu_req.addr[1:0] == 2'b00) begin
+ 		      data_write[47:32] = mem_data.data[31:16];
+            data_write[15:0] = mem_data.data[15:0];
 			end
- 			/*update cache line data*/
- 			data_req.we = '1;
->>>>>>> 642ca0c1c039079bb76edf45bd656421125886a0
- 		end
-	end
+			else begin
+			   data_write[47:32] = mem_data.data[15:0];
+            data_write[15:0] = mem_data.data[31:16];
+		   end
+		   v_mem_req.addr = {cpu_req.addr[15:2], !cpu_req.addr[1], cpu_req.addr[0]};
+         v_mem_req.rw = '1;
+	   end
+	 
+   end
  
 	/*wait for writing back dirty cache line*/
  	write_back: begin
