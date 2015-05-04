@@ -14,7 +14,7 @@ module Cache_Controller(input bit clk, input bit rst,
  //timeprecision 1ps;
  
  /*write clock*/
- typedef enum {idle, compare_tag, allocate, write_back} cache_state_type;
+ typedef enum {idle, compare_tag, allocate_1, allocate_2, write_back} cache_state_type;
 
  /*FSM state register*/
  cache_state_type vstate, rstate;
@@ -34,13 +34,6 @@ module Cache_Controller(input bit clk, input bit rst,
 
  /*temporary variable for memory controller request*/
  mem_req_type v_mem_req;
- 
- /*temporary variable for read cycle num*/
- logic cycleNum;
-
- initial begin
-     	cycleNum = 1'b0;
- end
 
  assign mem_req = v_mem_req; 		//connect to output ports
  assign cpu_res = v_cpu_res; 
@@ -48,7 +41,7 @@ module Cache_Controller(input bit clk, input bit rst,
  always_comb begin
 
  /*------------------------------default values for all signals*/
- 
+
  	/*no state change by default*/
  	vstate = rstate;
  	v_cpu_res = '{0, 0}; tag_write = '{0, 0, 0};
@@ -56,24 +49,27 @@ module Cache_Controller(input bit clk, input bit rst,
  	/*read tag by default*/
  	tag_req.we = '0;
  	/*direct map index for tag*/
- 	tag_req.index = cpu_req.addr[4:2];
+ 	tag_req.index = cpu_req.addr[5:3];
 	
  	/*read current cache line by default*/
  	data_req.we = '0;
  	/*direct map index for cache data*/
- 	data_req.index = cpu_req.addr[4:2];
+ 	data_req.index = cpu_req.addr[5:3];
  	
  	/*modify correct word (16-bit) based on address*/
- 	data_write = data_read;
+ 	//data_write = data_read;
+
+/*
  	case(cpu_req.addr[1:0])
  	2'b00:data_write[15:0] = cpu_req.data;
  	2'b01:data_write[31:16] = cpu_req.data;
  	2'b10:data_write[47:32] = cpu_req.data;
  	2'b11:data_write[63:48] = cpu_req.data;
  	endcase
+*/
 	
  	/*read out correct word(16-bit) from cache (to CPU)*/
- 	case(cpu_req.addr[1:0])
+ 	case(cpu_req.addr[2:1])
  	2'b00:v_cpu_res.data = data_read[15:0];
  	2'b01:v_cpu_res.data = data_read[31:16];
  	2'b10:v_cpu_res.data = data_read[47:32];
@@ -81,7 +77,11 @@ module Cache_Controller(input bit clk, input bit rst,
  	endcase
 	
  	/*memory request address (sampled from CPU request)*/
- 	v_mem_req.addr = cpu_req.addr;
+ 	if(rstate == allocate_1)
+		v_mem_req.addr = cpu_req.addr;
+	else
+		v_mem_req.addr = cpu_req.addr + 4;
+
  	/*memory request data (used in write)*/
  	v_mem_req.data = data_read;
  	v_mem_req.rw = '0;
@@ -119,7 +119,7 @@ module Cache_Controller(input bit clk, input bit rst,
  				tag_write.dirty = '1;
  			end
 
- 			/*xaction is finished*/
+ 			/*action is finished*/
  			vstate = idle;
  		end
 
@@ -138,7 +138,7 @@ module Cache_Controller(input bit clk, input bit rst,
  			/*compulsory miss or miss with clean block*/
  			if (tag_read.valid == 1'b0 || tag_read.dirty == 1'b0) begin
  				/*wait till a new block is allocated*/
- 				vstate = allocate;
+ 				vstate = allocate_1;
 			end
  			else begin
  				/*miss with dirty line*/
@@ -154,40 +154,46 @@ module Cache_Controller(input bit clk, input bit rst,
 	end
  
 	/*wait for allocating a new cache line*/
- 	allocate: begin
+ 	allocate_1: begin
+ 
+		/*memory controller has responded*/
+ 		if (mem_data.ready) begin
+			v_mem_req.valid = '0;
+			if (cpu_req.addr[1:0] == 2'b00) begin
+ 		      		data_write[31:16] = mem_data.data[31:16];
+            			data_write[15:0] = mem_data.data[15:0];
+			end
+			else begin
+			   	data_write[31:16] = mem_data.data[15:0];
+            			data_write[15:0] = mem_data.data[31:16];
+		   	end
+		   	//v_mem_req.addr = {cpu_req.addr[15:2], !cpu_req.addr[1], cpu_req.addr[0]};
+    			v_mem_req.valid = '1;
+			vstate = allocate_2;
+	   	end
+	 
+   	end
+
+	/*wait for allocating a new cache line*/
+ 	allocate_2: begin
  
   		//leave allocate only when we have completed the second read
- 		if(mem_data.ready & cycleNum) begin
+ 		if(mem_data.ready) begin
  			/*re-compare tag for write miss (need modify correct word)*/
  			vstate = compare_tag;
- 			cycleNum = 0;
  			if (cpu_req.addr[1:0] == 2'b00) begin
-            data_write[63:48] = mem_data.data[31:16];
-            data_write[31:16] = mem_data.data[15:0];
+            			data_write[63:48] = mem_data.data[31:16];
+            			data_write[47:32] = mem_data.data[15:0];
 			end
 			else begin
-			   data_write[63:48] = mem_data.data[15:0];
-            data_write[31:16] = mem_data.data[31:16];
-		   end
+			   	data_write[63:48] = mem_data.data[15:0];
+            			data_write[47:32] = mem_data.data[31:16];
+		   	end
      			/*update cache line data*/
- 		   data_req.we = '1;
- 	   end
-		/*memory controller has responded*/
- 		if (mem_data.ready & !cycleNum) begin
- 			cycleNum = 1;
-			if (cpu_req.addr[1:0] == 2'b00) begin
- 		      data_write[47:32] = mem_data.data[31:16];
-            data_write[15:0] = mem_data.data[15:0];
-			end
-			else begin
-			   data_write[47:32] = mem_data.data[15:0];
-            data_write[15:0] = mem_data.data[31:16];
-		   end
-		   v_mem_req.addr = {cpu_req.addr[15:2], !cpu_req.addr[1], cpu_req.addr[0]};
-         v_mem_req.rw = '1;
-	   end
+ 		   	data_req.we = '1;
+ 	   	end
 	 
-   end
+   	end
  
 	/*wait for writing back dirty cache line*/
  	write_back: begin
@@ -198,7 +204,7 @@ module Cache_Controller(input bit clk, input bit rst,
  			v_mem_req.valid = '1;
  			v_mem_req.rw = '0;
 			
- 			vstate = allocate;
+ 			vstate = allocate_1;
  		end
  	end
 
