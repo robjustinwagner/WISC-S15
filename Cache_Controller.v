@@ -153,7 +153,7 @@ module Cache_Controller(input bit clk, input bit rst,
  		if (mem_data.ready) begin
  			/*re-compare tag for write miss (need modify correct word)*/
  			vstate = compare_tag;
- 			data_write = {16'h0000, mem_data.data[31:16], 16'h0000, mem_data.data[15:0]};
+ 			data_write = {16'h0000, 16'h0000, mem_data.data[31:16], mem_data.data[15:0]};
  			/*update cache line data*/
  			data_req.we = '1;
  		end
