@@ -29,20 +29,73 @@ initial begin
 end
 
 initial begin
-  f = $fopen("LwStall_Results.txt","w");
+  f = $fopen("Branch_Results.txt","w");
 end
 
 always @(posedge (iCPU.IDU.reg_mem.we & !clk)) begin
 
      $fwrite(f, "/*****************************/\n");
-     $fwrite(f, "/* Register:\t%d\n",iCPU.IDU.reg_mem.dst_addr);
-     $fwrite(f, "/* Value:\t%h\n",iCPU.IDU.reg_mem.dst);
+     $fwrite(f, "/* Register:\t\t%d\n",iCPU.IDU.reg_mem.dst_addr);
+     $fwrite(f, "/* Value:\t\t%h\n",iCPU.IDU.reg_mem.dst);
+     $fwrite(f, "/*\n");
      $fwrite(f, "/* Clock cycle:\t%d\n",counter);
      $fwrite(f, "/*****************************/\n");
      $fwrite(f, "\n");
 end
-  
+
+always @(posedge (iCPU.PCU.branch & !clk)) begin
+
+     if (iCPU.PCU.PC_src) begin
+     	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "/* Branch taken @ PC:\t\t%h\n",iCPU.PC_out_1);
+	$fwrite(f, "/* After instruction:\t\t%h\n",iCPU.MEMU.main_mem.mem[iCPU.PC_out_1]);
+	$fwrite(f, "/*\n");
+	$fwrite(f, "/* New PC Target:\t\t%h\n",iCPU.IFU.PC_branch);
+	$fwrite(f, "/* Next instruction:\t\t%h\n",iCPU.MEMU.main_mem.mem[iCPU.PCU.PC_update]);
+	$fwrite(f, "/*\n");
+     	$fwrite(f, "/* Clock cycle:\t\t%d\n",counter);
+     	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "\n");
+     end
+
+     else begin
+     	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "/* Branch not taken @ PC:\t%h\n",iCPU.PC_out_1);
+     	$fwrite(f, "/* After instruction:\t\t%h\n",iCPU.MEMU.main_mem.mem[iCPU.PC_out_1]);
+	$fwrite(f, "/*\n");
+     	$fwrite(f, "/* Clock cycle:\t\t%d\n",counter);
+     	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "\n");
+     end
+
+end
+
+always @(posedge (iCPU.PCU.call & !clk)) begin
+
+	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "/* Function call\n");
+     	$fwrite(f, "/* New PC Target:\t\t%h\n",iCPU.PCU.PC_update);
+	$fwrite(f, "/*\n");
+     	$fwrite(f, "/* Clock cycle:\t\t%d\n",counter);
+     	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "\n");
+
+end
+
+always @(posedge (iCPU.PCU.ret_in & !clk)) begin
+
+	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "/* Function return\n");
+     	$fwrite(f, "/* New PC Target:\t\t%h\n",iCPU.PCU.PC_update);
+	$fwrite(f, "/*\n");
+     	$fwrite(f, "/* Clock cycle:\t\t%d\n",counter);
+     	$fwrite(f, "/*********************************************/\n");
+     	$fwrite(f, "\n");
+
+end
+
 initial begin
+
   @(posedge hlt)
 
      $fwrite(f, "/*****************************/\n");
