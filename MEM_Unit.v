@@ -14,27 +14,27 @@ module MEM_Unit(clk, rst,
 input clk;
 input rst;
 
-input        call_in;
-input        RegWrite_in;
-input        MemWrite_in;
-input        MemRead_in;
+input call_in;
+input RegWrite_in;
+input MemWrite_in;
+input MemRead_in;
 
-input        mem_to_reg_in;  // Memory Read to register 
+input mem_to_reg_in;  // Memory Read to register 
 input [3:0]  reg_rd_in;      // Destination of Memory Read
 input [15:0] alu_result_in;  // Results of ALU operation
-input [15:0] mem_write_data; // Data for Memory Write      <-- PC during call
+input [15:0] mem_write_data; // Data for Memory Write 
 
-input        ret_future_in; // Future ret_wb signal
+input ret_future_in; // Future ret_wb signal
 
 input mem_req_type mem_req;   //requests to memory from the i-cache
 
-input        HALT_in;
+input HALT_in;
 /////////////////////////////////////////////////////
 
 //////////////////////OUTPUTS////////////////////////
-output logic        RegWrite_out;
-output logic        ret_future_out;
-output logic        mem_to_reg_out;
+output logic RegWrite_out;
+output logic ret_future_out;
+output logic mem_to_reg_out;
 output logic [3:0]  reg_rd_out;
 output logic [15:0] mem_read_data;
 output logic [15:0] alu_result_out;
@@ -44,16 +44,19 @@ output logic        HALT_out;
 
 /////////////////////////////////////////////////////
 
+/* Signals for determing the appropriate data cache 
+   and unified memory address accesses/data writes */
 logic [15:0] alu_addr;
 logic [15:0] write_data;
 logic unified_mem_re;
 
-//PIPE TO PIPE
+// PIPE TO PIPE
 assign RegWrite_out   = RegWrite_in;
 assign mem_to_reg_out = mem_to_reg_in;
 assign ret_future_out = ret_future_in;
 
-//MUX for updating stack pointer with Call
+/* MUX for updating the Stack_Pointer register and 
+   PC return values during call and return instructions */
 always_comb begin
     
     if (call_in) begin
@@ -74,6 +77,9 @@ always_comb begin
        
 end
 
+/* Only write back to the RegFile when RegWrite
+   signal is asserted. This prevents a metastability
+   within the rf_pipelined module. */
 always_comb begin
     
     if (RegWrite_in) begin
@@ -85,6 +91,8 @@ always_comb begin
         
 end
 
+/* Unified memory data requests are only valid when
+   the memory request is specified as a read */
 always_comb begin
 
 	if(!mem_req.rw)
@@ -93,18 +101,19 @@ always_comb begin
 		unified_mem_re = 1'b0;
 end
 
-//MODULE INSTANTIATIONS
+//////////////////////MODULE INSTANTIATIONS//////////////////////////////
 
 Data_Memory data_mem(.clk(clk), .addr(alu_addr), .re(MemRead_in),
                      .we(MemWrite_in), .wrt_data(write_data),
                      .rd_data(mem_read_data));
                   
-//Establishes project-specified size of memory system with 4 cycle delay
+/* Establishes project-specified size of memory system with 4 cycle delay, assuming that
+   a write will never occur (also specified in the project specification) */
 unified_mem main_mem(.clk(clk), .rst_n(!rst), .addr(mem_req.addr), .re(unified_mem_re), 
 			.we(1'b0), .wdata(mem_req.data), 
 			.rd_data(mem_data_res.data), .rdy(mem_data_res.ready));
 			
-//TODO CHOOSE mem_req or normal input
+/////////////////////////////////////////////////////////////////////////
 
 assign HALT_out = HALT_in;
 

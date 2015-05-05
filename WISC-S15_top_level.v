@@ -28,7 +28,6 @@ logic rst_g;                      // Global reset for modules
 logic [15:0] PC_out_1;
 logic [15:0] instruction_out_1;
 logic        PC_hazard_1;
-logic	     PC_src_hazard;
 //#2; IFID_reg --> ID_Unit
 logic [3:0]  cntrl_input_2;   	  // Inst[15:12] - Opcode
 logic [2:0]  branch_cond_2;   	  // Inst[11:8]  - Branch condition
@@ -168,8 +167,7 @@ end
 				.mem_req(mem_req_1), 
 				.PC_out(PC_out_1), 
 				.instruction(instruction_out_1),
-				.PC_hazard_ff(PC_hazard_1),
-				.PC_src_hazard(PC_src_hazard));	
+				.PC_hazard_ff(PC_hazard_1));	
 
 	//#2; Instruction Fetch/Instruction Decode intermediate register
 	IFID_reg IFID_r(	.clk(clk), 
@@ -180,9 +178,7 @@ end
 				.PC_hazard(PC_hazard_3),
 				.instruction_in(instruction_out_1),
 				.PC_in(PC_out_1),
-				.PC_src_hazard(PC_src_hazard), 
 
-          			.cntrl_input(cntrl_input_2), 
           			.branch_cond(branch_cond_2), 
 				.reg_rs(reg_rs_2), 
 				.reg_rt(reg_rt_2), 
@@ -205,7 +201,6 @@ end
 				.reg_rt_arith(reg_rt_2), 
 				.reg_rd_wb(reg_rd_out_9), 
          			.reg_rd_data(write_back_data_9),
-				.cntrl_opcode(cntrl_input_2), 
 				.branch_cond_in(branch_cond_2), 
 				.arith_imm_in(arith_imm_2), 
 				.load_save_reg_in(reg_rd_2), 
@@ -245,7 +240,7 @@ end
 	IDEX_reg IDEX_r(	.clk(clk), 
 				.RegWrite_in(RegWrite_out_3),
 				.MemWrite_in(MemWrite_out_3),
-            .MemRead_in(MemRead_out_3),     
+            			.MemRead_in(MemRead_out_3),     
 				.mem_to_reg_in(mem_to_reg_3), 
 				.branch_cond_in(branch_cond_out_3), 
 				.call_target_in(call_target_out_3), 
