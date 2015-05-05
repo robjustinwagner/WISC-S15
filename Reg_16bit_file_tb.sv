@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "Reg_16bit_file.v"
+`include "Reg_16bit_file.sv"
 
 module REg_16bit_file_tb();
 	

@@ -1,7 +1,7 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "Data_Memory.v"
-`include "unified_mem.v"
+`include "Data_Memory.sv"
+`include "unified_mem.sv"
 import icache_def::*;
 
 module MEM_Unit(clk, rst,

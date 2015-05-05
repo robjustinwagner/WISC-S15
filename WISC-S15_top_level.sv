@@ -1,16 +1,16 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "IF_Unit.v"
-`include "IFID_reg.v"
-`include "ID_Unit.v"
-`include "IDEX_reg.v"
-`include "EX_Unit.v"
-`include "EXMEM_reg.v"
-`include "MEM_Unit.v"
-`include "MEMWB_reg.v"
-`include "WB_Unit.v"
+`include "IF_Unit.sv"
+`include "IFID_reg.sv"
+`include "ID_Unit.sv"
+`include "IDEX_reg.sv"
+`include "EX_Unit.sv"
+`include "EXMEM_reg.sv"
+`include "MEM_Unit.sv"
+`include "MEMWB_reg.sv"
+`include "WB_Unit.sv"
 
-//`include "icache_def.v"
+//`include "icache_def.sv"
 import icache_def::*;
 
 module WISC_S15_top_level(clk, rst, HALT);

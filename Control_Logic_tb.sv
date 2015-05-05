@@ -1,4 +1,4 @@
-`include "Control_Logic.v"
+`include "Control_Logic.sv"
 
 module Control_Logic_tb();
 	

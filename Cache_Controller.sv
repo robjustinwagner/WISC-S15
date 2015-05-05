@@ -1,5 +1,5 @@
-//`include "icache_def.v"
-//`include "Instruction_Cache.v"
+//`include "icache_def.sv"
+//`include "Instruction_Cache.sv"
 import icache_def::*;
 
 /*cache finite state machine*/

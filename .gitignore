@@ -3,13 +3,14 @@ WISC-S15.cr.mti
 *.mpf
 work/_info
 *.qdb
-work/_lib1_0.qpg
+work/_*
 *.qtl
 work/_vmake
 transcript
 *.mti
 *.qpg
 ~$D_Unit.docx
+work/@*
 work/_temp/vlog1aiaxt
 work/_temp/vlogbat87y
 work/_temp/vlogcqsx3y
@@ -46,3 +47,9 @@ work/_temp/vlog4h2ara
 timing.txt
 #filename.dc#
 area.txt
+wlftnwyeh4
+*.sv~
+work/*
+workk/*
+wlft*
+work2/*

@@ -1,4 +1,4 @@
-`include "Cache_Controller.v"
+`include "Cache_Controller.sv"
 import icache_def::*;
 
 module Cache_Controller_tb();

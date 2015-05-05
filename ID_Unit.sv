@@ -1,8 +1,8 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "rf_pipelined.v"
-`include "Control_Logic.v"
-`include "HDT_Unit.v"
+`include "rf_pipelined.sv"
+`include "Control_Logic.sv"
+`include "HDT_Unit.sv"
 
 module ID_Unit(clk, rst, PC_update, PC_hazard_in, branch_in, instruction,
 	RegWrite_in, reg_rs, reg_rt_arith, reg_rd_wb, reg_rd_data, branch_cond_in, arith_imm_in, 

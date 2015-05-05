@@ -1,5 +1,5 @@
-`include "WISC-S15_top_level.v"
-`include "icache_def.v"
+`include "WISC-S15_top_level.sv"
+`include "icache_def.sv"
 //import icache_def::*;
 
 module WISC_S15_top_level_tb();

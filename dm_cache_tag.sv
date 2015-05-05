@@ -1,4 +1,4 @@
-//`include "icache_def.v"
+//`include "icache_def.sv"
 import icache_def::*;
 
 /*cache: tag memory, single port, 8 blocks*/

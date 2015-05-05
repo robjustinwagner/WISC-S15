@@ -1,4 +1,4 @@
-`include "ALU.v"
+`include "ALU.sv"
 
 module ALU_tb();
 	

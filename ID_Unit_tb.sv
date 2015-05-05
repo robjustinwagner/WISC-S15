@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "ID_Unit.v"
+`include "ID_Unit.sv"
 
 module ID_Unit_tb();
     

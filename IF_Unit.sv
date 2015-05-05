@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "Cache_Controller.v"
+`include "Cache_Controller.sv"
 
 import icache_def::*;
 

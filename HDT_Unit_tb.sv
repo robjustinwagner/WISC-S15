@@ -1,6 +1,6 @@
 // Author: Graham Nygard, Robert Wagner
 
-`include "HDT_Unit.v"
+`include "HDT_Unit.sv"
 
 module HDT_Unit_tb();
     
