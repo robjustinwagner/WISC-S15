@@ -14,76 +14,74 @@ module EX_Unit(clk,
 
 ////////////////////////////INPUTS/////////////////////////////////
 
-input		clk;
+input clk;
 
 //PIPE TO PIPE
-input  RegWrite_in;
-input  MemWrite_in;
-input  MemRead_in;
+input RegWrite_in;
+input MemWrite_in;
+input MemRead_in;
 
-input		mem_to_reg_in;          // LW signal to Memory unit 
-input		ret_future_in;          // Future ret_wb signal
-input	[3:0]	reg_rd_in;         // Future Regfile dest
+input mem_to_reg_in;          // LW signal to Memory unit 
+input ret_future_in;          // Future ret_wb signal
+input [3:0] reg_rd_in;         // Future Regfile dest
 
 //PC UPDATER 
-input	[2:0]	 branch_cond;      // Branch condition
-input	[11:0]	call_target;      // Call target
+input [2:0]  branch_cond;      // Branch condition
+input [11:0] call_target;      // Call target
 
-input		      branch;
-input		      call_in;
+input branch;
+input call_in;
 
-input	[15:0]	PC_in;            // PC for branch/call/ret
+input [15:0] PC_in;            // PC for branch/call/ret
 
 //ALU INPUTS
-input		 alu_src;          // ALU operand 2 seleciton
+input alu_src;          // ALU operand 2 seleciton
 
-input	[2:0]	 alu_op;           // ALU operation
-input	[3:0]	 shift;            // ALU shift input
-input	[15:0]	rd_data_1;        // ALU operand 1
-input	[15:0]	rd_data_2;        // ALU operand 2
-input	[15:0]	sign_ext;         // ALU operand 2
+input [2:0]  alu_op;           // ALU operation
+input [3:0]  shift;            // ALU shift input
+input [15:0] rd_data_1;        // ALU operand 1
+input [15:0] rd_data_2;        // ALU operand 2
+input [15:0] sign_ext;         // ALU operand 2
 
 //LOAD HALF INSTRUCTIONS
-input        load_half;        // Specifies the ALU result
-input        half_spec;        // (0 -> LHB, 1 -> LLB)
-input	[7:0]	 load_half_imm;    // ALU imm load input
+input load_half;        // Specifies the ALU result
+input half_spec;        // (0 -> LHB, 1 -> LLB)
+input [7:0] load_half_imm;    // ALU imm load input
 
-input    HALT_in;
+input HALT_in;
 
 ///////////////////////////////////////////////////////////////////
 
 ///////////////////////////OUTPUTS/////////////////////////////////
 
 //PIPE TO PIPE
-output logic        RegWrite_out;
-output logic        MemWrite_out;
-output logic        MemRead_out;
-output logic        mem_to_reg_out; // LW signal to Memory unit 
-output logic        ret_future_out; // Future ret_wb signal
+output logic RegWrite_out;
+output logic MemWrite_out;
+output logic MemRead_out;
+output logic mem_to_reg_out; // LW signal to Memory unit 
+output logic ret_future_out; // Future ret_wb signal
 
-output logic        call_out;       // Signal to decrement SP
-output logic [3:0]  reg_rd_out;     // Future Regfile dest
+output logic call_out;       // Signal to decrement SP
+output logic [3:0] reg_rd_out;     // Future Regfile dest
 
 output logic [15:0] alu_result;     // Results of ALU operation
 
 output logic [15:0] sw_data;        // Save Word data
 
-output logic        HALT_out;
+output logic HALT_out;
 
-output logic        alu_done;
+output logic alu_done;
 
-output logic        [2:0] set_flags;
+output logic [2:0] set_flags;
 
 ///////////////////////////////////////////////////////////////////
 
 ////////////////////////INTERCONNECTS//////////////////////////////
 
-//logic        alu_done;
 logic [15:0] alu_out;
 
 logic [15:0] load_half_result;
 
-//logic [2:0] set_flags;
 logic [2:0] updated_flags;
 
 logic [15:0] alu_op_2;
@@ -98,7 +96,7 @@ assign ret_future_out = ret_future_in;
 
 ///////////////////////////////////////////////////////////////////
 
-////////LHB, LLB INSTRUCTIONS///////
+// LHB, LLB instructions
 always_comb begin
     
     if (!half_spec)
@@ -116,9 +114,8 @@ always_comb begin
        alu_result = alu_out;
        
 end
-/////////////////////////////////////
 
-//ALU SOURCE SELECT
+// ALU source selection
 always_comb begin
     
     if (alu_src)
@@ -128,7 +125,7 @@ always_comb begin
        
 end
 
-//SAVE WORD SELECT
+// Save word selection for saving PC
 always_comb begin
     
     if (call_in)
@@ -138,12 +135,12 @@ always_comb begin
        
 end
 
-//REGISTER WRITE SELECT
+/* Specify the Stack_Pointer register as the
+   future register destination */
 always_comb begin
     
-    if (call_in | ret_future_in) // BAD STYLE, POSSIBLY FIX IF TIME
-       reg_rd_out = 4'b1111;     // <-- Set future save reg as stack pointer
-    
+    if (call_in | ret_future_in)
+       reg_rd_out = 4'b1111;
     else
        reg_rd_out = reg_rd_in;
        
@@ -154,8 +151,6 @@ end
 ALU       alu(.data_one(rd_data_1), .data_two(alu_op_2),
               .shift(shift), .control(alu_op), .result(alu_out),
               .flags(set_flags), .done(alu_done));		                           
- 
-//Forwarding_Unit FU(); //FIX THIS
 
 ///////////////////////////////////////////////////////////////////
 
