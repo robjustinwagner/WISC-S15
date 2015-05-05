@@ -5,30 +5,30 @@ module Control_Logic_tb();
 reg clk;
 
 //DUT Inputs
-reg [3:0] opcode;   	//4-bit instruction opcode
+reg [3:0] opcode;    //4-bit instruction opcode
 
 //DUT OUTPUTS
-wire    		data_reg;	/* Control signal to Regfile to
-                                    	specifiy the contents of the 
-                                    	Data Segment Register for
-                                    	supplying read_data_1 */
-wire			call;		/* Control signal to RegFile to
-                                    	specify the contents of the
-                                    	Stack_Pointer Register for
-                                    	supplying read_data_1 */
-wire			rtrn;
-wire			branch;   	// branching control; 0-2 sensitive, 3 pick 
-wire    		mem_to_reg;     // LW signal to Memory unit 
-wire	   		reg_to_mem;     // SW signal to Memory unit
-wire	 [2:0] 		alu_op;         // ALU control unit input
-wire	    		alu_src;        // ALU operand seleciton
-wire			sign_ext_sel;   // sign extend select bit
-wire			reg_rt_src;	// Read_reg_2 proper SW select
-wire			RegWrite;
-wire			MemRead;
-wire			MemWrite;
-wire			load_half;	// Specifies the ALU result
-wire			half_spec;	// (0 -> LHB, 1 -> LLB)
+wire data_reg;	/* Control signal to Regfile to
+                     specifiy the contents of the 
+                     Data Segment Register for
+                     supplying read_data_1 */
+wire call;		   /* Control signal to RegFile to
+                     specify the contents of the
+                     Stack_Pointer Register for
+                     supplying read_data_1 */
+wire rtrn;
+wire	branch;            // branching control; 0-2 sensitive, 3 pick 
+wire mem_to_reg;      // LW signal to Memory unit 
+wire	reg_to_mem;      // SW signal to Memory unit
+wire	[2:0] alu_op;      // ALU control unit input
+wire	alu_src;         // ALU operand seleciton
+wire	sign_ext_sel;    // sign extend select bit
+wire	reg_rt_src;      // Read_reg_2 proper SW select
+wire	RegWrite;
+wire	MemRead;
+wire	MemWrite;
+wire	load_half;      // Specifies the ALU result
+wire	half_spec;      // (0 -> LHB, 1 -> LLB)
 
 reg passed;
 
@@ -52,10 +52,7 @@ localparam   CALL  =   4'b1101;
 localparam   RET   =   4'b1110;
 localparam   ERR   =   4'b1111;
 
-Control_Logic Control_Logic_DUT(.opcode(opcode),
-	.data_reg(data_reg), .call(call), .rtrn(rtrn), .branch(branch), .mem_to_reg(mem_to_reg), 
-	.reg_to_mem(reg_to_mem), .alu_op(alu_op), .alu_src(alu_src), .sign_ext_sel(sign_ext_sel), 
-	.reg_rt_src(reg_rt_src), .RegWrite(RegWrite), .MemRead(MemRead), .MemWrite(MemWrite), .load_half(load_half), .half_spec(half_spec));
+Control_Logic Control_Logic_DUT(.*);
                             
 initial begin
 
