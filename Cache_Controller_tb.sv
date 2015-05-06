@@ -9,28 +9,28 @@ bit rst;
 bit [16:0] counter;
 
 //DUT Inputs
-cpu_req_type cpu_req, 	//CPU request input (CPU->cache)
+cpu_req_type cpu_req; 	//CPU request input (CPU->cache)
 /*
  	  bit [15:0] addr; 	//16-bit request addr
  	  bit [15:0] data; 	//16-bit request data (used when write)
  	  bit rw; 		//request type : 0 = read, 1 = write
  	  bit valid; 		//request is valid
 */
-mem_data_type mem_data, 	//memory response (memory->cache)
+mem_data_type mem_data; 	//memory response (memory->cache)
 /*
  	  bit [31:0] data; //32-bit read back data
  	  bit ready; 		//data is ready
 */
 
 //DUT OUTPUTS
-wire mem_req_type mem_req; //memory request (cache->memory)
+mem_req_type mem_req; //memory request (cache->memory)
 /*
  	  bit [15:0] addr; 	//request byte addr
  	  bit [31:0] data; 	//32-bit request data (used when write)
  	  bit rw; 		//request type : 0 = read, 1 = write
    	 bit valid; 		//request is valid
 */
-wire cpu_result_type cpu_res; //cache result (cache->CPU)
+cpu_result_type cpu_res; //cache result (cache->CPU)
 /*
  	  bit [15:0] data; 	//16-bit data
  	  bit ready; 		//result is ready
@@ -57,7 +57,7 @@ initial begin
    cpu_req.addr = 16'h0000;
    cpu_req.data = 16'hxxxx;
    cpu_req.rw = 1'b0;   //we will never be writing into the i-cache
-   cpu_req.valid = 1'0;
+   cpu_req.valid = 1'b0;
 	#5
 	while(counter[16] != 1'b1) begin
 		#5
