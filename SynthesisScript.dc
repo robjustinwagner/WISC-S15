@@ -1,0 +1,104 @@
+#################################################
+# Author: Graham Nygard
+# - I wrote this script to handle system
+#   verilog. 
+###############################################
+
+#################################################
+# Read in the verilog files first
+################################################
+
+read_file -format sverilog { ./WISC-S15_top_level.sv }
+
+#################################################
+# Set Current Design to top level
+################################################
+
+set current_design WISC_S15_top_level
+
+#################################################
+# Constrain and assign clock
+################################################
+
+create_clock -name "clk"  -period 10  -waveform {0 6}
+
+#################################################
+# Constarin input timings and Drive
+################################################
+
+set_units -time ns -resistance kOhm -capacitance pF -voltage V -current mA
+set_operating_conditions NCCOM -library tcbn40lpbwptc
+set_wire_load_model -name TSMC512K_Lowk_Aggresive -library tcbn40lpbwptc
+set_local_link_library {tcbn40lpbwptc.db,tpfn45gsgv18tc.db,tcbn40lpbwptc.db}
+set_fix_multiple_port_nets -all
+
+#set prim_inputs [remove_from_collection [all_inputs] [find port clk]]
+#set_input_delay -clock clk 0.5 $prim_inputs
+#set_driving_cell -lib_cell ND2D2BWP -from_pin A1 -library tcbn40lpbwptc $prim_inputs
+#set_drive 0.1 rst_n
+
+#removed this from tutorial script#
+######## Set drive on Bp to be stronger #########
+#set_drive 3 [find port Bp]
+
+#################################################
+# Constarin output timings and loads
+################################################
+
+#set_output_delay -clock clk 0.5 [all_outputs]
+#set_load 0.1 [all_outputs]
+
+#################################################
+# Set wireload and transition time
+################################################
+
+#set_wire_load_model -name TSMC32K_Lowk_Conservative -library tcbn40lpbwptc
+#set_max_transition 0.1 [current_design]
+
+#################################################
+# Compile Design
+################################################
+
+compile -map_effort medium
+
+#################################################
+# Clk fix 
+################################################
+
+#set_fix_multiple_port_nets -all
+#set_clock_uncertainty 0.15 clk
+#set_fix_hold clk
+
+#################################################
+# Flatten hierarcy 
+################################################
+
+ungroup -all
+uniquify
+
+#################################################
+# Compile Design attempt 2
+################################################
+
+#compile_ultra
+
+#################################################
+# Write out resulting synthesized netlist
+################################################
+
+#write -format verilog WISC_S15_top_level -output WISC_S15_top_level.v
+write -format verilog -hierarchy -output synth_output.v
+
+#################################################
+# Timing and Area Reports
+################################################
+
+report_timing -delay max > max_timing.rpt
+report_timing -delay min > min_timing.rpt
+report_area > area.txt
+
+###############################################
+# Are there latches?
+##############################################
+report_register -level_sensitive > latch.rpt
+
