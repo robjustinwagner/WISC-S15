@@ -5,86 +5,134 @@
 /*****************************/
 
 /*****************************/
-/* Register:	15
-/* Value:	ffff
+/* Register:		15	<-- Reset asserted
+/* Value:		ffff
+/*
 /* Clock cycle:	          1
 /*****************************/
 
 /*****************************/
-/* Register:	 1
-/* Value:	xx22
+/* Register:		 1
+/* Value:		xx22
+/*
 /* Clock cycle:	         14
 /*****************************/
 
 /*****************************/
-/* Register:	 1
-/* Value:	0022
+/* Register:		 1
+/* Value:		0022
+/*
 /* Clock cycle:	         18
 /*****************************/
 
 /*****************************/
-/* Register:	 2
-/* Value:	xx11
+/* Register:		 2
+/* Value:		xx11
+/*
 /* Clock cycle:	         22
 /*****************************/
 
 /*****************************/
-/* Register:	 2
-/* Value:	0011
+/* Register:		 2
+/* Value:		0011
+/*
 /* Clock cycle:	         26
 /*****************************/
 
 /*****************************/
-/* Register:	 0
-/* Value:	ffef
+/* Register:		 0
+/* Value:		ffef
+/*
 /* Clock cycle:	         34
 /*****************************/
 
+/*************************************/
+/* Branch not taken @ PC:	0006
+/* After instruction:		b333
+/*
+/* Clock cycle:		         35
+/*************************************/
+
+/*************************************/
+/* Branch taken @ PC:		0008
+/* After instruction:		a333
+/*
+/* New PC Target:		000b
+/* Next instruction:		b000
+/*
+/* Clock cycle:		         39
+/*************************************/
+
 /*****************************/
-/* Register:	 3
-/* Value:	xx33
+/* Register:		 3
+/* Value:		xx33
+/*
 /* Clock cycle:	         40
 /*****************************/
 
 /*****************************/
-/* Register:	 3
-/* Value:	3333
+/* Register:		 3
+/* Value:		3333
+/*
 /* Clock cycle:	         50
 /*****************************/
 
 /*****************************/
-/* Register:	 0
-/* Value:	0000
+/* Register:		 0
+/* Value:		0000
+/*
 /* Clock cycle:	         52
 /*****************************/
 
 /*****************************/
-/* Register:	 0
-/* Value:	0000
+/* Register:		 0
+/* Value:		0000
+/*
 /* Clock cycle:	         62
 /*****************************/
 
+/*************************************/
+/* Branch not taken @ PC:	000e
+/* After instruction:		b355
+/*
+/* Clock cycle:		         63
+/*************************************/
+
+/*************************************/
+/* Branch taken @ PC:		0010
+/* After instruction:		a355
+/*
+/* New PC Target:		0013
+/* Next instruction:		bbaa
+/*
+/* Clock cycle:		         67
+/************************************/
+
 /*****************************/
-/* Register:	 3
-/* Value:	3355
+/* Register:		 3
+/* Value:		3355
+/*
 /* Clock cycle:	         68
 /*****************************/
 
 /*****************************/
-/* Register:	 3
-/* Value:	5555
+/* Register:		 3
+/* Value:		5555
+/*
 /* Clock cycle:	         78
 /*****************************/
 
 /*****************************/
-/* Register:	11
-/* Value:	xxaa
+/* Register:		11
+/* Value:		xxaa
+/*
 /* Clock cycle:	         80
 /*****************************/
 
 /*****************************/
-/* Register:	11
-/* Value:	aaaa
+/* Register:		11
+/* Value:		aaaa
+/*
 /* Clock cycle:	         90
 /*****************************/
 
@@ -110,5 +158,11 @@
 /*	Rd = xxxx
 /*	Re = xxxx
 /*	Rf = ffff
+/*
+/* Branches taken:      2
+/*
+/* Cache misses:        6
+/*
+/* Cache hits:          19
 /*
 /*****************************/
