@@ -5,6 +5,7 @@ module Control_Logic_tb();
 reg clk;
 
 //DUT Inputs
+wire [15:0] instruction;
 reg [3:0] opcode;    //4-bit instruction opcode
 
 //DUT OUTPUTS
@@ -17,6 +18,7 @@ wire call;		   /* Control signal to RegFile to
                      Stack_Pointer Register for
                      supplying read_data_1 */
 wire rtrn;
+wire stack_reg;
 wire	branch;            // branching control; 0-2 sensitive, 3 pick 
 wire mem_to_reg;      // LW signal to Memory unit 
 wire	reg_to_mem;      // SW signal to Memory unit
@@ -29,8 +31,11 @@ wire	MemRead;
 wire	MemWrite;
 wire	load_half;      // Specifies the ALU result
 wire	half_spec;      // (0 -> LHB, 1 -> LLB)
+wire HALT;
 
 reg passed;
+
+assign instruction[15:12] = opcode;
 
 /* LOCAL PARAMS */      
 //ALU OPERATIONS 
@@ -73,6 +78,17 @@ initial begin
 		end
 		else begin
 			if(data_reg != 1'b0) begin
+				passed = 1'b0;
+			end
+		end
+		//stack_reg
+		if(opcode == CALL || opcode == RET) begin
+		   if(stack_reg != 1'b1) begin
+		          passed = 1'b0;
+		       end
+		end
+		else begin
+			if(stack_reg != 1'b0) begin
 				passed = 1'b0;
 			end
 		end
@@ -132,7 +148,7 @@ initial begin
 			end
 		end
 		//alu_op
-		if(opcode == CALL || opcode == RET || opcode == SW) begin
+		if(opcode == CALL || opcode == RET || opcode == SW || opcode == LW) begin
 			if(alu_op != ADD[2:0]) begin
 				passed = 1'b0;
 			end
@@ -154,7 +170,7 @@ initial begin
 			end
 		end
 		//sign_ext_sel
-		if(opcode == INC || opcode == LW || opcode == SW || opcode == B) begin
+		if(opcode == LW || opcode == SW || opcode == B) begin
 			if(sign_ext_sel != 1'b1) begin
 				passed = 1'b0;
 			end
@@ -176,7 +192,7 @@ initial begin
 			end
 		end
 		//RegWrite
-		if(opcode == SW || opcode == B) begin
+		if(opcode == SW || opcode == B || opcode == ERR) begin
 			if(RegWrite != 1'b0) begin
 				passed = 1'b0;
 			end
@@ -227,6 +243,17 @@ initial begin
 		end
 		else begin
 			if(half_spec != 1'b0) begin
+				passed = 1'b0;
+			end
+		end
+		//HALT
+		if(opcode == ERR) begin
+			if(HALT != 1'b1) begin
+				passed = 1'b0;
+			end
+		end
+		else begin
+			if(HALT != 1'b0) begin
 				passed = 1'b0;
 			end
 		end
