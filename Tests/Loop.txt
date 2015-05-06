@@ -1,3 +1,5 @@
+MIPS ASSEMBLY:	
+
 	LLB R1, 0x00
 	
 	LHB R1, 0x02		# R1=0x0200
@@ -16,6 +18,8 @@ Repeat: SUB R1, R1, R2
 	B   NEQ, Repeat
 	
 	ADD R3, R3, R2		# R3=R3+0x0001
+
+BINARY:
 
 @0000 B100
 @0001 A102

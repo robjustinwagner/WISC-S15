@@ -1,3 +1,5 @@
+MIPS ASSEMBLY:
+
 		LLB R1, 0x22		# R1 = 0xxx22
 		LHB R1, 0x00		# R1 = 0x0022
 		LLB R2, 0x11		# R2 = 0xxx11
@@ -22,6 +24,8 @@ FAIL:		LLB R10, 0xFF		# R10 will contain 0xxxFF
 		
 PASS:		LLB R11, 0xAA		# R11 will contain 0xxxAA
 		LHB R11, 0xAA		# R11 will contain 0xAAAA (indicated pass)
+
+BINARY:
 
 @0000 B122
 @0001 A100
