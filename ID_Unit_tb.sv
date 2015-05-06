@@ -8,26 +8,16 @@ module ID_Unit_tb();
 
 reg [15:0] instruction;
 
-reg clk, rst, PC_update, RegWrite_in;
+reg clk, rst, PC_update, RegWrite_in, HALT_in;
 
 // For writing to registers
 reg [3:0] reg_rd_wb;
 reg [15:0] reg_rd_data;
 
-/*
-reg [2:0] branch_cond;
-reg [3:0] reg_rs, reg_rt_arith, reg_rd_wb, cntrl_opcode, arith_imm,
-          load_save_reg_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd;
-reg [7:0] load_save_imm;
-reg [11:0] call_target;
-reg [15:0] reg_rd_data, PC_in;
-*/
-
 //CONNECTORS
 
 wire [2:0]  branch_cond;
-wire [3:0]  reg_rs, reg_rt_arith, cntrl_opcode, arith_imm_in,
-                load_save_reg_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd;
+wire [3:0]  reg_rs, reg_rt_arith, cntrl_opcode, arith_imm_in, load_save_reg_in, ID_EX_reg_rd, EX_MEM_reg_rd, MEM_WB_reg_rd;
 wire [7:0]  load_save_imm_in;
 wire [11:0] call_target;
 wire [15:0] PC_in;
@@ -36,7 +26,7 @@ wire [15:0] PC_in;
 
 wire       mem_to_reg, RegWrite_out, MemWrite_out,
            MemRead_out, alu_src, branch, call, ret, load_half,
-           half_spec, data_hazard, PC_hazard_out;
+           half_spec, data_hazard, PC_hazard_out, HALT_out;
 
 wire [2:0] branch_cond_out, alu_op;
 
@@ -57,32 +47,24 @@ end
 assign cntrl_opcode     = instruction[15:12];
 assign reg_rs           = instruction[7:4];
 assign reg_rt_arith     = instruction[3:0];
-assign	load_save_reg_in = instruction[11:8];
+assign load_save_reg_in = instruction[11:8];
 assign arith_imm_in     = instruction[3:0];
 assign load_save_imm_in = instruction[7:0];
 assign call_target      = instruction[11:0];
 assign branch_cond      = instruction[10:8];
 
-/*
-IFID_reg IFID_reg(.clk(clk), .hazard(hazard),
-                     .instruction(instruction), .PC_in(PC_in),
-                   .cntrl_input(cntrl_opcode), .branch_cond(branch_cond_in),
-                      .reg_rs(reg_rs), .reg_rt(reg_rt_arith), .reg_rd(load_save_reg_in),
-                      .arith_imm(arith_imm_in), .load_save_imm(load_save_imm_in),
-                      .call_target(call_target), .PC_out(PC_in));
-*/
-ID_Unit ID(.clk(clk), .rst(rst), 
+ID_Unit ID(.clk(clk), .rst(rst), .instruction(instruction),
 	         .PC_hazard_in(PC_hazard_in), .RegWrite_in(RegWrite_in), .reg_rs(reg_rs), .reg_rt_arith(reg_rt_arith),
-	             .reg_rd_wb(reg_rd_wb), .reg_rd_data(reg_rd_data), .cntrl_opcode(cntrl_opcode),
-	             .branch_cond_in(branch_cond_in), .arith_imm_in(arith_imm_in), .load_save_reg_in(load_save_reg_in),
-	             .load_save_imm_in(load_save_imm_in), .call_target_in(call_target), .PC_in(PC_in),
-	             .ID_EX_reg_rd(ID_EX_reg_rd), .EX_MEM_reg_rd(EX_MEM_reg_rd), .MEM_WB_reg_rd(MEM_WB_reg_rd), 
+	             .reg_rd_wb(reg_rd_wb), .reg_rd_data(reg_rd_data),.branch_cond_in(branch_cond_in), 
+		     .arith_imm_in(arith_imm_in), .load_save_reg_in(load_save_reg_in), .load_save_imm_in(load_save_imm_in),
+		     .call_target_in(call_target), .PC_in(PC_in), .ID_EX_reg_rd(ID_EX_reg_rd), .EX_MEM_reg_rd(EX_MEM_reg_rd), 
+		     .MEM_WB_reg_rd(MEM_WB_reg_rd), .HALT_out(HALT_out),
 	          .PC_hazard_out(PC_hazard_out), .RegWrite_out(RegWrite_out), .MemWrite_out(MemWrite_out), .MemRead_out(MemRead_out),
 	             .mem_to_reg(mem_to_reg), .alu_src(alu_src), .alu_op(alu_op), .branch(branch), .call(call), .ret(ret),
 	             .load_half(load_half), .half_spec(half_spec), .read_data_1(read_data_1), .read_data_2(read_data_2),
 	             .branch_cond_out(branch_out_cond), .load_save_reg_out(load_save_reg_out), .arith_imm_out(arith_imm_out),
 	             .load_save_imm_out(load_save_imm_out), .call_target_out(call_target_out), .PC_out(PC_out),
-	             .sign_ext_out(sign_ext_out), .data_hazard(data_hazard));
+	             .sign_ext_out(sign_ext_out), .data_hazard(data_hazard), .HALT_in(HALT_in));
 
 initial begin
     
@@ -750,7 +732,7 @@ initial begin
       (MemWrite_out != 1)        ||
       (MemRead_out != 0)         ||
       (load_half != 0)           ||
-      (PC_hazard_out != 1)       ||
+      (PC_hazard_out != 0)       ||
       (branch != 0)              || 
       (call != 1)                || 
       (ret != 0)) begin
