@@ -569,10 +569,6 @@ initial begin
 					passed = 1'b0;
 				end
 			end
-			//overflow & sign
-			if(flags[1] != 1'b0 || flags[0] != 1'b0) begin
-				passed = 1'b0;
-			end
 			stim2 = stim2 + 73;
 		end
 		stim1 = stim1 + 73;
@@ -720,7 +716,7 @@ initial begin
 				end
 			i = i + 1;
 			end
-			//no flag test, leave flags alone
+			//no flag test, leave flags alone.
 			stim1 = stim_cache;
 			shift = shift + 1;
 			ctr = ctr + 1;
